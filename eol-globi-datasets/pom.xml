@@ -104,7 +104,7 @@
             </activation>
             <properties>
                 <elton.step.name>compile</elton.step.name>
-                <elton4n.memory>16G</elton4n.memory>
+                <elton4n.memory>24G</elton4n.memory>
             </properties>
             <build>
                 <plugins>
