@@ -15,6 +15,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 public class ResourceServiceCachingTest {
 
@@ -54,6 +57,26 @@ public class ResourceServiceCachingTest {
         }
 
         assertThat(tmpDir.exists(), Is.is(true));
+
+
+    }
+
+    @Test(expected = IOException.class)
+    public void createTmpFileWithFileAsDir() throws IOException {
+        File tmpDir = folder.newFile("existingfile");
+
+        try (InputStream inputStream = ResourceServiceCaching.cacheAndOpenStream(
+                new ByteArrayInputStream("foo".getBytes(StandardCharsets.UTF_8)),
+                inStream -> inStream,
+                tmpDir
+        )) {
+            IOUtils.copy(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+            assertThat(tmpDir.exists(), Is.is(true));
+        } catch (IOException ex) {
+            assertThat(ex.getMessage(), startsWith("expected cache directory at ["));
+            assertThat(ex.getMessage(), endsWith("but found a file instead."));
+            throw ex;
+        }
 
 
     }

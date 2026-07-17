@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOExceptionList;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ProxyInputStream;
 import org.eol.globi.service.ResourceService;
@@ -20,8 +21,12 @@ public abstract class ResourceServiceCaching implements ResourceService {
     }
 
     protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory, File tmpDir) throws IOException {
-        if (!tmpDir.exists()) {
+        if (!tmpDir.exists() ) {
             FileUtils.forceMkdir(tmpDir);
+        } else {
+            if (!tmpDir.isDirectory()) {
+                throw new IOException("expected cache directory at [" + tmpDir.getAbsolutePath() + "] but found a file instead.");
+            }
         }
         final File tmpFile = File.createTempFile("globiRemote", "tmp", tmpDir);
         tmpFile.deleteOnExit();
