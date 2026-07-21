@@ -69,10 +69,10 @@ public class ExportTaxonMapTest extends GraphDBNeo4jTestCase {
         StringWriter writer = new StringWriter();
         new ExportTaxonMap().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
         String actual = writer.toString();
-        assertThat(actual, startsWith("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName"));
-        assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\thomoSapiensId\tHomo sapiens"));
-        assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\talt:123\tAlternate Homo sapiens"));
-        assertThat(actual, containsString("\ncanisLupusId\tCanis lupus\tcanisLupusId\tCanis lupus\n"));
+        assertThat(actual, startsWith("providedTaxonId\tprovidedTaxonName\tprovidedTaxonPath\tresolvedTaxonId\tresolvedTaxonName\tresolvedTaxonPath"));
+        assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\tone two three\thomoSapiensId\tHomo sapiens\t"));
+        assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\tone two three\talt:123\tAlternate Homo sapiens\t"));
+        assertThat(actual, containsString("\ncanisLupusId\tCanis lupus\tfour five six\tcanisLupusId\tCanis lupus\tfour five six\n"));
     }
 
 }

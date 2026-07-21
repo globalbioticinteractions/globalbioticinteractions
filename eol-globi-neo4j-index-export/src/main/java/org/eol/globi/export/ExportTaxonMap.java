@@ -18,14 +18,17 @@ public class ExportTaxonMap implements StudyExporter {
 
     protected void doExport(StudyNode study, ExportUtil.Appender writer) throws IOException {
         String query = "CYPHER 2.3 START study = node:studies('*:*')\n" +
-                "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
-                "WITH distinct(origTaxon.name) as origName, origTaxon.externalId as origId, taxon " +
+                "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, " +
+                "specimen-[:CLASSIFIED_AS]->taxon " +
+                "WITH distinct(origTaxon.name) as origName, origTaxon.externalId as origId, origTaxon.path as origPath, taxon " +
                 "MATCH taxon-[:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.path) " +
                 "RETURN origId as providedTaxonId" +
                 ", origName as providedTaxonName" +
+                ", origPath as providedTaxonPath" +
                 ", linkedTaxon.externalId as resolvedTaxonId" +
-                ", linkedTaxon.name as resolvedTaxonName";
+                ", linkedTaxon.name as resolvedTaxonName" +
+                ", linkedTaxon.path as resolvedTaxonPath";
 
         ExportUtil.writeResults(writer,
                 study.getUnderlyingNode().getGraphDatabase(),
