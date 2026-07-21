@@ -13,6 +13,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -124,8 +125,10 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
     public void iNaturalistTaxonWikidata() throws NodeFactoryException {
         TaxonImpl taxon = new TaxonImpl("Ficus", "INAT_TAXON:50999");
         taxon.setPath("Plantae | Tracheophyta | Magnoliopsida | Rosales | Moraceae | Ficus");
+        taxon.setPathNames("kingdom | phylum | class | order | family | genus");
         TaxonImpl taxon1 = new TaxonImpl("Ficus", "INAT_TAXON:208863");
         taxon1.setPath("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus");
+        taxon1.setPathNames("kingdom | phylum | class | order | family | genus");
         TaxonImpl taxon2 = new TaxonImpl("Ficus", "12345");
         TaxonImpl taxon3 = new TaxonImpl("Ficus", "WD:Q1938846");
         Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon);
@@ -137,10 +140,17 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
         someOtherOrganism.ate(someOtherOrganism4);
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
+        NonResolvingTaxonIndexNeo4j2 taxonIndexNew = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+        taxonIndexNew.skipHomonymMatches(true);
+        taxonIndex = taxonIndexNew;
 
-        TaxonIndex taxonIndex1 = getTaxonIndex();
+        //TaxonIndex taxonIndex1 = getTaxonIndex();
 
-        final NameResolver nameResolver = new NameResolver(graphServiceFactory, getNodeIdCollector(), taxonIndex1);
+        final NameResolver nameResolver = new NameResolver(
+                graphServiceFactory,
+                getNodeIdCollector(),
+                taxonIndexNew
+        );
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
@@ -161,6 +171,7 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
 
         TaxonImpl taxon4 = new TaxonImpl("Ficus");
         taxon4.setPath("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus");
+        taxon4.setPathNames("kingdom | phylum | class | order | family | genus");
         Taxon taxonMollusk = taxonIndex.getOrCreateTaxon(taxon4);
         assertThat(taxonMollusk.getPath(), is("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus"));
     }
