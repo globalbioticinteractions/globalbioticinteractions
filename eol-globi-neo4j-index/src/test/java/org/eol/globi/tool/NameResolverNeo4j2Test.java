@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
@@ -118,6 +119,50 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
         Taxon resolvedTaxon2 = taxonIndex.findTaxonByName("Blaus bla");
         assertThat(resolvedTaxon2, is(notNullValue()));
         assertThat(resolvedTaxon2.getExternalId(), is("INAT_TAXON:58831"));
+    }
+    @Test
+    public void iNaturalistTaxonWikidata() throws NodeFactoryException {
+        TaxonImpl taxon = new TaxonImpl("Ficus", "INAT_TAXON:50999");
+        taxon.setPath("Plantae | Tracheophyta | Magnoliopsida | Rosales | Moraceae | Ficus");
+        TaxonImpl taxon1 = new TaxonImpl("Ficus", "INAT_TAXON:208863");
+        taxon1.setPath("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus");
+        TaxonImpl taxon2 = new TaxonImpl("Ficus", "12345");
+        TaxonImpl taxon3 = new TaxonImpl("Ficus", "WD:Q1938846");
+        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon);
+        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon1);
+        Specimen someOtherOrganism3 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon2);
+        Specimen someOtherOrganism4 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon3);
+        someOtherOrganism.ate(someOtherOrganism2);
+        someOtherOrganism.ate(someOtherOrganism3);
+        someOtherOrganism.ate(someOtherOrganism4);
+
+        GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
+
+        TaxonIndex taxonIndex1 = getTaxonIndex();
+
+        final NameResolver nameResolver = new NameResolver(graphServiceFactory, getNodeIdCollector(), taxonIndex1);
+        nameResolver.setBatchSize(1L);
+        nameResolver.index();
+
+        Taxon resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:50999");
+        assertThat(resolvedTaxon, is(notNullValue()));
+        assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:50999"));
+        assertThat(resolvedTaxon.getName(), is("Ficus"));
+        assertThat(resolvedTaxon.getPath(), is("Plantae | Tracheophyta | Magnoliopsida | Rosales | Moraceae | Ficus"));
+
+        resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:208863");
+        assertThat(resolvedTaxon, is(notNullValue()));
+        assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:208863"));
+        assertThat(resolvedTaxon.getName(), is("Ficus"));
+        assertThat(resolvedTaxon.getPath(), is("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus"));
+        Taxon resolvedTaxon2 = taxonIndex.findTaxonByName("Ficus");
+        assertThat(resolvedTaxon2, is(notNullValue()));
+        assertThat(resolvedTaxon2.getExternalId(), is("INAT_TAXON:50999"));
+
+        TaxonImpl taxon4 = new TaxonImpl("Ficus");
+        taxon4.setPath("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus");
+        Taxon taxonMollusk = taxonIndex.getOrCreateTaxon(taxon4);
+        assertThat(taxonMollusk.getPath(), is("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus"));
     }
 
     @Test
