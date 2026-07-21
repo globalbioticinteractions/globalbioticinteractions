@@ -22,7 +22,8 @@ public class CmdIndexTaxa extends CmdNeo4J {
     @Override
     public void run() {
         if ("2".equals(getNeo4jVersion())) {
-            final TaxonIndex taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphServiceFactory().getGraphService());
+            final NonResolvingTaxonIndexNeo4j2 taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphServiceFactory().getGraphService());
+            taxonIndex.skipHomonymMatches(true);
             final IndexerNeo4j nameResolver = new NameResolver(getGraphServiceFactory(), new NodeIdCollectorNeo4j2(), taxonIndex);
             final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(getGraphServiceFactory(), new NodeIdCollectorNeo4j2());
             index(nameResolver, taxonInteractionIndexer);

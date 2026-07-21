@@ -144,8 +144,6 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
         taxonIndexNew.skipHomonymMatches(true);
         taxonIndex = taxonIndexNew;
 
-        //TaxonIndex taxonIndex1 = getTaxonIndex();
-
         final NameResolver nameResolver = new NameResolver(
                 graphServiceFactory,
                 getNodeIdCollector(),
