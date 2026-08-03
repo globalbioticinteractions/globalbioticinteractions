@@ -18,7 +18,8 @@
         <spring.version>5.2.22.RELEASE</spring.version>
         <aspectj.version>1.6.12</aspectj.version>
         <jetty.groupId>org.eclipse.jetty</jetty.groupId>
-        <jetty.version>9.4.56.v20240826</jetty.version>
+        <jetty.version>11.0.26</jetty.version>
+        <jetty.maven.plugin.version>11.0.26</jetty.maven.plugin.version>
         <javassist.version>3.9.0.GA</javassist.version>
     </properties>
 
@@ -83,7 +84,7 @@
             <plugin>
                 <groupId>${jetty.groupId}</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
+                <version>${jetty.maven.plugin.version}</version>
                 <configuration>
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
