@@ -158,7 +158,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${jetty.groupId}</groupId>
-                                    <artifactId>jetty-runner</artifactId>
+                                    <artifactId>jetty-ee${jetty.ee.version}-runner</artifactId>
                                     <version>${jetty.version}</version>
                                     <destFileName>jetty-runner.jar</destFileName>
                                 </artifactItem>
@@ -169,7 +169,7 @@
             </plugin>
             <plugin>
                 <groupId>${jetty.groupId}</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <artifactId>jetty-ee${jetty.ee.version}-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
                     <stopKey>foo</stopKey>
