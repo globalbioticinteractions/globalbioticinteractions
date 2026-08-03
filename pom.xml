@@ -28,6 +28,7 @@
                 <module>eol-globi-data-sources</module>
                 <module>eol-globi-taxon-resolver</module>
                 <module>dwc-dp</module>
+                <module>eol-globi-rest-services</module>
             </modules>
         </profile>
         <profile>

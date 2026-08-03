@@ -112,10 +112,10 @@ public class InteractionControllerTestIT {
     @Test
     public void findPredatorObservationsCSV() throws IOException, URISyntaxException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(new HashMap<String, String>() {
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
             {
-                put("includeObservations", "true");
-                put("type", "csv");
+                put("includeObservations", new String[]{"true"});
+                put("type", new String[]{"csv"});
             }
         });
         when(request.getParameter("type")).thenReturn("csv");

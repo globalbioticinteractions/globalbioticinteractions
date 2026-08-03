@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+    <context:spring-configured/>
+    <context:annotation-config/>
+    <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager">
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.eol.globi.server.util.CypherHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="favorPathExtension" value="true"/>
+        <property name="ignoreAcceptHeader" value="true"/>
+        <property name="favorParameter" value="true"/>
+        <property name="parameterName" value="type"/>
+        <property name="mediaTypes">
+            <value>
+                json.v2=text/html;charset=UTF-8
+                json=application/json;charset=UTF-8
+                jsonld=application/ld+json;charset=UTF-8
+                csv=text/csv;charset=UTF-8
+                tsv=text/tab-separated-values;charset=UTF-8
+                dot=text/vnd.graphviz;charset=UTF-8
+                svg=image/svg+xml;charset=UTF-8
+                gs=text/plain;charset=UTF-8
+            </value>
+        </property>
+    </bean>
+    <context:component-scan base-package="org.eol.globi"/>
+</beans>
