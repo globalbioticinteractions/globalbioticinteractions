@@ -107,7 +107,7 @@
         </dependency>
         <dependency>
             <groupId>${jetty.groupId}</groupId>
-            <artifactId>jetty-ee${jetty.ee.version}-servlets</artifactId>
+            <artifactId>jetty${jetty.ee.version.name}servlets</artifactId>
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
@@ -158,7 +158,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${jetty.groupId}</groupId>
-                                    <artifactId>jetty-ee${jetty.ee.version}-runner</artifactId>
+                                    <artifactId>jetty${jetty.ee.version.name}runner</artifactId>
                                     <version>${jetty.version}</version>
                                     <destFileName>jetty-runner.jar</destFileName>
                                 </artifactItem>
@@ -169,7 +169,7 @@
             </plugin>
             <plugin>
                 <groupId>${jetty.groupId}</groupId>
-                <artifactId>jetty-ee${jetty.ee.version}-maven-plugin</artifactId>
+                <artifactId>jetty${jetty.ee.version.name}maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
                     <stopKey>foo</stopKey>

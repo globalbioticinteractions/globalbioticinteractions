@@ -16,6 +16,7 @@
     <properties>
         <spring.version>5.2.22.RELEASE</spring.version>
         <aspectj.version>1.6.12</aspectj.version>
+        <jetty.version>9.4.58.v20250814</jetty.version>
         <javassist.version>3.9.0.GA</javassist.version>
     </properties>
 
@@ -94,7 +95,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${jetty.groupId}</groupId>
-                                    <artifactId>jetty-ee${jetty.ee.version}-runner</artifactId>
+                                    <artifactId>jetty${jetty.ee.version.name}runner</artifactId>
                                     <version>${jetty.version}</version>
                                     <destFileName>jetty-runner.jar</destFileName>
                                 </artifactItem>
@@ -105,7 +106,7 @@
             </plugin>
             <plugin>
                 <groupId>${jetty.groupId}</groupId>
-                <artifactId>jetty-ee${jetty.ee.version}-maven-plugin</artifactId>
+                <artifactId>jetty${jetty.ee.version.name}maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
                     <stopKey>foo</stopKey>
