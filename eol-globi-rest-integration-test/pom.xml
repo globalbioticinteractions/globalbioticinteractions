@@ -9,10 +9,9 @@
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>eol-globi-rest</artifactId>
-    <packaging>war</packaging>
+    <artifactId>eol-globi-rest-integration-test</artifactId>
 
-    <name>Global Biotic Interactions API</name>
+    <name>Global Biotic Interactions API Integration Tests</name>
 
     <properties>
         <spring.version>5.2.22.RELEASE</spring.version>
@@ -38,6 +37,32 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j.test</groupId>
+            <artifactId>neo4j-harness</artifactId>
+            <version>${neo4j.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-neo4j-index</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
