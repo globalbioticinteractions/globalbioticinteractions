@@ -29,6 +29,7 @@
                 <module>eol-globi-taxon-resolver</module>
                 <module>dwc-dp</module>
                 <module>eol-globi-rest-services</module>
+                <module>eol-globi-rest</module>
             </modules>
         </profile>
         <profile>
@@ -40,7 +41,6 @@
                 <module>eol-globi-neo4j</module>
                 <module>eol-globi-neo4j-index-export</module>
                 <module>eol-globi-neo4j-index</module>
-                <module>eol-globi-rest</module>
                 <module>eol-globi-rest-integration-test</module>
                 <module>elton4n</module>
             </modules>
