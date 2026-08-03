@@ -19,7 +19,7 @@
         <aspectj.version>1.6.12</aspectj.version>
         <jetty.ee.version>8</jetty.ee.version>
         <jetty.groupId>org.eclipse.jetty.ee${jetty.ee.version}</jetty.groupId>
-        <jetty.version>12.1.11</jetty.version>
+        <jetty.version>12.0.37</jetty.version>
         <jetty.maven.plugin.version>${jetty.version}</jetty.maven.plugin.version>
         <javassist.version>3.9.0.GA</javassist.version>
     </properties>
@@ -73,7 +73,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${jetty.groupId}</groupId>
-                                    <artifactId>jetty-runner</artifactId>
+                                    <artifactId>jetty-ee${jetty.ee.version}-runner</artifactId>
                                     <version>${jetty.version}</version>
                                     <destFileName>jetty-runner.jar</destFileName>
                                 </artifactItem>
