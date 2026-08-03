@@ -29,6 +29,10 @@
         <bytebuddy.version>1.17.5</bytebuddy.version>
         <picocli.version>4.6.3</picocli.version>
 
+        <jetty.ee.version>8</jetty.ee.version>
+        <jetty.groupId>org.eclipse.jetty.ee${jetty.ee.version}</jetty.groupId>
+        <jetty.version>12.0.37</jetty.version>
+
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>

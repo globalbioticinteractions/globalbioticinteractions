@@ -16,8 +16,6 @@
     <properties>
         <spring.version>5.2.22.RELEASE</spring.version>
         <aspectj.version>1.6.12</aspectj.version>
-        <jetty.groupId>org.eclipse.jetty</jetty.groupId>
-        <jetty.version>9.4.56.v20240826</jetty.version>
         <javassist.version>3.9.0.GA</javassist.version>
     </properties>
 
@@ -109,7 +107,7 @@
         </dependency>
         <dependency>
             <groupId>${jetty.groupId}</groupId>
-            <artifactId>jetty-servlets</artifactId>
+            <artifactId>jetty-ee${jetty.ee.version}-servlets</artifactId>
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
