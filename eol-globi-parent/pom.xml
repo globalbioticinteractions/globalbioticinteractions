@@ -28,7 +28,9 @@
         <mockito.version>3.12.4</mockito.version>
         <bytebuddy.version>1.17.5</bytebuddy.version>
         <picocli.version>4.6.3</picocli.version>
-
+        <spring.version>5.2.22.RELEASE</spring.version>
+        <aspectj.version>1.6.12</aspectj.version>
+        <javassist.version>3.9.0.GA</javassist.version>
         <jetty.ee.version>ee8</jetty.ee.version>
         <jetty.ee.version.package>.ee8</jetty.ee.version.package>
         <jetty.ee.version.name>-${jetty.ee.version}-</jetty.ee.version.name>

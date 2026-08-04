@@ -15,9 +15,7 @@
     <name>Global Biotic Interactions API</name>
 
     <properties>
-        <spring.version>5.2.22.RELEASE</spring.version>
-        <aspectj.version>1.6.12</aspectj.version>
-        <javassist.version>3.9.0.GA</javassist.version>
+
     </properties>
 
     <dependencies>
