@@ -1957,9 +1957,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         Map<String, String> properties = createTmpMap();
         JsonNode jsonNode = new ObjectMapper().readTree(candidateJsonChunk);
 
-        Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
-        while (fields.hasNext()) {
-            Map.Entry<String, JsonNode> field = fields.next();
+        Set<Map.Entry<String, JsonNode>> fields = jsonNode.properties();
+        for (Map.Entry<String, JsonNode> field : fields) {
             if (field.getValue().isValueNode()) {
                 properties.put(field.getKey(), field.getValue().asText());
             }

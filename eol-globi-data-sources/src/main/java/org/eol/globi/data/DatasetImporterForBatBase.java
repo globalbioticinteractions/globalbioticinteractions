@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class DatasetImporterForBatBase extends DatasetImporterWithListener {
@@ -99,10 +100,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         if (Version.PRE_CITATION_OBJECT_2020_12_13.equals(version)) {
             if (jsonNode.has("source")) {
                 JsonNode sources = jsonNode.get("source");
-                Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.fields();
-                while (taxonEntries.hasNext()) {
-                    Map.Entry<String, JsonNode> next = taxonEntries.next();
-                    JsonNode sourceValue = next.getValue();
+                Set<Map.Entry<String, JsonNode>> taxonEntries = sources.properties();
+                for (Map.Entry<String, JsonNode> taxonEntry : taxonEntries) {
+                    JsonNode sourceValue = taxonEntry.getValue();
                     if (sourceValue.isTextual()) {
                         JsonNode sourceNode = objectMapper.readTree(sourceValue.asText());
                         String id = JSONUtil.textValueOrNull(sourceNode, "id");
@@ -114,10 +114,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         } else if (Version.POST_CITATION_OBJECT_2020_12_13.equals(version)) {
             if (jsonNode.has("citation")) {
                 JsonNode sources = jsonNode.get("citation");
-                Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.fields();
-                while (taxonEntries.hasNext()) {
-                    Map.Entry<String, JsonNode> next = taxonEntries.next();
-                    JsonNode sourceValue = next.getValue();
+                Set<Map.Entry<String, JsonNode>> taxonEntries = sources.properties();
+                for (Map.Entry<String, JsonNode> taxonEntry : taxonEntries) {
+                    JsonNode sourceValue = taxonEntry.getValue();
                     if (sourceValue.isTextual()) {
                         JsonNode sourceNode = objectMapper.readTree(sourceValue.asText());
                         String id = JSONUtil.textValueOrNull(sourceNode, "id");
@@ -169,10 +168,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
                                               ObjectMapper objectMapper,
                                               JsonNode taxon,
                                               Prefixer prefixer) throws IOException {
-        Iterator<Map.Entry<String, JsonNode>> taxonEntries = taxon.fields();
-        while (taxonEntries.hasNext()) {
-            Map.Entry<String, JsonNode> next = taxonEntries.next();
-            JsonNode taxonValue = next.getValue();
+        Set<Map.Entry<String, JsonNode>> taxonEntries = taxon.properties();
+        for (Map.Entry<String, JsonNode> taxonEntry : taxonEntries) {
+            JsonNode taxonValue = taxonEntry.getValue();
             if (taxonValue.isTextual()) {
                 JsonNode taxonNode = objectMapper.readTree(taxonValue.asText());
                 List<String> path = new ArrayList<>();
@@ -222,9 +220,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
     private static Map<String, JsonNode> indexTaxonNodes(ObjectMapper objectMapper, JsonNode taxon) throws
             IOException {
         Map<String, JsonNode> taxonNodes = new TreeMap<>();
-        Iterator<Map.Entry<String, JsonNode>> taxonEntries = taxon.fields();
-        while (taxonEntries.hasNext()) {
-            Map.Entry<String, JsonNode> next = taxonEntries.next();
+        Set<Map.Entry<String, JsonNode>> taxonEntries = taxon.properties();
+        for (Map.Entry<String, JsonNode> taxonEntry : taxonEntries) {
+            Map.Entry<String, JsonNode> next = taxonEntry;
             JsonNode taxonValue = next.getValue();
             if (taxonValue.isTextual()) {
                 JsonNode taxonNode = objectMapper.readTree(taxonValue.asText());
@@ -259,10 +257,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         if (jsonNode.has("interaction")) {
             JsonNode interaction = jsonNode.get("interaction");
             if (interaction.isObject()) {
-                Iterator<Map.Entry<String, JsonNode>> fields = interaction.fields();
-                while (fields.hasNext()) {
-                    Map.Entry<String, JsonNode> entry = fields.next();
-                    JsonNode value = entry.getValue();
+                Set<Map.Entry<String, JsonNode>> fields = interaction.properties();
+                for (Map.Entry<String, JsonNode> field : fields) {
+                    JsonNode value = field.getValue();
                     if (value.isTextual()) {
                         JsonNode interactionNode = objectMapper.readTree(value.asText());
                         JsonNode interactionType = interactionNode.get("interactionType");
@@ -400,10 +397,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         JsonNode jsonNode = objectMapper.readTree(inputStream);
         if (jsonNode.has("location")) {
             JsonNode sources = jsonNode.get("location");
-            Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.fields();
-            while (taxonEntries.hasNext()) {
-                Map.Entry<String, JsonNode> next = taxonEntries.next();
-                JsonNode sourceValue = next.getValue();
+            Set<Map.Entry<String, JsonNode>> taxonEntries = sources.properties();
+            for (Map.Entry<String, JsonNode> taxonEntry : taxonEntries) {
+                JsonNode sourceValue = taxonEntry.getValue();
                 if (sourceValue.isTextual()) {
                     JsonNode locationNode = objectMapper.readTree(sourceValue.asText());
                     String id = JSONUtil.textValueOrNull(locationNode, "id");

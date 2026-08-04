@@ -58,7 +58,7 @@ public class DatasetImporterForJSON extends DatasetImporterWithListener {
                     if (jsonNode.has("referenceId")) {
                         InteractUtil.putNotBlank(interaction, REFERENCE_ID, jsonNode.get("referenceId").asText());
                     }
-                    jsonNode.fields().forEachRemaining(entry -> {
+                    jsonNode.properties().forEach(entry -> {
                         if (entry.getValue().isValueNode()) {
                             interaction.put(entry.getKey(), entry.getValue().asText());
                         }

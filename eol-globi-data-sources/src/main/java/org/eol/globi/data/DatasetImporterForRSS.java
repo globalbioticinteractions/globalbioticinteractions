@@ -92,7 +92,7 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
         for (SyndEntry entry : entries) {
             String title = StringUtils.trim(entry.getTitle());
             if (shouldIncludeTitleInDatasetCollection(title, datasetOrig)) {
-                Dataset e = datasetFor(datasetOrig, (SyndEntry) entry);
+                Dataset e = datasetFor(datasetOrig, entry);
                 LOG.info("including [" + title + "].");
                 if (e != null) {
                     datasets.add(e);

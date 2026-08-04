@@ -34,6 +34,7 @@ import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -292,9 +293,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                                  ImportLogger importLogger) throws StudyImporterException {
         String[] line;
         Map<String, String> defaults = new TreeMap<>();
-        Iterator<Map.Entry<String, JsonNode>> fields = config.fields();
-        while (fields.hasNext()) {
-            Map.Entry<String, JsonNode> field = fields.next();
+        Set<Map.Entry<String, JsonNode>> fields = config.properties();
+        for (Map.Entry<String, JsonNode> field : fields) {
             if (field.getValue().isValueNode()) {
                 defaults.put(field.getKey(), field.getValue().asText());
             }
