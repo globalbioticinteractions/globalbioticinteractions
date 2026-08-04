@@ -27,6 +27,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-rest-services</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.ee8</groupId>
+                    <artifactId>jetty-ee8-servlets</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
