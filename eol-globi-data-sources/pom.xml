@@ -105,12 +105,20 @@
                     <artifactId>jsr305</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>commons-beanutils</groupId>
                     <artifactId>commons-beanutils</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
                     <artifactId>owasp-java-html-sanitizer</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.freemarker</groupId>
