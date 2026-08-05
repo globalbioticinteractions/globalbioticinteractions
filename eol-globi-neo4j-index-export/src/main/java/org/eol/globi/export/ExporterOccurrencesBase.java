@@ -1,6 +1,12 @@
 package org.eol.globi.export;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+
 public abstract class ExporterOccurrencesBase extends ExporterBase {
+
+    public ExporterOccurrencesBase(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     protected String[] getFields() {
         return new String[]{

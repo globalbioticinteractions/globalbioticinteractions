@@ -12,6 +12,7 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -83,13 +84,17 @@ public class InteractionListenerImplTest extends GraphDBNeo4jTestCase {
 
         interactionListener.on(interaction);
 
-        Result execute = getGraphDb()
-                .execute(
-                        "CYPHER 2.3 START study = node:studies('*:*') " +
-                                "MATCH study-[:COLLECTED]->specimen " +
-                                "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
-                                "RETURN count(distinct(study)) as study_count"
-                );
+        Result execute;
+        try (Transaction transaction = getGraphDb()
+                .beginTx()) {
+            execute = transaction.execute(
+                    "CYPHER 2.3 START study = node:studies('*:*') " +
+                            "MATCH study-[:COLLECTED]->specimen " +
+                            "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
+                            "RETURN count(distinct(study)) as study_count"
+            );
+            transaction.commit();
+        }
 
         assertThat(execute.next().get("study_count"), Is.is(1L));
 
@@ -114,13 +119,16 @@ public class InteractionListenerImplTest extends GraphDBNeo4jTestCase {
 
         interactionListener.on(interaction);
 
-        Result execute = getGraphDb()
-                .execute(
-                        "CYPHER 2.3 START study = node:studies('*:*') " +
-                                "MATCH study-[:COLLECTED]->specimen " +
-                                "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
-                                "RETURN count(distinct(study)) as study_count"
-                );
+        Result execute;
+        try (Transaction transaction = getGraphDb()
+                .beginTx()) {
+            execute = transaction.execute(
+                    "CYPHER 2.3 START study = node:studies('*:*') " +
+                            "MATCH study-[:COLLECTED]->specimen " +
+                            "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
+                            "RETURN count(distinct(study)) as study_count"
+            );
+        }
 
         assertThat(execute.next().get("study_count"), Is.is(1L));
 
@@ -195,11 +203,15 @@ public class InteractionListenerImplTest extends GraphDBNeo4jTestCase {
     }
 
     public void assertStudyCount(long expectedStudyCount) {
-        Result execute = getGraphDb()
-                .execute(
-                        "START study = node:studies('*:*') " +
-                                "RETURN count(study) as study_count"
-                );
+        Result execute;
+        try (Transaction transaction = getGraphDb()
+                .beginTx()) {
+            execute = transaction.execute(
+                    "START study = node:studies('*:*') " +
+                            "RETURN count(study) as study_count"
+            );
+            transaction.commit();
+        }
 
         assertThat(execute.next().get("study_count"), Is.is(expectedStudyCount));
     }

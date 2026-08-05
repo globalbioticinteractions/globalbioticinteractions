@@ -23,6 +23,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -104,21 +105,25 @@ public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
 
         assertTrue(success.get());
 
-        Result result = getGraphDb().execute("CYPHER 2.3 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
-        List<String> interactions = new ArrayList<String>();
-        while (((ResourceIterator<Map<String, Object>>) result).hasNext()) {
-            Map<String, Object> next = ((ResourceIterator<Map<String, Object>>) result).next();
-            interactions.add((String) next.get("interaction"));
+        Result result;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute("CYPHER 2.3 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
+            List<String> interactions = new ArrayList<String>();
+            while (result.hasNext()) {
+                Map<String, Object> next = result.next();
+                interactions.add((String) next.get("interaction"));
+            }
+            assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
+            assertThat(interactions, CoreMatchers.hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
+            assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
+            assertThat(interactions, CoreMatchers.hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
+
+            assertThat(study.getTitle(), is("bioinfo:ref:60527"));
+
+            assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
+            assertThat(msgs.get(0), is("empty/no taxon name for bioinfo taxon id [149359] on line [4171]"));
+            transaction.commit();
         }
-        assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
-        assertThat(interactions, CoreMatchers.hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
-        assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
-        assertThat(interactions, CoreMatchers.hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
-
-        assertThat(study.getTitle(), is("bioinfo:ref:60527"));
-
-        assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
-        assertThat(msgs.get(0), is("empty/no taxon name for bioinfo taxon id [149359] on line [4171]"));
     }
 
 

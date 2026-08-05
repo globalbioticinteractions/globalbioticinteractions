@@ -17,6 +17,6 @@ public class GraphServiceFactoryProxy implements GraphServiceFactory {
 
     @Override
     public void close() {
-        service.shutdown();
+        //
     }
 }

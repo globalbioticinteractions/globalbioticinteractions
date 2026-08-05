@@ -134,21 +134,21 @@ public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
             Node predatorNode = collectedRel.getEndNode();
             if (StringUtils.equals(actual, "2000-03-01T10:55:00.000-06:00")
                     && predatorNode.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL)
-                    && predatorNode.hasRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING)) {
+                    && predatorNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE))) {
 
                 assertThat(predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
                 assertThat(predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
 
-                Node predatorTaxonNode = predatorNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                Node predatorTaxonNode = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                 assertThat(predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
 
                 Set<String> preyNames = new HashSet<>();
-                Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Iterable<Relationship> ate = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 for (Relationship preyRels : ate) {
                     Node preyNode = preyRels.getEndNode();
                     assertThat(preyNode, is(not(nullValue())));
 
-                    Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                    Node taxonNode = preyNode.getRelationships(Direction.OUTGOING,NodeUtil.asNeo4j( RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                     assertThat(taxonNode, is(not(nullValue())));
                     preyNames.add((String)taxonNode.getProperty(PropertyAndValueDictionary.NAME));
                 }
@@ -168,7 +168,7 @@ public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
             Node predatorNode = collectedRel.getEndNode();
             if (predatorNode.hasProperty(SpecimenConstant.LENGTH_IN_MM)
                     && (Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM) == 548.0) {
-                Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Iterable<Relationship> ate = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 assertThat(ate.iterator().hasNext(), is(false));
 
                 Location location = null;

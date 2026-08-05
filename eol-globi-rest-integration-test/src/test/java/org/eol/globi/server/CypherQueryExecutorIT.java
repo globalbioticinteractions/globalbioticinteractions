@@ -7,6 +7,7 @@ import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.Statement;
 import org.neo4j.driver.v1.StatementResult;
@@ -49,7 +50,7 @@ public class CypherQueryExecutorIT {
             }});
             StatementResult run = transaction
                     .run(statement);
-            run.stream().map(r -> r.asMap()).forEach(System.out::println);
+            run.stream().map(Record::asMap).forEach(System.out::println);
             transaction.success();
         }
 

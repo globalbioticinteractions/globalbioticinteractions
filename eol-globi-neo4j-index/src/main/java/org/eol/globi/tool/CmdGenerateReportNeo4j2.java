@@ -2,7 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.eol.globi.util.NodeIdCollectorNeo4j2;
+import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
             if (StringUtils.isNotBlank(namespace)) {
                 namespaceGroups.add(namespaceHandler.parse(namespace));
             }
-        }, "namespace", "*", new NodeIdCollectorNeo4j2());
+        }, "namespace", "*", new NodeIdCollectorNeo4j3());
 
         final Set<Long> distinctTaxonIds = reportCache
                 .createHashSet("distinctTaxonIds")
@@ -177,23 +177,26 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
                     distinctSources.add(namespace);
                     distinctDatasets.add(namespace);
                 }
-            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup), new NodeIdCollectorNeo4j2());
+            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup), new NodeIdCollectorNeo4j3());
 
-            final Node node = getGraphDb().createNode();
-            String sourceIdPrefix = "globi:" + namespaceGroup;
-            node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
-            node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
+            final Node node;
+            try (Transaction transaction = getGraphDb().beginTx()) {
+                node = transaction.createNode();
+                String sourceIdPrefix = "globi:" + namespaceGroup;
+                node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
+                node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
+            }
 
-            getGraphDb()
-                    .index()
-                    .forNodes("reports")
-                    .add(node, namespaceHandler.getNamespaceKey(), sourceIdPrefix);
+//            getGraphDb()
+//                    .index()
+//                    .forNodes("reports")
+//                    .add(node, namespaceHandler.getNamespaceKey(), sourceIdPrefix);
 
         }
     }
@@ -235,7 +238,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
         });
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            final Node node = getGraphDb().createNode();
+            final Node node = tx.createNode();
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
@@ -243,8 +246,8 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
-            getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            tx.success();
+            //getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+            tx.commit();
         }
     }
 

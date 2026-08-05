@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
@@ -15,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -29,33 +31,39 @@ public class LinkerTermMatcherNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Ignore
     @Test
-    public void holorchisCastexMissedLink() throws NodeFactoryException, IOException {
+    public void holorchisCastexMissedLink() throws StudyImporterException, IOException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/448
         String classifiedId = "EOL_V2:11987314";
         assertTaxonMapping(classifiedId);
     }
 
     @Test
-    public void holorchisCastexNonMissedLink() throws NodeFactoryException, IOException {
+    public void holorchisCastexNonMissedLink() throws StudyImporterException, IOException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/448
         assertTaxonMapping("EOL:11987314");
     }
 
-    private void assertTaxonMapping(String classifiedId) throws NodeFactoryException, IOException {
+    private void assertTaxonMapping(String classifiedId) throws StudyImporterException, IOException {
         Taxon taxon2 = new TaxonImpl("Holorchis castex", classifiedId);
 
         Taxon createdTaxon = taxonIndex.getOrCreateTaxon(taxon2);
-        Node specimenDummy = getGraphDb().createNode();
-        Node originalTaxonDummy = getGraphDb().createNode();
-        originalTaxonDummy.setProperty("name", "holorchis castex");
-        originalTaxonDummy.setProperty("externalId", "EOL:11987314");
-        specimenDummy.createRelationshipTo(
-                originalTaxonDummy,
-                NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS));
+        Node specimenDummy;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            specimenDummy = transaction.createNode();
+        }
+        Node originalTaxonDummy;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            originalTaxonDummy = transaction.createNode();
+            originalTaxonDummy.setProperty("name", "holorchis castex");
+            originalTaxonDummy.setProperty("externalId", "EOL:11987314");
+            specimenDummy.createRelationshipTo(
+                    originalTaxonDummy,
+                    NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS));
 
-        specimenDummy.createRelationshipTo(
-                ((TaxonNode) createdTaxon).getUnderlyingNode(),
-                NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            specimenDummy.createRelationshipTo(
+                    ((TaxonNode) createdTaxon).getUnderlyingNode(),
+                    NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+        }
 
         TaxonCacheService taxonCacheService = new TaxonCacheService(
                 "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
@@ -64,9 +72,12 @@ public class LinkerTermMatcherNeo4j2Test extends GraphDBNeo4jTestCase {
                 tmpDir.newFolder("test")
         );
 
-        new LinkerTermMatcherNeo4j2(taxonCacheService, new GraphServiceFactoryProxy(getGraphDb()))
-                .index();
+        new IndexerNeo4j() {
+            @Override
+            public void index() throws StudyImporterException {
 
+            }
+        }.index();
         Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);
         assertThat(externalIds, hasItem("EOL_V2:11987314"));
         assertThat(externalIds, hasItem("GBIF:5890922"));

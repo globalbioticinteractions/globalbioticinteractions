@@ -44,7 +44,7 @@ public class IndexerDataset implements IndexerNeo4j {
         NodeFactory nodeFactory;
         try (Transaction tx = graphService.beginTx();) {
             nodeFactory = nodeFactoryFactory.create(graphService, cacheDir);
-            tx.success();
+            tx.commit();
         }
 
         try {

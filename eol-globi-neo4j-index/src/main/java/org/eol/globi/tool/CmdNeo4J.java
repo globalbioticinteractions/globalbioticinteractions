@@ -1,6 +1,5 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
 import picocli.CommandLine;
@@ -92,9 +91,7 @@ public abstract class CmdNeo4J implements Cmd {
 
 
     private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
-        return StringUtils.equals("2", neo4jVersion)
-                ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(graphServiceFactory)
-                : new NodeFactoryFactoryTransactingOnDatasetNeo4j3(graphServiceFactory);
+        return new NodeFactoryFactoryTransactingOnDatasetNeo4j3(graphServiceFactory);
     }
 
     private static GraphServiceFactoryImpl getGraphServiceFactory(String graphDbDir) {

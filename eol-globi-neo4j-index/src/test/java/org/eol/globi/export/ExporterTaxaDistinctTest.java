@@ -40,7 +40,7 @@ public class ExporterTaxaDistinctTest extends GraphDBNeo4jTestCase {
 
     protected String exportStudy(StudyNode myStudy1) throws IOException {
         StringWriter row = new StringWriter();
-        new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
+        new ExporterTaxaDistinct(getGraphDb()).exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
         return row.getBuffer().toString();
     }
 
@@ -56,13 +56,13 @@ public class ExporterTaxaDistinctTest extends GraphDBNeo4jTestCase {
     }
 
     private void assertThatNoTaxaAreExportedOnMissingHeader(StudyNode myStudy1, StringWriter row) throws IOException {
-        new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterTaxaDistinct(getGraphDb()).exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), is(""));
     }
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterTaxaDistinct());
+        ExportTestUtil.assertFileInMeta(new ExporterTaxaDistinct(getGraphDb()));
     }
 
 }

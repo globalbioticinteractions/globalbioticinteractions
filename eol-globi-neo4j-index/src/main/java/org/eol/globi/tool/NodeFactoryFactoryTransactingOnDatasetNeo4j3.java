@@ -34,7 +34,7 @@ public class NodeFactoryFactoryTransactingOnDatasetNeo4j3 implements NodeFactory
                     } else {
                         Transaction transaction = tx.get();
                         if (transaction != null) {
-                            transaction.success();
+                            transaction.commit();
                             transaction.close();
                         }
                         tx.set(graphServiceFactory.getGraphService().beginTx());
@@ -47,13 +47,13 @@ public class NodeFactoryFactoryTransactingOnDatasetNeo4j3 implements NodeFactory
                     closing.set(true);
                     Transaction lastTx = tx.getAndSet(null);
                     if (lastTx != null) {
-                        lastTx.success();
+                        lastTx.commit();
                         lastTx.close();
                     }
                 }
 
             };
-            tx.success();
+            tx.commit();
             return nodeFactory;
         }
 

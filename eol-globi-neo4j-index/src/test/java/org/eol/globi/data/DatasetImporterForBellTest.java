@@ -7,6 +7,7 @@ import org.hamcrest.CoreMatchers;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
 
@@ -29,11 +30,14 @@ public class DatasetImporterForBellTest extends GraphDBNeo4jTestCase {
             assertThat(study.getTitle(), is("bell-MSB"));
             assertThat(study.getCitation(), startsWith("Bell, K. C., Matek, D., Demboski, J. R., & Cook, J. A. (2015). Expanded Host Range of Sucking Lice and Pinworms of Western North American Chipmunks. Comparative Parasitology, 82(2), 312–321. doi:10.1654/4756.1 . Data provided by Kayce C. Bell."));
         }
-        Result execute = getGraphDb().execute("CYPHER 2.3 START taxon = node:taxons('*:*') RETURN taxon.name");
-        String actual = execute.resultAsString();
-        assertThat(actual, CoreMatchers.containsString("Tamias"));
-        assertThat(taxonIndex.findTaxonByName("Tamias speciosus"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Hoplopleura arboricola"), is(notNullValue()));
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            Result execute = transaction.execute("CYPHER 2.3 START taxon = node:taxons('*:*') RETURN taxon.name");
+            String actual = execute.resultAsString();
+            assertThat(actual, CoreMatchers.containsString("Tamias"));
+            assertThat(taxonIndex.findTaxonByName("Tamias speciosus"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Hoplopleura arboricola"), is(notNullValue()));
+            transaction.commit();
+        }
     }
 
     @Test

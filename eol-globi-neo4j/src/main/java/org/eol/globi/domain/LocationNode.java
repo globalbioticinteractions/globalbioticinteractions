@@ -76,7 +76,7 @@ public class LocationNode extends NodeBacked implements Location {
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT));
         for (Relationship relationship : relationships) {
             if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
                 needsAssociation = false;
@@ -90,7 +90,7 @@ public class LocationNode extends NodeBacked implements Location {
 
     public List<Environment> getEnvironments() {
         List<Environment> environments = new ArrayList<Environment>();
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT));
         for (Relationship relationship : relationships) {
             environments.add(new EnvironmentNode(relationship.getEndNode()));
         }

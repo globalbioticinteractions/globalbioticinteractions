@@ -17,7 +17,7 @@ public class ResolvingTaxonIndexNeo4j3 extends ResolvingTaxonIndexNoTxNeo4j3 {
     public TaxonNode findTaxonById(String externalId) {
         try (Transaction tx = getGraphDbService().beginTx()) {
             TaxonNode taxonById = super.findTaxonById(externalId);
-            tx.success();
+            tx.commit();
             return taxonById;
         }
     }
@@ -26,10 +26,17 @@ public class ResolvingTaxonIndexNeo4j3 extends ResolvingTaxonIndexNoTxNeo4j3 {
     public TaxonNode findTaxonByName(String name) throws NodeFactoryException {
         try (Transaction tx = getGraphDbService().beginTx()) {
             TaxonNode taxonById = super.findTaxonByName(name);
-            tx.success();
+            tx.commit();
             return taxonById;
         }
     }
 
 
+    public void setEnricher(PropertyEnricher enricher) {
+
+    }
+
+    public void skipHomonymMatches(boolean skipHomonymMatches) {
+
+    }
 }

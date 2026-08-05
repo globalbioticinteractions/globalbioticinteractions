@@ -20,6 +20,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,10 +60,12 @@ public class NodeUtil {
     }
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
-        Node node = graphDb.createNode();
-        TaxonNode sameAsTaxon = new TaxonNode(node);
-        TaxonUtil.copy(taxon, sameAsTaxon);
-        taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
+        try (Transaction transaction = graphDb.beginTx()) {
+            Node node = transaction.createNode();
+            TaxonNode sameAsTaxon = new TaxonNode(node);
+            TaxonUtil.copy(taxon, sameAsTaxon);
+            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
+        }
     }
 
     public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
@@ -72,7 +75,7 @@ public class NodeUtil {
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener) {
-        findStudies(graphService, listener, "title", "*", new NodeIdCollectorNeo4j2());
+        findStudies(graphService, listener, "title", "*", new NodeIdCollectorNeo4j3());
     }
 
     public static void findStudies(GraphDatabaseService graphService,
@@ -145,16 +148,16 @@ public class NodeUtil {
     }
 
     public static Iterable<Relationship> getStomachContents(Specimen specimen) {
-        return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(asNeo4j(InteractType.ATE), Direction.OUTGOING);
+        return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(InteractType.ATE));
     }
 
     public static Iterable<Relationship> getSpecimenCaughtHere(Location location) {
-        return ((NodeBacked) location).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
+        return ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
 
     }
 
     public static Node getDataSetForStudy(StudyNode study) {
-        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
+        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.IN_DATASET));
         Iterator<Relationship> iterator = rels.iterator();
         return iterator.hasNext() ? iterator.next().getEndNode() : null;
     }

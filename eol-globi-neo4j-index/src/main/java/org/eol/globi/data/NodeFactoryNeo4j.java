@@ -43,6 +43,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +84,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         this.bodyPartLookupService
                 = new TermLookupServiceWithResource(
-                        "body-part-mapping.csv",
+                "body-part-mapping.csv",
                 new ResourceServiceLocal(inputStreamFactory)
         );
 
@@ -152,16 +153,18 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             throw new NodeFactoryException("specimen needs at least one study relationship type, but none is specified");
         }
 
-        SpecimenNode specimen = createSpecimen();
-        for (RelTypes type : types) {
-            ((StudyNode) study).createRelationshipTo(specimen, type);
-        }
+        try (Transaction tx = graphDb.beginTx()) {
+            SpecimenNode specimen = createSpecimen(tx);
+            for (RelTypes type : types) {
+                ((StudyNode) study).createRelationshipTo(specimen, type);
+            }
 
-        specimen.setOriginalTaxonDescription(taxon);
-        if (StringUtils.isNotBlank(taxon.getName())) {
-            extractTerms(taxon.getName(), specimen);
+            specimen.setOriginalTaxonDescription(taxon);
+            if (StringUtils.isNotBlank(taxon.getName())) {
+                extractTerms(taxon.getName(), specimen);
+            }
+            return specimen;
         }
-        return specimen;
     }
 
     private void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {
@@ -202,8 +205,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
 
-    private SpecimenNode createSpecimen() {
-        return new SpecimenNode(graphDb.createNode(), null);
+    private SpecimenNode createSpecimen(Transaction transaction) {
+        return new SpecimenNode(transaction.createNode(), transaction);
     }
 
 
@@ -471,15 +474,18 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
         InteractionNode interactionNode;
-        Node node = graphDb.createNode();
-        StudyNode studyNode = getOrCreateStudy(study);
-        interactionNode = new InteractionNode(node);
-        interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
-        Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-        if (dataset instanceof DatasetNode) {
-            interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+        try(Transaction transaction = graphDb.beginTx()) {
+
+            Node node = transaction.createNode();
+            StudyNode studyNode = getOrCreateStudy(study);
+            interactionNode = new InteractionNode(node);
+            interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
+            Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
+            if (dataset instanceof DatasetNode) {
+                interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+            }
+            return interactionNode;
         }
-        return interactionNode;
     }
 
     protected abstract Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException;

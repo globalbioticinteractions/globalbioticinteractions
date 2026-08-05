@@ -3,13 +3,14 @@ package org.eol.globi.taxon;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.tool.LinkerTaxonIndexNeo4j2;
+import org.eol.globi.tool.LinkerTaxonIndexNeo4j3;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -21,7 +22,7 @@ import static org.hamcrest.core.Is.is;
 public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
-    public void fuzzyMatch() throws NodeFactoryException {
+    public void fuzzyMatch() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
         Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
@@ -43,8 +44,11 @@ public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
 
     }
 
-    private LinkerTaxonIndexNeo4j2 createIndexer() {
-        return new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb()), getNodeIdCollector());
+    private LinkerTaxonIndexNeo4j3 createIndexer() {
+        return new LinkerTaxonIndexNeo4j3(
+                new GraphServiceFactoryProxy(getGraphDb()),
+                getNodeIdCollector()
+        );
     }
 
     @Test
@@ -84,8 +88,8 @@ public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
         assertQueryHits("name:HMO~ AND name:saPIENS~", 0L);
     }
 
-    private void assertQueryHits(String query, long expectedNumberOfHits) throws NodeFactoryException {
-        NonResolvingTaxonIndexNeo4j2 taxonService = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+    private void assertQueryHits(String query, long expectedNumberOfHits) throws StudyImporterException {
+        NonResolvingTaxonIndexNeo4j3 taxonService = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
@@ -100,7 +104,7 @@ public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
     }
 
     private TaxonFuzzySearchIndex getFuzzySearch() {
-        return new TaxonFuzzySearchIndexNeo4j2(getGraphDb());
+        return new TaxonFuzzySearchIndexNeo4j3(getGraphDb());
     }
 
     public static Taxon setTaxonProps(Taxon taxon) {
@@ -110,6 +114,4 @@ public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
         taxon.setName("this is the actual name");
         return taxon;
     }
-
-
 }

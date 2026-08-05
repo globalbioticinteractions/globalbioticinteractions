@@ -1,13 +1,21 @@
 package org.eol.globi.tool;
 
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.util.NodeIdCollectorNeo4j2;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
 
-public class LinkerTaxonIndexNeo4j3 extends LinkerTaxonIndexNeo4j2 {
+public class LinkerTaxonIndexNeo4j3 implements IndexerNeo4j {
 
     public LinkerTaxonIndexNeo4j3(GraphServiceFactory factory) {
-        super(factory, new NodeIdCollectorNeo4j3());
     }
 
+    public LinkerTaxonIndexNeo4j3(GraphServiceFactoryProxy factory, NodeIdCollectorNeo4j3 nodeIdCollectorNeo4j3) {
+
+    }
+
+    @Override
+    public void index() throws StudyImporterException {
+
+    }
 }

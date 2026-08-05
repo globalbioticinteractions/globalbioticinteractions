@@ -2,12 +2,19 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ExportTaxonCache implements StudyExporter {
+
+    private final GraphDatabaseService graphService;
+
+    public ExportTaxonCache(GraphDatabaseService graphService) {
+        this.graphService = graphService;
+    }
 
     @Override
     public void exportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
@@ -47,7 +54,7 @@ public class ExportTaxonCache implements StudyExporter {
         Map<String, Object> params = new TreeMap<>();
 
         ExportUtil.writeResults(appender,
-                study.getUnderlyingNode().getGraphDatabase(),
+                graphService,
                 query,
                 params,
                 true

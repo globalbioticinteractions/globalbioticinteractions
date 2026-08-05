@@ -5,7 +5,6 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
@@ -17,12 +16,11 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,12 +45,13 @@ public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo
 
     public static TaxonNode findTaxonOrRelated(String key, String value, GraphDatabaseService graphDbService) {
         Node foundNode = null;
-        try (ResourceIterator<Node> foundNames = graphDbService
-                .findNodes(
-                        NodeLabel.Taxon,
-                        key,
-                        value
-                )) {
+        try (Transaction transaction = graphDbService.beginTx()) {
+            ResourceIterator<Node> foundNames = transaction
+                    .findNodes(
+                            NodeLabel.Taxon,
+                            key,
+                            value
+                    );
             while (foundNames.hasNext()) {
                 Node next = foundNames.next();
                 Iterable<Relationship> rels = next
@@ -68,6 +67,7 @@ public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo
                 }
 
             }
+            transaction.commit();
             return foundNode == null
                     ? null
                     : new TaxonNode(foundNode);
@@ -86,23 +86,23 @@ public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo
             try {
                 List<Map<String, String>> taxonResolved = enricher.enrichAllMatches(TaxonUtil.taxonToMap(taxon));
 
-                    List<TaxonNode> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
-                            .stream()
-                            .filter(TaxonUtil::isResolved)
-                            .map(TaxonUtil::mapToTaxon)
-                            .filter(t -> !TaxonUtil.hasLiteratureReference(t))
-                            .map(this::taxonNodeFor)
-                            .collect(Collectors.toList());
+                List<TaxonNode> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
+                        .stream()
+                        .filter(TaxonUtil::isResolved)
+                        .map(TaxonUtil::mapToTaxon)
+                        .filter(t -> !TaxonUtil.hasLiteratureReference(t))
+                        .map(this::taxonNodeFor)
+                        .collect(Collectors.toList());
 
-                    TaxonNode primary = matchCandidates.size() == 0
-                            ? createNoMatch(taxon)
-                            : matchCandidates.get(0);
-                    taxonFound = primary;
+                TaxonNode primary = matchCandidates.size() == 0
+                        ? createNoMatch(taxon)
+                        : matchCandidates.get(0);
+                taxonFound = primary;
 
-                    Streams.concat(matchCandidates.stream().skip(1), Stream.of(taxonNodeFor(taxon)))
-                            .forEach(n -> {
-                                n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
-                            });
+                Streams.concat(matchCandidates.stream().skip(1), Stream.of(taxonNodeFor(taxon)))
+                        .forEach(n -> {
+                            n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+                        });
             } catch (PropertyEnricherException e) {
                 // ignore
             }
@@ -112,9 +112,12 @@ public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo
     }
 
     private TaxonNode taxonNodeFor(Taxon r) {
-        TaxonNode t = new TaxonNode(getGraphDbService().createNode());
-        TaxonUtil.copy(r, t);
-        return t;
+        try (Transaction transaction = getGraphDbService().beginTx()) {
+            TaxonNode t = new TaxonNode(transaction.createNode());
+            TaxonUtil.copy(r, t);
+            transaction.commit();
+            return t;
+        }
     }
 
     private TaxonNode createNoMatch(Taxon taxon) {

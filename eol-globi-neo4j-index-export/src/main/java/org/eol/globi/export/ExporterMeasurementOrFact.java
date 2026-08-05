@@ -6,6 +6,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -16,6 +17,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ExporterMeasurementOrFact extends ExporterBase {
+
+    public ExporterMeasurementOrFact(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     protected String[] getFields() {
         return new String[]{

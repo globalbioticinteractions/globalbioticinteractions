@@ -1,9 +1,11 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.Iterator;
 
@@ -11,9 +13,15 @@ public class NodeBacked {
 
     public static final boolean CHECK_EXISTING_REL_DEFAULT = false;
     private final Node underlyingNode;
+    private final Transaction tx;
 
     public NodeBacked(Node node) {
+        this(node, null);
+    }
+
+    public NodeBacked(Node node, Transaction tx) {
         this.underlyingNode = node;
+        this.tx = tx;
     }
 
     public Node getUnderlyingNode() {
@@ -117,6 +125,12 @@ public class NodeBacked {
         if (value != null) {
             getUnderlyingNode().setProperty(name, value);
         }
+    }
+
+    public void setOriginalTaxonDescription(Taxon taxon) {
+        TaxonNode taxonNode = new TaxonNode(tx.createNode(), taxon.getName());
+        TaxonUtil.copy(taxon, taxonNode);
+        createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
     }
 
     protected String getProperty(String propertyName) {

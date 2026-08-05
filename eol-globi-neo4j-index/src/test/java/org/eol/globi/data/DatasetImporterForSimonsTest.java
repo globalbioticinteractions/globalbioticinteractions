@@ -123,7 +123,7 @@ public class DatasetImporterForSimonsTest extends GraphDBNeo4jTestCase {
         assertEquals(alt, locationNode.getProperty(LocationConstant.ALTITUDE));
         assertEquals(lat, locationNode.getProperty(LocationConstant.LATITUDE));
 
-        Iterator<Relationship> prey = firstSpecimen.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING).iterator();
+        Iterator<Relationship> prey = firstSpecimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
         Set<String> preyNames = new HashSet<>();
         while (prey.hasNext()) {
             Relationship stomachContents = prey.next();

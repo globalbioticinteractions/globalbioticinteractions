@@ -20,7 +20,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     private final String queryKey;
     private final String queryOrQueryObject;
     private final String indexName;
-    private NodeIdCollector nodeIdCollector;
+    private final NodeIdCollector nodeIdCollector;
 
     public NodeProcessorImpl(GraphDatabaseService graphService,
                              Long batchSize,
@@ -90,7 +90,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
             LOG.info("processing " + ids.size() + " [" + indexName + "] nodes...");
 
             for (Long nodeId : ids) {
-                nodeListener.on(graphService.getNodeById(nodeId));
+                nodeListener.on(graphService.beginTx().getNodeById(nodeId));
                 nodeCount.incrementAndGet();
                 if (nodeCount.get() % batchSize == 0) {
                     batchListener.onStart();

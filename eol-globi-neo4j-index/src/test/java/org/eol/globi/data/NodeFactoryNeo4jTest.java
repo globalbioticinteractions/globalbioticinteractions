@@ -25,7 +25,6 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
@@ -513,7 +512,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     }
 
     private void initTaxonService() {
-        this.taxonIndex = new NonResolvingTaxonIndexNeo4j2(
+        this.taxonIndex = new NonResolvingTaxonIndexNeo4j3(
                 getGraphDb()
         );
     }

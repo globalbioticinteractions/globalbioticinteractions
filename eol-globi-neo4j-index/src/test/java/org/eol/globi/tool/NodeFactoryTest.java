@@ -6,7 +6,6 @@ import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.StudyImporterException;
@@ -14,7 +13,7 @@ import org.eol.globi.data.StudyImporterTestFactory;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.GraphExporterImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNoTxNeo4j2;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNoTxNeo4j3;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
@@ -54,14 +53,15 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             importWithGraphDB(factory);
+            tx.commit();
         }
     }
 
     private NodeFactory createNeo4j2(GraphDatabaseService graphDb) {
         NodeFactory factory;
         try (Transaction tx = getGraphDb().beginTx()) {
-            factory = new NodeFactoryNeo4j2(graphDb, getCacheDir());
-            tx.success();
+            factory = new NodeFactoryNeo4j3(graphDb, getCacheDir());
+            tx.commit();
         }
         return factory;
     }
@@ -74,8 +74,11 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
         Study study = getStudySingleton(graphService);
         assertThat(study.getTitle(), is("Simons 1997"));
 
-        assertNotNull(graphService.getNodeById(1));
-        assertNotNull(graphService.getNodeById(200));
+        try (Transaction transaction = graphService.beginTx()) {
+            assertNotNull(transaction.getNodeById(1));
+            assertNotNull(transaction.getNodeById(200));
+            transaction.commit();
+        }
     }
 
     @Test
@@ -83,7 +86,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             NodeFactoryNeo4j3.initSchema(getGraphDb());
-            tx.success();
+            tx.commit();
         }
 
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb(), getCacheDir());
@@ -95,22 +98,25 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
     public static void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory, GraphDatabaseService graphDb) throws StudyImporterException {
         importData(DatasetImporterForSimons.class, factory);
 
-        ResourceIterator<Node> nodes = graphDb.findNodes(NodeLabel.Reference);
+        try (Transaction transaction = graphDb.beginTx()) {
+            ResourceIterator<Node> nodes = transaction.findNodes(NodeLabel.Reference);
+            transaction.commit();
+            assertTrue(nodes.hasNext());
 
-        assertTrue(nodes.hasNext());
+            Study study = new StudyNode(nodes.next());
+            assertThat(study.getTitle(), is("Simons 1997"));
 
-        Study study = new StudyNode(nodes.next());
-        assertThat(study.getTitle(), is("Simons 1997"));
-
-        assertFalse(nodes.hasNext());
-        assertNotNull(graphDb.getNodeById(1));
-        assertNotNull(graphDb.getNodeById(200));
+            assertFalse(nodes.hasNext());
+            assertNotNull(transaction.getNodeById(1));
+            assertNotNull(transaction.getNodeById(200));
+            transaction.commit();
+        }
     }
 
     @Test
     public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
         createNeo4j2(getGraphDb());
-        doSingleImportExport(new NodeFactoryFactoryTransactingOnDatasetNeo4j2(getGraphFactory()));
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDatasetNeo4j3(getGraphFactory()));
     }
 
     @Test
@@ -138,14 +144,14 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             indexerDataset.index();
-            new NonResolvingTaxonIndexNoTxNeo4j2(getGraphDb()).findTaxonByName("bla");
-            tx.success();
+            new NonResolvingTaxonIndexNoTxNeo4j3(getGraphDb()).findTaxonByName("bla");
+            tx.commit();
         }
 
 
         try (Transaction tx = getGraphDb().beginTx()) {
             indexerDataset.index();
-            tx.success();
+            tx.commit();
         }
 
         File baseDir = new File("target/normalizer-test/");
@@ -153,7 +159,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
         try (Transaction tx = getGraphDb().beginTx()) {
             new GraphExporterImpl()
                     .export(getGraphDb(), baseDir, "2");
-            tx.success();
+            tx.commit();
         }
     }
 

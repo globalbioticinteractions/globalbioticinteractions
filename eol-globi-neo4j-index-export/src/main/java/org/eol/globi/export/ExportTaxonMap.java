@@ -1,13 +1,18 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 public class ExportTaxonMap implements StudyExporter {
+
+    private final GraphDatabaseService graphService;
+
+    public ExportTaxonMap(GraphDatabaseService graphService) {
+        this.graphService = graphService;
+    }
 
     @Override
     public void exportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
@@ -30,8 +35,9 @@ public class ExportTaxonMap implements StudyExporter {
                 ", linkedTaxon.name as resolvedTaxonName" +
                 ", linkedTaxon.path as resolvedTaxonPath";
 
-        ExportUtil.writeResults(writer,
-                study.getUnderlyingNode().getGraphDatabase(),
+        ExportUtil.writeResults(
+                writer,
+                graphService,
                 query,
                 new HashMap<>(),
                 true

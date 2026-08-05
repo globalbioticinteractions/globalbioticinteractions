@@ -3,18 +3,26 @@ package org.eol.globi.export;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.StudyNode;
-import org.eol.globi.util.DateUtil;
-import org.neo4j.graphdb.PropertyContainer;
+import org.neo4j.graphdb.Entity;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 
-    protected static void addProperty(Map<String, String> properties, PropertyContainer node, String propertyName, String fieldName) throws IOException {
+    protected final GraphDatabaseService graphService;
+
+    public ExporterBase(GraphDatabaseService graphService) {
+        this.graphService = graphService;
+    }
+
+    protected static void addProperty(Map<String, String> properties,
+                                      Entity node,
+                                      String propertyName,
+                                      String fieldName) throws IOException {
         if (node != null && node.hasProperty(propertyName)) {
             properties.put(fieldName, node.getProperty(propertyName).toString());
         }
@@ -87,4 +95,7 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     }
 
+    public GraphDatabaseService getGraphService() {
+        return graphService;
+    }
 }

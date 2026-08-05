@@ -44,7 +44,7 @@ public class DatasetImporterForGeminaTest extends GraphDBNeo4jTestCase {
         assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
         List<String> antraxHosts = new ArrayList<String>();
-        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
+        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship rel : relationships) {
             Node specimen = rel.getStartNode();
             Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));

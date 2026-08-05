@@ -63,7 +63,7 @@ public class ExporterOccurrencesTest extends GraphDBNeo4jTestCase {
     }
 
     private ExporterOccurrences exportOccurrences() {
-        return new ExporterOccurrences();
+        return new ExporterOccurrences(getGraphDb());
     }
 
     @Test

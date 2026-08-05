@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdGenerateReportNeo4j2;
 import org.eol.globi.tool.CmdIndexTaxa;
 import org.eol.globi.tool.CmdIndexTaxonStrings;
 import org.eol.globi.tool.CmdInterpretTaxa;

@@ -4,12 +4,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,15 +18,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.Is.is;
 
 public class ExporterSiteMapForNamesTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void writeSiteMapWithNames() throws StudyImporterException, IOException {
-        taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation 123"));
         TaxonImpl homoSapiens = new TaxonImpl("Homo sapiens", "homoSapiensId");
         homoSapiens.setPath("one two three");

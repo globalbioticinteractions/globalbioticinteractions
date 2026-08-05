@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,7 +73,11 @@ public class DatasetImporterForHechingerIT extends GraphDBNeo4jTestCase {
         String query = "CYPHER 2.3 START resourceTaxon = node:taxons(name='Suaeda spp.')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon, specimen-[:COLLECTED_AT]->location" +
                 " RETURN taxon.name, specimen.lifeStage, type(r), resourceTaxon.name, resourceSpecimen.lifeStage, location.latitude as lat, location.longitude as lng";
-        Result result = getGraphDb().execute(query);
+        Result result;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute(query);
+            transaction.commit();
+        }
 
         assertThat(result.resultAsString(), CoreMatchers.containsString("Branta bernicla"));
         assertThat(result.resultAsString(), CoreMatchers.containsString("Athya affinis"));
@@ -82,26 +87,30 @@ public class DatasetImporterForHechingerIT extends GraphDBNeo4jTestCase {
         query = "CYPHER 2.3 START taxon = node:taxons('*:*')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:PARASITE_OF]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN taxon.name";
-        result = getGraphDb().execute(query);
-        Set<String> actualParasites = new HashSet<String>();
-        result.forEachRemaining(row ->
-                actualParasites.add((String) row.get("taxon.name"))
-        );
-
-        assertThat(actualParasites.size() > 0, is(true));
-        for (String unlikelyParasite : unlikelyParasites()) {
-            assertThat(actualParasites, not(hasItem(unlikelyParasite)));
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute(query);
+            Set<String> actualParasites = new HashSet<String>();
+            result.forEachRemaining(row ->
+                    actualParasites.add((String) row.get("taxon.name"))
+            );
+            assertThat(actualParasites.size() > 0, is(true));
+            for (String unlikelyParasite : unlikelyParasites()) {
+                assertThat(actualParasites, not(hasItem(unlikelyParasite)));
+            }
         }
+
 
         // Trypanorhyncha (kind of tapeworms) are typically parasites, not prey
         query = "CYPHER 2.3 START resourceTaxon = node:taxons(name='Trypanorhyncha')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r:PREYS_UPON]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN specimen.externalId + type(r) + resourceSpecimen.externalId as `resourceExternalId`";
-        result = getGraphDb().execute(query);
-        Set<String> actualPrey = new HashSet<String>();
-        result.forEachRemaining(row -> actualPrey.add((String) row.get("resourceExternalId")));
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute(query);
+            Set<String> actualPrey = new HashSet<String>();
+            result.forEachRemaining(row -> actualPrey.add((String) row.get("resourceExternalId")));
 
-        assertThat(actualPrey.size(), is(0));
+            assertThat(actualPrey.size(), is(0));
+        }
     }
 
 

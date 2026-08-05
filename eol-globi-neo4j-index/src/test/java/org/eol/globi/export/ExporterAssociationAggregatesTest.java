@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -12,7 +13,6 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
 
     @Before
     public void setEnricher() {
-        taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
 
         nodeFactory.findStudy(new StudyImpl("myStudy1")).setExternalId("some:id");
 
-        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
+        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates(getGraphDb());
         StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy1"));
         StringWriter row = new StringWriter();
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
@@ -73,7 +73,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
         }
         resolveNames();
 
-        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
+        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates(getGraphDb());
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
             StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl(studyTitle));

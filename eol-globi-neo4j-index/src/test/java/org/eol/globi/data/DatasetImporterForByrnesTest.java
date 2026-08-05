@@ -6,6 +6,7 @@ import org.eol.globi.util.NodeUtil;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,9 +51,13 @@ public class DatasetImporterForByrnesTest extends GraphDBNeo4jTestCase {
 
         assertThat(citations, not(hasItem("17(8)")));
 
-        Result result = getGraphDb().execute("CYPHER 2.3 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
-                " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
-                " RETURN collect(distinct(preyTaxon.name))");
+        Result result;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute("CYPHER 2.3 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
+                    " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
+                    " RETURN collect(distinct(preyTaxon.name))");
+            transaction.commit();
+        }
         assertThat(result.resultAsString(), CoreMatchers.containsString("Bossiella orbigiana"));
     }
 }

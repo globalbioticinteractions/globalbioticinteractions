@@ -85,7 +85,7 @@ public class DatasetImporterForAkinTest extends GraphDBNeo4jTestCase {
 
                 Node speciesNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
                 assertThat(speciesNode.getProperty("name"), is("Pogonias cromis"));
-                Iterable<Relationship> ateRels = specimenNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Iterable<Relationship> ateRels = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 Map<String, Map<String, Object>> preys = new TreeMap<String, Map<String, Object>>();
                 for (Relationship ateRel : ateRels) {
                     Node preyNode = ateRel.getEndNode();

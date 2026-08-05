@@ -6,6 +6,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,34 +45,37 @@ public class ExportNCBIResourceFile implements GraphExporter {
                 "WHERE exists(linkedTaxon.externalId) AND linkedTaxon.externalId =~ 'NCBI:.*'" +
                 "RETURN distinct(linkedTaxon.externalId) as id";
 
-        Result rows = graphService.execute(query);
+        try(Transaction transaction = graphService.beginTx()) {
+            Result rows = transaction.execute(query);
 
-        int rowCount = 0;
-        OutputStream os = null;
-        try {
-            List<String> columns = rows.columns();
-            Map<String, Object> row;
-            while (rows.hasNext()) {
-                row = rows.next();
-                if (rowCount % getLinksPerResourceFile() == 0) {
-                    close(os);
-                    os = null;
+            int rowCount = 0;
+            OutputStream os = null;
+            try {
+                List<String> columns = rows.columns();
+                Map<String, Object> row;
+                while (rows.hasNext()) {
+                    row = rows.next();
+                    if (rowCount % getLinksPerResourceFile() == 0) {
+                        close(os);
+                        os = null;
+                    }
+
+                    for (String column : columns) {
+                        String taxonId = row.get(column).toString();
+                        String ncbiTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.ID_PREFIX_NCBI, "");
+                        String aLink = String.format(
+                                "         <ObjId>%s</ObjId>\n"
+                                , ncbiTaxonId);
+
+                        IOUtils.write(aLink, os == null ? (os = open(fileFactory, rowCount)) : os, StandardCharsets.UTF_8);
+                    }
+                    rowCount++;
                 }
-
-                for (String column : columns) {
-                    String taxonId = row.get(column).toString();
-                    String ncbiTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.ID_PREFIX_NCBI, "");
-                    String aLink = String.format(
-                            "         <ObjId>%s</ObjId>\n"
-                            , ncbiTaxonId);
-
-                    IOUtils.write(aLink, os == null ? (os = open(fileFactory, rowCount)) : os, StandardCharsets.UTF_8);
-                }
-                rowCount++;
+                close(os);
+            } catch (IOException e) {
+                throw new StudyImporterException("failed to export ncbi resources", e);
             }
-            close(os);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to export ncbi resources", e);
+            transaction.commit();
         }
     }
 

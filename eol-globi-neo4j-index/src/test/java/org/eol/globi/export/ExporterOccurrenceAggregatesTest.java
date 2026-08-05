@@ -44,7 +44,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBNeo4jTestCase {
         resolveNames();
 
         StringWriter row = new StringWriter();
-        new ExporterOccurrenceAggregates().exportDistinct(myStudy, ExportUtil.AppenderWriter.of(row));
+        new ExporterOccurrenceAggregates(getGraphDb()).exportDistinct(myStudy, ExportUtil.AppenderWriter.of(row));
         assertThat(row.toString(), equalTo(""));
     }
 
@@ -57,7 +57,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBNeo4jTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterOccurrenceAggregates().exportDistinct(myStudy1, ExportUtil.AppenderWriter.of(row));
+        new ExporterOccurrenceAggregates(getGraphDb()).exportDistinct(myStudy1, ExportUtil.AppenderWriter.of(row));
 
 
         String actualData = row.getBuffer().toString();

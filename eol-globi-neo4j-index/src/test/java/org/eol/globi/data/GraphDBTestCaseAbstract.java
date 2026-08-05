@@ -9,7 +9,6 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollector;
@@ -29,7 +28,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
+import org.neo4j.harness.Neo4j;
+import org.neo4j.harness.Neo4jBuilders;
 
 import java.io.IOException;
 import java.net.URI;
@@ -113,7 +113,7 @@ public abstract class GraphDBTestCaseAbstract {
         nodeFactory = createNodeFactory();
         try (Transaction tx = getGraphDb().beginTx()) {
             getTaxonIndex();
-            tx.success();
+            tx.commit();
         }
     }
 
@@ -140,11 +140,7 @@ public abstract class GraphDBTestCaseAbstract {
 
     protected TaxonIndex getTaxonIndex() {
         if (taxonIndex == null) {
-            if (Neo4jIndexType.noSchema.equals(getSchemaType())) {
-                taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
-            } else {
-                taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
-            }
+            taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
         }
         return taxonIndex;
     }
@@ -160,6 +156,7 @@ public abstract class GraphDBTestCaseAbstract {
     protected GraphServiceFactory getGraphFactory() {
         return new GraphServiceFactory() {
 
+            private Neo4j neo4j = null;
             private GraphDatabaseService graphDb = null;
 
             @Override
@@ -167,9 +164,12 @@ public abstract class GraphDBTestCaseAbstract {
                 GraphDatabaseService graphDb = this.graphDb;
                 GraphServiceUtil.verifyState(graphDb);
 
-                if (this.graphDb == null) {
-                    this.graphDb = new TestGraphDatabaseFactory()
-                            .newImpermanentDatabase();
+                if (this.graphDb == null
+                        || this.neo4j == null) {
+                    neo4j = Neo4jBuilders
+                            .newInProcessBuilder()
+                            .build();
+                    this.graphDb = neo4j.defaultDatabaseService();
                 }
                 return this.graphDb;
             }
@@ -177,7 +177,7 @@ public abstract class GraphDBTestCaseAbstract {
             @Override
             public void close() {
                 if (graphDb != null) {
-                    graphDb.shutdown();
+                    neo4j.close();
                     graphDb = null;
                 }
             }

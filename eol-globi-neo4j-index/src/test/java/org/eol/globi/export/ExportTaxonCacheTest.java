@@ -39,7 +39,7 @@ public class ExportTaxonCacheTest extends GraphDBNeo4jTestCase {
         NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode)human, getGraphDb(), RelTypes.SIMILAR_TO);
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonCache().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(writer), true);
+        new ExportTaxonCache(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(writer), true);
         assertThat(writer.toString(), is("id\tname\trank\tcommonNames\tpath\tpathIds\tpathNames\tspeciesName\tspeciesId\tgenusName\tgenusId\tfamilyName\tfamilyId\torderName\torderId\tclassName\tclassId\tphylumName\tphylumId\tkingdomName\tkingdomId\texternalUrl\tthumbnailUrl" +
                 "\nhomoSapiensId\tHomo sapiens\t\tman @en | \"mens @nl\tone two three\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\thttp://some/thing\thttp://thing/some" +
                 "\nalt:123\tAlternate Homo sapiens\t\t\tsome path here\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\thttp://some/thing\thttp://thing/some" +

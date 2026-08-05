@@ -2,7 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
@@ -13,7 +13,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -140,7 +139,7 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
         someOtherOrganism.ate(someOtherOrganism4);
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
-        NonResolvingTaxonIndexNeo4j2 taxonIndexNew = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+        NonResolvingTaxonIndexNeo4j3 taxonIndexNew = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
         taxonIndexNew.skipHomonymMatches(true);
         taxonIndex = taxonIndexNew;
 

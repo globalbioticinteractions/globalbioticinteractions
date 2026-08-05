@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
+
+    public ExporterOccurrenceAggregates(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     @Override
     public void doExportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
@@ -18,7 +23,12 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     }
 
     public void exportDistinct(StudyNode study, ExportUtil.Appender writer) throws IOException {
-        ExporterAggregateUtil.exportDistinctInteractionsByStudy(writer, study.getUnderlyingNode().getGraphDatabase(), new OccurrenceRowWriter());
+        ExporterAggregateUtil
+                .exportDistinctInteractionsByStudy(
+                        writer,
+                        getGraphService(),
+                        new OccurrenceRowWriter()
+                );
     }
 
     class OccurrenceRowWriter implements ExporterAggregateUtil.RowWriter {

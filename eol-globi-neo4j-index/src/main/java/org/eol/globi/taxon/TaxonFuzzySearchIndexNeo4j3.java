@@ -4,12 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonNode;
-import org.neo4j.cypher.internal.compiler.v3_1.EmptyResourceIterator;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+
+import java.util.NoSuchElementException;
 
 public class TaxonFuzzySearchIndexNeo4j3 implements TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
@@ -18,7 +19,7 @@ public class TaxonFuzzySearchIndexNeo4j3 implements TaxonFuzzySearchIndex {
     public TaxonFuzzySearchIndexNeo4j3(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
-            Result execute = graphDbService.execute("CALL db.indexes YIELD indexName");
+            Result execute = tx.execute("CALL db.indexes YIELD indexName");
             ResourceIterator<String> indexName = execute.columnAs("indexName");
             long size = indexName
                     .stream()
@@ -27,26 +28,43 @@ public class TaxonFuzzySearchIndexNeo4j3 implements TaxonFuzzySearchIndex {
                     .count();
             if (size == 0) {
 
-                graphDbService.execute("CALL db.index.fulltext.createNodeIndex(" +
+                tx.execute("CALL db.index.fulltext.createNodeIndex(" +
                         "'" + TAXON_NAME_SUGGESTIONS + "', " +
                         "['" + NodeLabel.Taxon.name() + "'], " +
                         "['" + PropertyAndValueDictionary.COMMON_NAMES + "','" + PropertyAndValueDictionary.NAME + "'])");
             }
 
-            tx.success();
+            tx.commit();
         }
     }
 
     @Override
     public ResourceIterator<Node> query(String luceneQueryString) {
-        ;
-        Result execute = graphDbService.execute("CALL db.index.fulltext.queryNodes(" +
-                "\"" + TAXON_NAME_SUGGESTIONS + "\"" +
-                ", \"" + StringUtils.replace(luceneQueryString, "name:", "") + "\")");
+        try(Transaction transaction = graphDbService.beginTx()) {
+            Result execute = transaction.execute("CALL db.index.fulltext.queryNodes(" +
+                    "\"" + TAXON_NAME_SUGGESTIONS + "\"" +
+                    ", \"" + StringUtils.replace(luceneQueryString, "name:", "") + "\")");
 
-        return execute.hasNext()
-                ? execute.columnAs("node")
-                : new EmptyResourceIterator<>();
+            return execute.hasNext()
+                    ? execute.columnAs("node")
+                    : new ResourceIterator<Node>() {
+                @Override
+                public void close() {
+
+                }
+
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public Node next() {
+                    throw new NoSuchElementException("empty resource");
+                }
+            };
+
+        }
     }
 
     @Override

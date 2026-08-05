@@ -84,7 +84,7 @@ public class GraphExporterUtil {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename, taxonRelation, neo4jVersion)
+        new ExportFlatInteractions(joiner, filename, taxonRelation)
                 .export(graphService, baseDir, neo4jVersion);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
@@ -124,7 +124,7 @@ public class GraphExporterUtil {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename, taxonRelation, neo4jVersion)
+        new ExportFlatInteractions(joiner, filename, taxonRelation)
                 .setArgumentType(RelTypes.REFUTES)
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
                 .export(graphService, baseDir, neo4jVersion);

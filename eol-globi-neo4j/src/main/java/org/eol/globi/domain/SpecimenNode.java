@@ -1,10 +1,10 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
 
@@ -12,6 +12,10 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     public SpecimenNode(Node node) {
         super(node);
+    }
+
+    public SpecimenNode(Node node, Transaction tx) {
+        super(node, tx);
     }
 
     public SpecimenNode(Node node, Double lengthInMm) {
@@ -117,13 +121,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         if (recipientSpecimen instanceof NodeBacked) {
             createInteraction(this, relType, (NodeBacked) recipientSpecimen);
         }
-    }
-
-    @Override
-    public void setOriginalTaxonDescription(Taxon taxon) {
-        TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
-        TaxonUtil.copy(taxon, taxonNode);
-        createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
     }
 
     @Override

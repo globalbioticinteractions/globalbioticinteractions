@@ -66,8 +66,8 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
             if (count.getAndIncrement() % 1000 == 0) {
                 transactionPerBatch.onStart();
             }
-            final Node sourceTaxon = graphService.getNodeById(uniqueTaxonInteraction.a);
-            final Node targetTaxon = graphService.getNodeById(uniqueTaxonInteraction.c);
+            final Node sourceTaxon = transactionPerBatch.getTx().getNodeById(uniqueTaxonInteraction.a);
+            final Node targetTaxon = transactionPerBatch.getTx().getNodeById(uniqueTaxonInteraction.c);
             if (sourceTaxon != null && targetTaxon != null) {
                 final InteractType relType = InteractType.valueOf(uniqueTaxonInteraction.b);
                 final Long interactionCount = taxonInteractions.get(uniqueTaxonInteraction);

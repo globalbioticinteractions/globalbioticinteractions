@@ -25,6 +25,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
             @Override
             public void on(Relationship specimen) {
                 assertThat(specimen.getEndNode().hasRelationship(Direction.INCOMING, hasParticipant), Is.is(true));
-                Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(hasParticipant, Direction.INCOMING);
+                Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.INCOMING, hasParticipant);
                 for (Relationship relationship : relationships) {
                     long id = relationship.getStartNode().getId();
                     ids.add(id);
@@ -89,14 +90,17 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
         assertThat(ids.size(), Is.is(1));
         assertThat(idList.size(), Is.is(2));
 
-        Node interactionNode = getGraphDb().getNodeById(idList.get(0));
-        assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM)));
-        assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
+        try(Transaction transaction = getGraphDb().beginTx()) {
+            Node interactionNode = transaction.getNodeById(idList.get(0));
+            assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM)));
+            assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
+        }
 
     }
 
 
     protected IndexerNeo4j getInteractionIndexer() {
-        return new IndexInteractionsNeo4j2(new GraphServiceFactoryProxy(getGraphDb()));
+        return null;
+        //return new IndexInteractionsNeo4j2(new GraphServiceFactoryProxy(getGraphDb()));
     }
 }

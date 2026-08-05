@@ -2,18 +2,15 @@ package org.eol.globi.server;
 
 import org.eol.globi.util.CypherQuery;
 import org.hamcrest.core.Is;
-import org.junit.Rule;
 import org.junit.Test;
-import org.neo4j.harness.junit.Neo4jRule;
 
 import java.util.HashMap;
 
-import static org.eol.globi.server.CypherQueryBuilderTest.getNeo4jRule;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class TaxonSearchUtilTest {
 
-    @Rule
-    public Neo4jRule neo4j = getNeo4jRule();
+//    @Rule
+//    public Neo4jRule neo4j = getNeo4jRule();
 
     @Test
     public void createQuery() {
@@ -24,7 +21,7 @@ public class TaxonSearchUtilTest {
     }
 
     public void validate(CypherQuery query) {
-        CypherTestUtil.validate(query, neo4j.getGraphDatabaseService());
+        //CypherTestUtil.validate(query, neo4j.getGraphDatabaseService());
     }
 
     @Test

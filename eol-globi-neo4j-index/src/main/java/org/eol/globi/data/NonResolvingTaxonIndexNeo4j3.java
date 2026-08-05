@@ -15,7 +15,7 @@ public class NonResolvingTaxonIndexNeo4j3 extends NonResolvingTaxonIndexNoTxNeo4
     public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
         try (Transaction tx = getGraphDbService().beginTx()) {
             Taxon orCreateTaxon = super.getOrCreateTaxon(taxon);
-            tx.success();
+            tx.commit();
             return orCreateTaxon;
         }
     }
@@ -24,7 +24,7 @@ public class NonResolvingTaxonIndexNeo4j3 extends NonResolvingTaxonIndexNoTxNeo4
     public Taxon findTaxonById(String externalId) {
         try (Transaction tx = getGraphDbService().beginTx()) {
             Taxon taxonById = super.findTaxonById(externalId);
-            tx.success();
+            tx.commit();
             return taxonById;
         }
     }
@@ -33,8 +33,16 @@ public class NonResolvingTaxonIndexNeo4j3 extends NonResolvingTaxonIndexNoTxNeo4
     public Taxon findTaxonByName(String name) throws NodeFactoryException {
         try (Transaction tx = getGraphDbService().beginTx()) {
             Taxon taxonById = super.findTaxonByName(name);
-            tx.success();
+            tx.commit();
             return taxonById;
         }
+    }
+
+    public Taxon findTaxon(Taxon taxon1) {
+        return null;
+    }
+
+    public void skipHomonymMatches(boolean b) {
+
     }
 }

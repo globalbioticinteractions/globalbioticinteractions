@@ -10,6 +10,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -21,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ExporterOccurrences extends ExporterOccurrencesBase {
+
+    public ExporterOccurrences(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     @Override
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {

@@ -7,6 +7,7 @@ import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -16,6 +17,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ExporterAssociations extends ExporterAssociationsBase {
+
+    public ExporterAssociations(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     @Override
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {

@@ -79,8 +79,8 @@ public class GraphExporterImpl extends GraphExporterBase {
     private void exportNames(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         File taxaDir = new File(baseDir, "taxa");
         mkdir(taxaDir);
-        exportNames(graphService, taxaDir, new ExportTaxonMap(), "taxonMap.tsv.gz");
-        exportNames(graphService, taxaDir, new ExportTaxonCache(), "taxonCache.tsv.gz");
+        exportNames(graphService, taxaDir, new ExportTaxonMap(graphService), "taxonMap.tsv.gz");
+        exportNames(graphService, taxaDir, new ExportTaxonCache(graphService), "taxonCache.tsv.gz");
         //exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
     }
 
@@ -120,10 +120,10 @@ public class GraphExporterImpl extends GraphExporterBase {
         exportDarwinCoreArchive(graphService,
                 new File(baseDir, "aggregatedByStudy"), new HashMap<String, DarwinCoreExporter>() {
                     {
-                        put("association.tsv", new ExporterAssociationAggregates());
-                        put("occurrence.tsv", new ExporterOccurrenceAggregates());
-                        put("references.tsv", new ExporterReferences());
-                        put("taxa.tsv", new ExporterTaxaDistinct());
+                        put("association.tsv", new ExporterAssociationAggregates(graphService));
+                        put("occurrence.tsv", new ExporterOccurrenceAggregates(graphService));
+                        put("references.tsv", new ExporterReferences(graphService));
+                        put("taxa.tsv", new ExporterTaxaDistinct(graphService));
                     }
                 }
         );
@@ -132,11 +132,11 @@ public class GraphExporterImpl extends GraphExporterBase {
     private void exportDarwinCoreAll(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         exportDarwinCoreArchive(graphService, new File(baseDir, "all"), new HashMap<String, DarwinCoreExporter>() {
             {
-                put("association.tsv", new ExporterAssociations());
-                put("occurrence.tsv", new ExporterOccurrences());
-                put("references.tsv", new ExporterReferences());
-                put("taxa.tsv", new ExporterTaxaDistinct());
-                put("measurementOrFact.tsv", new ExporterMeasurementOrFact());
+                put("association.tsv", new ExporterAssociations(graphService));
+                put("occurrence.tsv", new ExporterOccurrences(graphService));
+                put("references.tsv", new ExporterReferences(graphService));
+                put("taxa.tsv", new ExporterTaxaDistinct(graphService));
+                put("measurementOrFact.tsv", new ExporterMeasurementOrFact(graphService));
             }
         });
     }

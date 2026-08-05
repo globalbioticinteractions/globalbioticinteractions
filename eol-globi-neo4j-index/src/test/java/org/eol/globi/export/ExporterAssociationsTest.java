@@ -31,7 +31,7 @@ public class ExporterAssociationsTest extends GraphDBNeo4jTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterAssociations().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterAssociations(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
@@ -67,7 +67,7 @@ public class ExporterAssociationsTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterAssociations());
+        ExportTestUtil.assertFileInMeta(new ExporterAssociations(getGraphDb()));
     }
 
 }

@@ -17,7 +17,6 @@ public class ExportFlatInteractions implements GraphExporter {
 
     private final ExportUtil.ValueJoiner joiner;
     private final String filename;
-    private final String neo4jVersion;
 
     public RelTypes getTaxonRelation() {
         return taxonRelation;
@@ -33,14 +32,9 @@ public class ExportFlatInteractions implements GraphExporter {
     }
 
     public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename, RelTypes taxonRelation) {
-        this(joiner, filename, taxonRelation, "2");
-    }
-
-    public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename, RelTypes taxonRelation, String neo4jVersion) {
         this.joiner = joiner;
         this.filename = filename;
         this.taxonRelation = taxonRelation;
-        this.neo4jVersion = neo4jVersion;
     }
 
 
@@ -168,9 +162,7 @@ public class ExportFlatInteractions implements GraphExporter {
     }
 
     private String getPrefix() {
-        return "2".equals(neo4jVersion)
-                ? "CYPHER 2.3 START dataset = node:datasets('namespace:*') "
-                : "";
+        return "";
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {

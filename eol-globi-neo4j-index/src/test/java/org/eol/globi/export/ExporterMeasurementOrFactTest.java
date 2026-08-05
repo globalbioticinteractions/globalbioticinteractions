@@ -35,7 +35,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb()).exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
@@ -47,14 +47,14 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
         nodeFactory.createSpecimen(myStudy, new TaxonImpl("Some namus", PropertyAndValueDictionary.NO_MATCH));
 
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
     protected void assertResult(String targetTaxonName, String sourceTaxonName, String expected) throws NodeFactoryException, ParseException, IOException {
         createTestData(null, targetTaxonName, sourceTaxonName);
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
 
@@ -97,7 +97,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterMeasurementOrFact());
+        ExportTestUtil.assertFileInMeta(new ExporterMeasurementOrFact(getGraphDb()));
     }
 
 }
