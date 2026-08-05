@@ -51,6 +51,7 @@ public class CypherQueryBuilderTest {
 ////                .withConfig("dbms.connector.http.enabled", "false");
 //    }
 
+
     private static String CYPHER_VERSION = "CYPHER 2.3 ";
 
     private static final String EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS = expectedInteractionClause(RELATED_TO);
