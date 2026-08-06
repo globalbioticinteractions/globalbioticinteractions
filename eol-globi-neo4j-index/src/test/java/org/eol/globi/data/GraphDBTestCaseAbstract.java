@@ -23,11 +23,13 @@ import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.BeforeClass;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.harness.junit.rule.Neo4jRule;
+import org.neo4j.harness.Neo4j;
+import org.neo4j.harness.Neo4jBuilders;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,8 +51,22 @@ public abstract class GraphDBTestCaseAbstract {
 
     protected TaxonIndex taxonIndex;
 
-    @Rule
-    public Neo4jRule neo4j = new Neo4jRule().withDisabledServer();
+    static Neo4j neo4j = null;
+
+
+    @BeforeClass
+    public static void initializeNeo4j() {
+        GraphDBTestCaseAbstract.neo4j = Neo4jBuilders.newInProcessBuilder()
+                .withDisabledServer()
+                .build();
+    }
+
+    @AfterClass
+    public static void closeDriver() {
+        if (neo4j != null) {
+            neo4j.close();
+        }
+    }
 
     protected Neo4jIndexType getSchemaType() {
         return Neo4jIndexType.noSchema;
