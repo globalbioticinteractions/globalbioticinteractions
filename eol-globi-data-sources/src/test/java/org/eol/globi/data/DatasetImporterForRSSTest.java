@@ -480,7 +480,7 @@ public class DatasetImporterForRSSTest {
         }
 
         @Override
-        public Location getOrCreateLocation(Location location) throws NodeFactoryException {
+        public Location getOrCreateLocationNode(Location location) throws NodeFactoryException {
             return null;
         }
 

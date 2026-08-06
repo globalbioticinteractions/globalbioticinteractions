@@ -185,7 +185,7 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
                         Location location = parseLocation(locationResource, parser);
                         DateTime eventDate = parseEventDate(locationResource, parser);
 
-                        Location locationNode = getNodeFactory().getOrCreateLocation(location);
+                        Location locationNode = getNodeFactory().getOrCreateLocationNode(location);
 
                         enrichLocation(metaStudy, locationResource, cmecsService, parser, locationNode);
 

@@ -168,7 +168,7 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
             if (latLng == null) {
                 getLogger().warn(study, "failed to find location for county [" + locality + "]");
             } else {
-                Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
+                Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
                 predator.caughtIn(location);
                 String habitat = properties.get(OF_HABITAT);
                 if (StringUtils.isNotBlank(habitat)) {

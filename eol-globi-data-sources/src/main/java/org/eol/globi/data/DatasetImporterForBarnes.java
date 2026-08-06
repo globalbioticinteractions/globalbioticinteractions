@@ -87,7 +87,7 @@ public class DatasetImporterForBarnes extends NodeBasedImporter {
         Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
         String depth = parser.getValueByLabel("Depth");
         Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
-        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, altitudeInMeters, null));
+        Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latitude, longitude, altitudeInMeters, null));
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("Prey");

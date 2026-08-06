@@ -102,7 +102,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(44.0, 120.0, -60.0, null));
+        Location location = nodeFactory.getOrCreateLocationNode(new LocationImpl(44.0, 120.0, -60.0, null));
         specimen.caughtIn(location);
     }
 

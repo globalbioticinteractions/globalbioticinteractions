@@ -119,7 +119,7 @@ public class DatasetImporterForBrose extends NodeBasedImporter {
         if (latLng == null) {
             getLogger().warn(localStudy, "failed to find location for [" + locationString + "]");
         } else {
-            location = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
+            location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
             String habitat = StringUtils.join(parser.getValueByLabel("General habitat"), " ", parser.getValueByLabel("Specific habitat"));
             String habitatId = "BROSE:" + habitat.replaceAll("\\W", "_");
             getNodeFactory().getOrCreateEnvironments(location, habitatId, habitat);

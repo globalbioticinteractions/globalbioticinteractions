@@ -133,7 +133,7 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
         try {
-            return getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
+            return getNodeFactory().getOrCreateLocationNode(new LocationImpl(latitude, longitude, altitude, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }

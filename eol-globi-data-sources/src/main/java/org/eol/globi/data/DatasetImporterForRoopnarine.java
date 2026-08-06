@@ -40,7 +40,7 @@ public class DatasetImporterForRoopnarine extends NodeBasedImporter {
             LatLng latLng = resourceLatLngEntry.getValue();
             Location location;
             try {
-                location = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), 0.0, null));
+                location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latLng.getLat(), latLng.getLng(), 0.0, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }

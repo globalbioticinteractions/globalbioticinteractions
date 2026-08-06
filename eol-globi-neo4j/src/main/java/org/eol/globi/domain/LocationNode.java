@@ -60,7 +60,9 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     private Double getDoubleOrNull(String altitude) {
-        return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
+        return getUnderlyingNode().hasProperty(altitude)
+                ? (Double) getUnderlyingNode().getProperty(altitude)
+                : null;
     }
 
     @Override

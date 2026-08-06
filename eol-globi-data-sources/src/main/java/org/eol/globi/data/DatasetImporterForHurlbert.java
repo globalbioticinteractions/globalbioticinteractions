@@ -23,7 +23,6 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
-import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.util.SpecimenUtil;
 import org.joda.time.DateTime;
 
@@ -161,7 +160,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
             String locationSpecific = columnValueOrNull(record, "Location_Specific");
             location.setLocality(StringUtils.join(Arrays.asList(locationRegion, locationSpecific), ":"));
 
-            Location locationNode = getNodeFactory().getOrCreateLocation(location);
+            Location locationNode = getNodeFactory().getOrCreateLocationNode(location);
             String habitat_type = columnValueOrNull(record, "Habitat_type");
             List<Term> habitatList = Arrays.stream(StringUtils.split(StringUtils.defaultIfBlank(habitat_type, ""), ";"))
                     .map(StringUtils::trim)

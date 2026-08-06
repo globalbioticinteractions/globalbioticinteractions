@@ -21,7 +21,6 @@ import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -213,7 +212,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
             double bottom = Double.parseDouble(southString);
             LatLng centroid = calculateCentroidOfBBox(left, top, right, bottom);
             try {
-                loc = getNodeFactory().getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+                loc = getNodeFactory().getOrCreateLocationNode(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
             } catch (NodeFactoryException ex) {
                 String locationString = StringUtils.join(Arrays.asList(westString, northString, eastString, southString), ",");
                 LOG.warn("found invalid locations [" + locationString + "] on line [" + (dietParser.lastLineNumber() + 1) + "]: " + ex.getMessage());
@@ -234,7 +233,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
                 if (centroid == null) {
                     getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
                 } else {
-                    loc = getNodeFactory().getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+                    loc = getNodeFactory().getOrCreateLocationNode(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
                 }
             } catch (IOException e) {
                 getLogger().warn(study, "failed to lookup point for location [" + location + "] on line [" + dietParser.lastLineNumber() + "]");

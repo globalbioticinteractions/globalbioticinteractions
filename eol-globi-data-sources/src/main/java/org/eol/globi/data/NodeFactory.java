@@ -32,7 +32,7 @@ public interface NodeFactory extends AutoCloseable {
 
     Study findStudy(Study study);
 
-    Location getOrCreateLocation(Location location) throws NodeFactoryException;
+    Location getOrCreateLocationNode(Location location) throws NodeFactoryException;
 
     void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException;
 

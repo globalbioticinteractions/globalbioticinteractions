@@ -107,16 +107,17 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract Node createSeasonNode();
 
-    private LocationNode createLocation(final Location location) throws NodeFactoryException {
-        Node node = createLocationNode();
+    private LocationNode createLocationNode(Transaction transaction, final Location location) throws NodeFactoryException {
+        Node node = createLocationNode(transaction);
         LocationNode locationNode = new LocationNode(node, fromLocation(location));
         indexLocation(location, node);
         return locationNode;
+
     }
 
     abstract protected void indexLocation(Location location, Node node) throws NodeFactoryException;
 
-    protected abstract Node createLocationNode();
+    protected abstract Node createLocationNode(Transaction transaction1);
 
     protected Node findFirstMatchingLocationIfAvailable(Location location, ResourceIterator<Node> matchingLocations) {
         Node matching = null;
@@ -346,13 +347,17 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
 
     @Override
-    public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
-        Location location1 = findLocation(location);
-        if (!(location1 instanceof LocationNode)) {
-            location1 = createLocation(location);
+    public LocationNode getOrCreateLocationNode(org.eol.globi.domain.Location location) throws NodeFactoryException {
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            LocationNode location1 = findLocationNode(getGraphDb().beginTx(), location);
+            if (location1 == null) {
+                location1 = createLocationNode(transaction, location);
+            }
+            return location1;
         }
-        return (LocationNode) location1;
     }
+
+    protected abstract LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException;
 
 
     @Override
@@ -470,7 +475,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
         InteractionNode interactionNode;
-        try(Transaction transaction = graphDb.beginTx()) {
+        try (Transaction transaction = graphDb.beginTx()) {
 
             Node node = transaction.createNode();
             StudyNode studyNode = getOrCreateStudy(study);

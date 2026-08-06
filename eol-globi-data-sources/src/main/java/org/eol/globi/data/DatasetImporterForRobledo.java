@@ -33,7 +33,7 @@ public class DatasetImporterForRobledo extends NodeBasedImporter {
         Double longitude = LocationUtil.parseDegrees("83°59'W");
         Location location;
         try {
-            location = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, 35.0, null));
+            location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latitude, longitude, 35.0, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }

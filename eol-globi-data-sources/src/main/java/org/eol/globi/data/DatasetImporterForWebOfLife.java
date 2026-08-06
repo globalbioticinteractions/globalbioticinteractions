@@ -138,7 +138,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
             try {
                 final double lat = Double.parseDouble(latitude);
                 final double lng = Double.parseDouble(longitude);
-                networkLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(lat, lng, null, null));
+                networkLocation = getNodeFactory().getOrCreateLocationNode(new LocationImpl(lat, lng, null, null));
             } catch (NumberFormatException ex) {
                 getLogger().warn(null, "found invalid lat,lng pair: [" + latitude + "], [" + longitude + "] on line [" + parser.lastLineNumber() + "] in [references.csv]");
             }

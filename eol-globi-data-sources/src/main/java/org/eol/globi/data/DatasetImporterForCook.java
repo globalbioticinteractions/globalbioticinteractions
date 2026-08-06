@@ -42,7 +42,7 @@ public class DatasetImporterForCook extends NodeBasedImporter {
             Double latitude = LocationUtil.parseDegrees("27º51'N");
             Double longitude = LocationUtil.parseDegrees("97º8'W");
 
-            Location sampleLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, -3.0, null));
+            Location sampleLocation = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latitude, longitude, -3.0, null));
 
             try {
                 while (parser.getLine() != null) {

@@ -72,7 +72,7 @@ public class DatasetImporterForBlewett extends NodeBasedImporter {
             }
             Location location;
             try {
-                location = getNodeFactory().getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0, null));
+                location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }

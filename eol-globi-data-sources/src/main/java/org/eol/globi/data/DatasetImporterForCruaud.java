@@ -54,7 +54,7 @@ public class DatasetImporterForCruaud extends NodeBasedImporter {
                                 if (pointForLocality == null) {
                                     LOG.warn("no location associated with locality [" + samplingLocation + "]");
                                 } else {
-                                    Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(pointForLocality.getLat(), pointForLocality.getLng(), null, null));
+                                    Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(pointForLocality.getLat(), pointForLocality.getLng(), null, null));
                                     parasite.caughtIn(location);
                                     host.caughtIn(location);
                                 }

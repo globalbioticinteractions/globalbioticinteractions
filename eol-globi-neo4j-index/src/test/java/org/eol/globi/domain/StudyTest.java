@@ -33,7 +33,7 @@ public class StudyTest extends GraphDBNeo4jTestCase {
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);
 
-        Location bolinasBay = nodeFactory.getOrCreateLocation(new LocationImpl(12.2d, 12.1d, -100.0d, null));
+        Location bolinasBay = nodeFactory.getOrCreateLocationNode(new LocationImpl(12.2d, 12.1d, -100.0d, null));
         shark.caughtIn(bolinasBay);
 
         Season winter = nodeFactory.createSeason("winter");

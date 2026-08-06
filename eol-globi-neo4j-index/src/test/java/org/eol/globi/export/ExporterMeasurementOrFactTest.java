@@ -89,7 +89,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(22.0, 129.9, -60.0, null));
+        Location location = nodeFactory.getOrCreateLocationNode(new LocationImpl(22.0, 129.9, -60.0, null));
         specimen.caughtIn(location);
         resolveNames();
     }

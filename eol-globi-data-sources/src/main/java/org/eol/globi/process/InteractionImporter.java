@@ -376,7 +376,7 @@ public class InteractionImporter implements InteractionListener {
                 location.setLocality(localityName);
             }
         }
-        return location == null ? null : nodeFactory.getOrCreateLocation(location);
+        return location == null ? null : nodeFactory.getOrCreateLocationNode(location);
     }
 
     private void logWarningIfPossible(Map<String, String> link, String message) {

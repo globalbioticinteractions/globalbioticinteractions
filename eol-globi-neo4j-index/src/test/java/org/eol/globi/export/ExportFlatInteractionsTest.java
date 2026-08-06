@@ -12,8 +12,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Before;
@@ -125,7 +123,7 @@ public class ExportFlatInteractionsTest extends GraphDBNeo4jTestCase {
         LocationImpl location1 = new LocationImpl(12.0, -45.9, -60.0, null);
         location1.setLocality("some locale");
         location1.setLocalityId("some:localeid");
-        Location location = factory.getOrCreateLocation(location1);
+        Location location = factory.getOrCreateLocationNode(location1);
         specimen.caughtIn(location);
     }
 

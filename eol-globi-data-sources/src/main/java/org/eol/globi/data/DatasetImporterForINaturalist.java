@@ -278,7 +278,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
 
     private Location parseLocation(JsonNode observation) throws NodeFactoryException {
         Location location = parseLocationNode(observation);
-        return location == null ? null : getNodeFactory().getOrCreateLocation(location);
+        return location == null ? null : getNodeFactory().getOrCreateLocationNode(location);
     }
 
     protected static Location parseLocationNode(JsonNode observation) {

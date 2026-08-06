@@ -140,7 +140,7 @@ public class DatasetImporterForPlanque extends NodeBasedImporter {
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
         Specimen predator = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(normalizeName(predatorName), null));
         // from http://www.geonames.org/630674/barents-sea.html
-        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(74.0, 36.0, null, null));
+        Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(74.0, 36.0, null, null));
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("PREY");
