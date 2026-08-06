@@ -45,6 +45,10 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
         return new ResolvingTaxonIndexNeo4j3(enricher, getGraphDb());
     }
 
+    public GraphDatabaseService getGraphDb() {
+        return getNodeFactory().getGraphDb();
+    }
+
     protected NodeIdCollectorNeo4j3 getNodeIdCollector() {
         return new NodeIdCollectorNeo4j3();
     }
@@ -57,7 +61,7 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
                 = new NodeFactoryFactoryTransactingOnDatasetNeo4j3(new GraphServiceFactory() {
             @Override
             public GraphDatabaseService getGraphService() {
-                return getGraphDb();
+                return neo4j.defaultDatabaseService();
             }
 
             @Override

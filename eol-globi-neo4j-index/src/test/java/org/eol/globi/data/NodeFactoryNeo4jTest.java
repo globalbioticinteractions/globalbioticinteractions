@@ -339,7 +339,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         study1.setOriginatingDataset(datasetWithNamespace("some/namespace"));
 
         long datasetNodeId;
-        try (Transaction tx = getGraphDb().beginTx()) {
+        try (Transaction tx = getNodeFactory().getGraphDb().beginTx()) {
             StudyNode study = getNodeFactory().getOrCreateStudyNode(tx, study1);
             Node datasetNode = NodeUtil.getDataSetForStudy(study);
             datasetNodeId = datasetNode.getId();
@@ -347,7 +347,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         }
 
         study1.setOriginatingDataset(datasetWithNamespace("some/othernamespace"));
-        try (Transaction tx = getGraphDb().beginTx()) {
+        try (Transaction tx = getNodeFactory().getGraphDb().beginTx()) {
             StudyNode studyDifferentDataset = getNodeFactory().getOrCreateStudyNode(tx, study1);
             Node datasetNodeOther = NodeUtil.getDataSetForStudy(studyDifferentDataset);
             assertThat(datasetNodeId, is(not(datasetNodeOther.getId())));
@@ -611,7 +611,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
-        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(getGraphDb(), getCacheDir());
+        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(neo4j.defaultDatabaseService(), getCacheDir());
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;

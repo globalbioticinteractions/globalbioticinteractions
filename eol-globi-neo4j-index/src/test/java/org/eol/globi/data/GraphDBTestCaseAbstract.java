@@ -132,7 +132,10 @@ public abstract class GraphDBTestCaseAbstract {
     }
 
     protected NodeFactoryNeo4j getNodeFactory() {
-        return (NodeFactoryNeo4j) nodeFactory;
+        if (nodeFactory == null) {
+            nodeFactory = createNodeFactory();
+        }
+        return nodeFactory;
     }
 
 
@@ -143,7 +146,7 @@ public abstract class GraphDBTestCaseAbstract {
         return taxonIndex;
     }
 
-    protected GraphDatabaseService getGraphDb() {
+    private GraphDatabaseService getGraphDb() {
         return neo4j.defaultDatabaseService();
     }
 

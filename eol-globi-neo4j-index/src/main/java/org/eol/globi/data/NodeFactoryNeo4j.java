@@ -41,35 +41,21 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.joda.time.DateTime;
 import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Entity;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Lock;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.QueryExecutionException;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.ResultTransformer;
-import org.neo4j.graphdb.StringSearchMode;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.schema.Schema;
-import org.neo4j.graphdb.traversal.BidirectionalTraversalDescription;
-import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
@@ -78,15 +64,16 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     private static final Logger LOG = LoggerFactory.getLogger(NodeFactoryNeo4j.class);
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
-    private GraphDatabaseService graphDb;
+    private final GraphDatabaseService graphDb;
 
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
     private final TermLookupService lifeStageLookupService;
     private final TermLookupService bodyPartLookupService;
+    private AtomicBoolean shouldStartNextBatch = new AtomicBoolean(false);
 
     public NodeFactoryNeo4j(GraphDatabaseService graphDb, File cacheDir) {
-        this.graphDb = getGraphDbFacade(graphDb);
+        this.graphDb = getGraphDatabaseServiceFacade(graphDb);
 
         InputStreamFactory inputStreamFactory = new InputStreamFactoryNoop();
         this.termLookupService = new UberonLookupService(
@@ -111,8 +98,12 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     }
 
-    private GraphDatabaseService getGraphDbFacade(GraphDatabaseService graphDb) {
-        return new GraphDatabaseServiceFacade(graphDb);
+    private GraphDatabaseService getGraphDatabaseServiceFacade(GraphDatabaseService graphDb) {
+        return new GraphDatabaseServiceProxy(graphDb, shouldStartNextBatch);
+    }
+
+    public void shouldStartNextBatch() {
+        shouldStartNextBatch.set(true);
     }
 
     public GraphDatabaseService getGraphDb() {
@@ -611,255 +602,5 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
     }
 
-    private static class GraphDatabaseServiceFacade implements GraphDatabaseService {
-        private final GraphDatabaseService graphDb;
-
-        public GraphDatabaseServiceFacade(GraphDatabaseService graphDb) {
-            this.graphDb = graphDb;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return graphDb.isAvailable();
-        }
-
-        @Override
-        public boolean isAvailable(long timeoutMillis) {
-            return graphDb.isAvailable(timeoutMillis);
-        }
-
-        @Override
-        public Transaction beginTx() {
-            return new TransactionProxy(graphDb.beginTx());
-        }
-
-        @Override
-        public Transaction beginTx(long timeout, TimeUnit unit) {
-            return new TransactionProxy(graphDb.beginTx(timeout, unit));
-        }
-
-        @Override
-        public void executeTransactionally(String query) throws QueryExecutionException {
-            graphDb.executeTransactionally(query);
-        }
-
-        @Override
-        public void executeTransactionally(String query, Map<String, Object> parameters) throws QueryExecutionException {
-            graphDb.executeTransactionally(query, parameters);
-        }
-
-        @Override
-        public <T> T executeTransactionally(String query, Map<String, Object> parameters, ResultTransformer<T> resultTransformer) throws QueryExecutionException {
-            return graphDb.executeTransactionally(query, parameters, resultTransformer);
-        }
-
-        @Override
-        public <T> T executeTransactionally(String query, Map<String, Object> parameters, ResultTransformer<T> resultTransformer, Duration timeout) throws QueryExecutionException {
-            return graphDb.executeTransactionally(query, parameters, resultTransformer);
-        }
-
-        @Override
-        public String databaseName() {
-            return graphDb.databaseName();
-        }
-
-        private static class TransactionProxy implements Transaction {
-            private final Transaction tx;
-
-            public TransactionProxy(Transaction tx) {
-                this.tx = tx;
-            }
-
-            @Override
-            public Node createNode() {
-                return tx.createNode();
-            }
-
-            @Override
-            public Node createNode(Label... labels) {
-                return tx.createNode(labels);
-            }
-
-            @Override
-            public Node getNodeById(long id) {
-                return tx.getNodeById(id);
-            }
-
-            @Override
-            public Node getNodeByElementId(String elementId) {
-                return tx.getNodeByElementId(elementId);
-            }
-
-            @Override
-            public Relationship getRelationshipById(long id) {
-                return tx.getRelationshipById(id);
-            }
-
-            @Override
-            public Relationship getRelationshipByElementId(String elementId) {
-                return tx.getRelationshipByElementId(elementId);
-            }
-
-            @Override
-            public BidirectionalTraversalDescription bidirectionalTraversalDescription() {
-                return tx.bidirectionalTraversalDescription();
-            }
-
-            @Override
-            public TraversalDescription traversalDescription() {
-                return tx.traversalDescription();
-            }
-
-            @Override
-            public Result execute(String query) throws QueryExecutionException {
-                return execute(query);
-            }
-
-            @Override
-            public Result execute(String query, Map<String, Object> parameters) throws QueryExecutionException {
-                return execute(query, parameters);
-            }
-
-            @Override
-            public Iterable<Label> getAllLabelsInUse() {
-                return tx.getAllLabelsInUse();
-            }
-
-            @Override
-            public Iterable<RelationshipType> getAllRelationshipTypesInUse() {
-                return tx.getAllRelationshipTypesInUse();
-            }
-
-            @Override
-            public Iterable<Label> getAllLabels() {
-                return tx.getAllLabels();
-            }
-
-            @Override
-            public Iterable<RelationshipType> getAllRelationshipTypes() {
-                return tx.getAllRelationshipTypesInUse();
-            }
-
-            @Override
-            public Iterable<String> getAllPropertyKeys() {
-                return tx.getAllPropertyKeys();
-            }
-
-            @Override
-            public ResourceIterator<Node> findNodes(Label label, String key, String template, StringSearchMode searchMode) {
-                return tx.findNodes(label, key, template, searchMode);
-            }
-
-            @Override
-            public ResourceIterator<Node> findNodes(Label label, Map<String, Object> propertyValues) {
-                return tx.findNodes(label, propertyValues);
-            }
-
-            @Override
-            public ResourceIterator<Node> findNodes(Label label, String key1, Object value1, String key2, Object value2, String key3, Object value3) {
-                return tx.findNodes(label, key1, value1, key2, value2, key3, value3);
-            }
-
-            @Override
-            public ResourceIterator<Node> findNodes(Label label, String key1, Object value1, String key2, Object value2) {
-                return tx.findNodes(label, key1, value1, key2, value2);
-            }
-
-            @Override
-            public Node findNode(Label label, String key, Object value) {
-                return tx.findNode(label, key, value);
-            }
-
-            @Override
-            public ResourceIterator<Node> findNodes(Label label, String key, Object value) {
-                return tx.findNodes(label, key, value);
-            }
-
-            @Override
-            public ResourceIterator<Node> findNodes(Label label) {
-                return tx.findNodes(label);
-            }
-
-            @Override
-            public ResourceIterator<Relationship> findRelationships(RelationshipType relationshipType, String key, String template, StringSearchMode searchMode) {
-                return tx.findRelationships(relationshipType, key, template, searchMode);
-            }
-
-            @Override
-            public ResourceIterator<Relationship> findRelationships(RelationshipType relationshipType, Map<String, Object> propertyValues) {
-                return tx.findRelationships(relationshipType, propertyValues);
-            }
-
-            @Override
-            public ResourceIterator<Relationship> findRelationships(RelationshipType relationshipType, String key1, Object value1, String key2, Object value2, String key3, Object value3) {
-                return tx.findRelationships(relationshipType, key1, value1, key2, value2, key3, value3);
-            }
-
-            @Override
-            public ResourceIterator<Relationship> findRelationships(RelationshipType relationshipType, String key1, Object value1, String key2, Object value2) {
-                return tx.findRelationships(relationshipType, key1, value1, key2, value2);
-            }
-
-            @Override
-            public Relationship findRelationship(RelationshipType relationshipType, String key, Object value) {
-                return tx.findRelationship(relationshipType, key, value);
-            }
-
-            @Override
-            public ResourceIterator<Relationship> findRelationships(RelationshipType relationshipType, String key, Object value) {
-                return tx.findRelationships(relationshipType, key, value);
-            }
-
-            @Override
-            public ResourceIterator<Relationship> findRelationships(RelationshipType relationshipType) {
-                return tx.findRelationships(relationshipType);
-            }
-
-            @Override
-            public void terminate() {
-                tx.terminate();
-            }
-
-            @Override
-            public ResourceIterable<Node> getAllNodes() {
-                return tx.getAllNodes();
-            }
-
-            @Override
-            public ResourceIterable<Relationship> getAllRelationships() {
-                return tx.getAllRelationships();
-            }
-
-            @Override
-            public Lock acquireWriteLock(Entity entity) {
-                return tx.acquireWriteLock(entity);
-            }
-
-            @Override
-            public Lock acquireReadLock(Entity entity) {
-                return tx.acquireReadLock(entity);
-            }
-
-            @Override
-            public Schema schema() {
-                return tx.schema();
-            }
-
-            @Override
-            public void commit() {
-                tx.commit();
-            }
-
-            @Override
-            public void rollback() {
-                tx.rollback();
-            }
-
-            @Override
-            public void close() {
-                tx.close();
-            }
-        }
-    }
 }
 
