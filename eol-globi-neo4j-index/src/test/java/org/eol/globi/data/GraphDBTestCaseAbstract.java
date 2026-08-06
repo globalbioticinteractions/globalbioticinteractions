@@ -62,7 +62,7 @@ public abstract class GraphDBTestCaseAbstract {
     }
 
     @AfterClass
-    public static void closeDriver() {
+    public static void closeNeo4j() {
         if (neo4j != null) {
             neo4j.close();
         }
