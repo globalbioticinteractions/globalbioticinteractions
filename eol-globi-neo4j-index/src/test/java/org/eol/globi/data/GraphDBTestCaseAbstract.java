@@ -26,13 +26,17 @@ import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.neo4j.configuration.GraphDatabaseSettings;
+import org.neo4j.configuration.SettingImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.config.Setting;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +62,7 @@ public abstract class GraphDBTestCaseAbstract {
     public static void initializeNeo4j() {
         GraphDBTestCaseAbstract.neo4j = Neo4jBuilders.newInProcessBuilder()
                 .withDisabledServer()
+                .withConfig(GraphDatabaseSettings.transaction_timeout, Duration.ofSeconds(1))
                 .build();
     }
 

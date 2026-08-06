@@ -447,7 +447,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
     }
 
-    @Test
+    @Test(timeout = 1000L)
     public void specimenWithLifeStageInName() throws NodeFactoryException {
         initTaxonService();
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("mickey eggs scales", null));
