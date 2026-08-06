@@ -5,8 +5,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.eol.globi.data.CharsetConstant;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.MMapDirectory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -173,7 +173,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         if (!luceneDir.toFile().exists()) {
             buildIndex(luceneDir);
         }
-        this.taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
+        this.taxonLookupService = new TaxonLookupServiceImpl(new MMapDirectory(luceneDir)) {{
             setMaxHits(getMaxTaxonLinks());
         }};
 
@@ -182,7 +182,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private void buildIndex(Path luceneDir) throws IOException {
         Path tmpLuceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene" + UUID.randomUUID());
         CacheServiceUtil.createCacheDir(tmpLuceneDir.toFile());
-        SimpleFSDirectory indexDir = new SimpleFSDirectory(tmpLuceneDir);
+        FSDirectory indexDir = new MMapDirectory(tmpLuceneDir);
         TaxonLookupBuilder taxonLookupService = new TaxonLookupBuilder(indexDir) {{
             start();
         }};

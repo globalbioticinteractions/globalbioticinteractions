@@ -49,9 +49,9 @@ public class TaxonLookupServiceImpl implements TaxonLookupService, AutoCloseable
             query.add(new Term(fieldName, fieldValue));
             TopDocs docs = indexSearcher.search(query.build(), getMaxHits());
 
-            if (docs.totalHits > 0) {
-                int maxResults = Math.min(docs.totalHits, getMaxHits());
-                terms = new TaxonImpl[maxResults];
+            if (docs.totalHits.value > 0) {
+                long maxResults = Math.min(docs.totalHits.value, (long)getMaxHits());
+                terms = new TaxonImpl[(int)maxResults];
                 for (int i = 0; i < maxResults; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);

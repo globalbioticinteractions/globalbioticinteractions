@@ -5,10 +5,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Version;
 import org.eol.globi.domain.Taxon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,8 @@ public class TaxonLookupBuilder implements TaxonImportListener, AutoCloseable {
     public void addTerm(String key, Taxon taxon) {
         if (hasStarted()) {
             Document doc = new Document();
-            doc.add(new Field(TaxonLookupServiceConstants.FIELD_NAME, key, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            doc.add(new Field(TaxonLookupServiceConstants.FIELD_ID, taxon.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            doc.add(new Field(TaxonLookupServiceConstants.FIELD_NAME, key, StringField.TYPE_STORED));
+            doc.add(new Field(TaxonLookupServiceConstants.FIELD_ID, taxon.getExternalId(), StringField.TYPE_STORED));
 
             addIfNotBlank(doc, TaxonLookupServiceConstants.FIELD_RECOMMENDED_NAME, taxon.getName());
             addIfNotBlank(doc, TaxonLookupServiceConstants.FIELD_RANK, taxon.getRank());
@@ -54,7 +54,7 @@ public class TaxonLookupBuilder implements TaxonImportListener, AutoCloseable {
 
     private void addIfNotBlank(Document doc, String fieldName, String fieldValue) {
         if (StringUtils.isNotBlank(fieldValue)) {
-            doc.add(new Field(fieldName, fieldValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            doc.add(new Field(fieldName, fieldValue, StringField.TYPE_STORED));
         }
     }
 

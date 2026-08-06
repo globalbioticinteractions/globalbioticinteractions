@@ -1,11 +1,14 @@
 package org.eol.globi.taxon;
 
 import org.apache.lucene.store.LockObtainFailedException;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.MMapDirectory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.hamcrest.core.Is;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 
@@ -15,12 +18,21 @@ import static org.hamcrest.Matchers.is;
 
 public class TaxonLookupBuilderTest {
 
-    @Test
-    public void createIndexDoLookup() throws IOException {
-        lookup(new RAMDirectory());
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+    private MMapDirectory dir;
+
+    @Before
+    public void init() throws IOException {
+        dir = new MMapDirectory(folder.newFolder().toPath());
     }
 
-    public void lookup(RAMDirectory indexDir) throws IOException {
+    @Test
+    public void createIndexDoLookup() throws IOException {
+        lookup(dir);
+    }
+
+    public void lookup(MMapDirectory indexDir) throws IOException {
         TaxonLookupBuilder service = new TaxonLookupBuilder(indexDir);
 
         service.start();
@@ -61,15 +73,14 @@ public class TaxonLookupBuilderTest {
 
     @Test
     public void createIndexDoLookupBlankName() throws IOException {
-        RAMDirectory indexDir = new RAMDirectory();
-        TaxonLookupBuilder taxonLookupBuilder = new TaxonLookupBuilder(indexDir);
+        TaxonLookupBuilder taxonLookupBuilder = new TaxonLookupBuilder(dir);
 
         taxonLookupBuilder.start();
         taxonLookupBuilder.addTerm(new TaxonImpl("Homo sapiens", "1234"));
         taxonLookupBuilder.addTerm(new TaxonImpl("Prefix Homo sapiens suffix", "12346"));
         taxonLookupBuilder.finish();
 
-        TaxonLookupServiceImpl lookup = new TaxonLookupServiceImpl(indexDir);
+        TaxonLookupServiceImpl lookup = new TaxonLookupServiceImpl(dir);
 
         Taxon[] ids = lookup.lookupTermsByName(null);
 
@@ -79,9 +90,8 @@ public class TaxonLookupBuilderTest {
 
     @Test(expected = RuntimeException.class)
     public void writeLock() throws IOException {
-        RAMDirectory indexDir = new RAMDirectory();
-        TaxonLookupBuilder taxonLookupBuilder1 = new TaxonLookupBuilder(indexDir);
-        TaxonLookupBuilder taxonLookupBuilder2 = new TaxonLookupBuilder(indexDir);
+        TaxonLookupBuilder taxonLookupBuilder1 = new TaxonLookupBuilder(dir);
+        TaxonLookupBuilder taxonLookupBuilder2 = new TaxonLookupBuilder(dir);
 
         try {
             taxonLookupBuilder1.start();
@@ -98,9 +108,8 @@ public class TaxonLookupBuilderTest {
 
     @Test
     public void noWriteLock() throws IOException {
-        RAMDirectory indexDir = new RAMDirectory();
-        TaxonLookupBuilder taxonLookupBuilder1 = new TaxonLookupBuilder(indexDir);
-        TaxonLookupBuilder taxonLookupBuilder2 = new TaxonLookupBuilder(indexDir);
+        TaxonLookupBuilder taxonLookupBuilder1 = new TaxonLookupBuilder(dir);
+        TaxonLookupBuilder taxonLookupBuilder2 = new TaxonLookupBuilder(dir);
 
         taxonLookupBuilder1.start();
         taxonLookupBuilder1.addTerm(new TaxonImpl("Homo sapiens", "1234"));

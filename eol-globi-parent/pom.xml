@@ -15,7 +15,7 @@
         <project.build.testResourceEncoding>UTF-8</project.build.testResourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <neo4j.version>5.26.29</neo4j.version>
-        <lucene.version>5.5.5</lucene.version>
+        <lucene.version>9.11.1</lucene.version>
         <mapdb.version>1.0.9</mapdb.version>
         <jena.version>3.17.0</jena.version>
         <proj4j.version>1.4.1</proj4j.version>

@@ -27,14 +27,6 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.neo4j</groupId>
-                    <artifactId>neo4j-cypher-compiler-1.9_2.11</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.neo4j</groupId>
-                    <artifactId>neo4j-cypher-compiler-2.2_2.11</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.neo4j</groupId>
                     <artifactId>neo4j-jmx</artifactId>
                 </exclusion>
                 <exclusion>
