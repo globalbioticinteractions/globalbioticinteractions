@@ -57,11 +57,12 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
     protected NodeFactoryNeo4j createNodeFactory() {
         NodeFactoryFactory factoryFactory;
 
+        final GraphDatabaseService graphDatabaseService = neo4j.defaultDatabaseService();
         factoryFactory
                 = new NodeFactoryFactoryTransactingOnDatasetNeo4j3(new GraphServiceFactory() {
             @Override
             public GraphDatabaseService getGraphService() {
-                return neo4j.defaultDatabaseService();
+                return graphDatabaseService;
             }
 
             @Override
@@ -70,10 +71,8 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
             }
         });
 
-
-        GraphDatabaseService graphDb = getGraphDb();
-        try (Transaction tx = graphDb.beginTx()) {
-            NodeFactory nodeFactoryNeo4j = factoryFactory.create(graphDb, cacheDir);
+        try (Transaction tx = graphDatabaseService.beginTx()) {
+            NodeFactory nodeFactoryNeo4j = factoryFactory.create(graphDatabaseService, cacheDir);
             assertThat(nodeFactoryNeo4j, Is.is(instanceOf(NodeFactoryNeo4j.class)));
             NodeFactoryNeo4j factory = (NodeFactoryNeo4j) nodeFactoryNeo4j;
             factory.setEnvoLookupService(getEnvoLookupService());
