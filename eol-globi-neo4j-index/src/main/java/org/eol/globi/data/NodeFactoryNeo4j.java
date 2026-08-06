@@ -168,6 +168,10 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return createSpecimen(study, taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
     }
 
+    public SpecimenNode createSpecimenNode(Transaction tx, Study study, Taxon taxon) throws NodeFactoryException {
+        return createSpecimenNode(tx, study, taxon,RelTypes.COLLECTED, RelTypes.SUPPORTS);
+    }
+
     @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
         if (null == study) {
@@ -179,18 +183,24 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
 
         try (Transaction tx = graphDb.beginTx()) {
-            StudyNode orCreateStudy = getOrCreateStudyNode(tx, study);
-            SpecimenNode specimen = createSpecimenNode(tx);
-            for (RelTypes type : types) {
-                orCreateStudy.createRelationshipTo(specimen, type);
-            }
-
-            specimen.setOriginalTaxonDescription(taxon);
-            if (StringUtils.isNotBlank(taxon.getName())) {
-                extractTerms(taxon.getName(), specimen);
-            }
+            SpecimenNode specimen = createSpecimenNode(tx, study, taxon, types);
+            tx.commit();
             return specimen;
         }
+    }
+
+    private SpecimenNode createSpecimenNode(Transaction tx, Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
+        StudyNode orCreateStudy = getOrCreateStudyNode(tx, study);
+        SpecimenNode specimen = createSpecimenNode(tx);
+        for (RelTypes type : types) {
+            orCreateStudy.createRelationshipTo(specimen, type);
+        }
+
+        specimen.setOriginalTaxonNodeDescription(taxon, tx);
+        if (StringUtils.isNotBlank(taxon.getName())) {
+            extractTerms(taxon.getName(), specimen);
+        }
+        return specimen;
     }
 
     private void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {

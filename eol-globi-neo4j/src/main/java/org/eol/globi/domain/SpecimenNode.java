@@ -171,7 +171,10 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public Term getBasisOfRecord() {
-        return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_ID), getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_LABEL));
+        return new TermImpl(
+                getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_ID),
+                getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_LABEL)
+        );
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.bsd.RCommandClient;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
@@ -507,10 +508,21 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void specimenWithBasisOfRecord() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("mickey mouse", null));
-        specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("something:123", "theBasis"));
-        assertThat(specimen.getBasisOfRecord().getName(), is("theBasis"));
-        assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
+        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            SpecimenNode specimen = getNodeFactory().createSpecimenNode(
+                    tx,
+                    study,
+                    new TaxonImpl("mickey mouse", null)
+            );
+            Term basisOfRecord = getNodeFactory().getOrCreateBasisOfRecord("something:123", "theBasis");
+
+            specimen.setBasisOfRecord(basisOfRecord);
+            assertThat(specimen.getBasisOfRecord().getName(), is("theBasis"));
+            assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
+            tx.commit();
+        }
     }
 
     @Test

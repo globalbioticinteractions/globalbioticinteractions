@@ -128,7 +128,12 @@ public class NodeBacked {
     }
 
     public void setOriginalTaxonDescription(Taxon taxon) {
-        TaxonNode taxonNode = new TaxonNode(tx.createNode(), taxon.getName());
+        Transaction tx1 = tx;
+        setOriginalTaxonNodeDescription(taxon, tx1);
+    }
+
+    public void setOriginalTaxonNodeDescription(Taxon taxon, Transaction tx1) {
+        TaxonNode taxonNode = new TaxonNode(tx1.createNode(), taxon.getName());
         TaxonUtil.copy(taxon, taxonNode);
         createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
     }
