@@ -80,12 +80,6 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
         }
     }
 
-    @Override
-    public void beforeGraphDbShutdown() {
-        //transaction.commit();
-        //transaction.close();
-    }
-
     protected ResourceService getResourceService() {
         return new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir());
     }

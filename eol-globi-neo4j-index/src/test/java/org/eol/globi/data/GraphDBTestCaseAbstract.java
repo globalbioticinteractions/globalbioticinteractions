@@ -2,7 +2,6 @@ package org.eol.globi.data;
 
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
-import org.eol.globi.db.GraphServiceUtil;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
@@ -24,12 +23,11 @@ import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.harness.Neo4j;
-import org.neo4j.harness.Neo4jBuilders;
+import org.neo4j.harness.junit.rule.Neo4jRule;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,6 +48,9 @@ public abstract class GraphDBTestCaseAbstract {
     protected NodeFactory nodeFactory;
 
     protected TaxonIndex taxonIndex;
+
+    @Rule
+    public Neo4jRule neo4j = new Neo4jRule().withDisabledServer();
 
     protected Neo4jIndexType getSchemaType() {
         return Neo4jIndexType.noSchema;
@@ -117,22 +118,6 @@ public abstract class GraphDBTestCaseAbstract {
         }
     }
 
-    public void afterGraphDBStart() {
-    }
-
-    public void beforeGraphDbShutdown() {
-    }
-
-    @After
-    public void shutdownGraphDb() throws Exception {
-        beforeGraphDbShutdown();
-        try {
-            graphFactory.close();
-        } catch (Exception ex) {
-            // ignore
-        }
-    }
-
     protected NodeFactoryNeo4j getNodeFactory() {
         return (NodeFactoryNeo4j) nodeFactory;
     }
@@ -146,40 +131,19 @@ public abstract class GraphDBTestCaseAbstract {
     }
 
     protected GraphDatabaseService getGraphDb() {
-        if (graphFactory == null) {
-            graphFactory = getGraphFactory();
-            afterGraphDBStart();
-        }
-        return graphFactory.getGraphService();
+        return neo4j.defaultDatabaseService();
     }
 
     protected GraphServiceFactory getGraphFactory() {
         return new GraphServiceFactory() {
 
-            private Neo4j neo4j = null;
-            private GraphDatabaseService graphDb = null;
-
             @Override
             public GraphDatabaseService getGraphService() {
-                GraphDatabaseService graphDb = this.graphDb;
-                GraphServiceUtil.verifyState(graphDb);
-
-                if (this.graphDb == null
-                        || this.neo4j == null) {
-                    neo4j = Neo4jBuilders
-                            .newInProcessBuilder()
-                            .build();
-                    this.graphDb = neo4j.defaultDatabaseService();
-                }
-                return this.graphDb;
+                return neo4j.defaultDatabaseService();
             }
 
             @Override
             public void close() {
-                if (graphDb != null) {
-                    neo4j.close();
-                    graphDb = null;
-                }
             }
         };
     }

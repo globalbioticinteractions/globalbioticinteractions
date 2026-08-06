@@ -86,16 +86,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    Node createStudyNode() {
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Node node = transaction.createNode();
-            transaction.commit();
-            return node;
-
-        }
-    }
-
-    @Override
     void indexStudyNode(StudyNode studyNode) {
         // indexing already done via constraint: do nothing
     }

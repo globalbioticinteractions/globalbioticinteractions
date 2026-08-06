@@ -209,22 +209,18 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return new SpecimenNode(transaction.createNode(), transaction);
     }
 
-
-    abstract Node createStudyNode();
-
     abstract void indexStudyNode(StudyNode studyNode) throws NodeFactoryException;
 
     @Override
     public StudyNode createStudy(Study study) throws NodeFactoryException {
-        Node node = createStudyNode();
-        StudyNode studyNode = createStudyNode(study, node);
+        StudyNode studyNode = createStudyNode(getGraphDb().beginTx(), study);
         indexStudyNode(studyNode);
         return studyNode;
     }
 
-    private StudyNode createStudyNode(Study study, Node node) throws NodeFactoryException {
-        StudyNode studyNode;
-        studyNode = new StudyNode(node, study.getTitle());
+    private StudyNode createStudyNode(Transaction transaction, Study study) throws NodeFactoryException {
+        Node node = transaction.createNode();
+        StudyNode studyNode = new StudyNode(node, study.getTitle());
         studyNode.setCitation(study.getCitation());
         studyNode.setDOI(study.getDOI());
         if (study.getDOI() != null) {

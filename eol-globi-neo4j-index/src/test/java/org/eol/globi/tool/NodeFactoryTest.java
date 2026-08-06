@@ -40,12 +40,6 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
 
     private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 
-    @Override
-    public void afterGraphDBStart() {
-        // stub
-    }
-
-
     @Test
     public void doSingleImportNeo4j2() throws StudyImporterException {
         GraphDatabaseService graphDb = getGraphDb();
