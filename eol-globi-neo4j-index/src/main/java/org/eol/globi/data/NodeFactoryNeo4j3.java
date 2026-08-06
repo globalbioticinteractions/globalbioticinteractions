@@ -106,27 +106,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         return transaction.createNode(NodeLabel.ExternalId);
     }
 
-    @Override
-    public StudyNode findStudy(Study study) {
-        Node node = findStudyNode(study);
-
-        return node == null
-                ? null
-                : new StudyNode(node);
-    }
-
-    private Node findStudyNode(Study study) {
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Node node = transaction.findNode(
-                    NodeLabel.Reference,
-                    StudyConstant.TITLE_IN_NAMESPACE,
-                    getIdInNamespace(study)
-            );
-            transaction.commit();
-            return node;
-
-        }
-    }
 
     @Override
     public LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException {
@@ -170,13 +149,15 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
-        Node node = findStudyNode(study);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            tx.commit();
+            return studyNode;
+        }
 
-        return node == null
-                ? createStudy(study)
-                : new StudyNode(node);
 
     }
+
 
     private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
                                                  NodeLabel label,

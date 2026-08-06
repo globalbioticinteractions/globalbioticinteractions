@@ -64,36 +64,45 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
         NodeFactoryNeo4j nodeFactoryNeo4j = getNodeFactory();
         StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
         study1.setOriginatingDataset(new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), getResourceService()));
-        StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
+        StudyNode someStudy;
 
-        assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));
-        assertThat(interaction.getTitle(), is(someStudy.getTitle()));
-
-        RelationshipType hasParticipant = NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT);
         Set<Long> ids = new HashSet<>();
         List<Long> idList = new ArrayList<>();
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(someStudy.getUnderlyingNode()), new RelationshipListener() {
-            @Override
-            public void on(Relationship specimen) {
-                assertThat(specimen.getEndNode().hasRelationship(Direction.INCOMING, hasParticipant), Is.is(true));
-                Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.INCOMING, hasParticipant);
-                for (Relationship relationship : relationships) {
-                    long id = relationship.getStartNode().getId();
-                    ids.add(id);
-                    idList.add(id);
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            someStudy = nodeFactoryNeo4j.getOrCreateStudyNode(tx, study1);
+            assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));
+            assertThat(interaction.getTitle(), is(someStudy.getTitle()));
+
+            RelationshipType hasParticipant = NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT);
+
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(someStudy.getUnderlyingNode()), new RelationshipListener() {
+                @Override
+                public void on(Relationship specimen) {
+                    assertThat(specimen.getEndNode().hasRelationship(Direction.INCOMING, hasParticipant), Is.is(true));
+                    Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.INCOMING, hasParticipant);
+                    for (Relationship relationship : relationships) {
+                        long id = relationship.getStartNode().getId();
+                        ids.add(id);
+                        idList.add(id);
+                    }
+
                 }
+            });
 
-            }
-        });
+            assertThat(ids.size(), Is.is(1));
+            assertThat(idList.size(), Is.is(2));
 
-        assertThat(ids.size(), Is.is(1));
-        assertThat(idList.size(), Is.is(2));
+            tx.commit();
+        }
 
-        try(Transaction transaction = getGraphDb().beginTx()) {
+
+        try (Transaction transaction = getGraphDb().beginTx()) {
             Node interactionNode = transaction.getNodeById(idList.get(0));
             assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM)));
             assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
+            transaction.commit();
         }
 
     }

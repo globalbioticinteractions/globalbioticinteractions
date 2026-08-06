@@ -20,6 +20,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
@@ -115,6 +116,28 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     }
 
+    public StudyNode findStudyNode(Transaction tx, Study study) {
+        Node node = tx.findNode(
+                NodeLabel.Reference,
+                StudyConstant.TITLE_IN_NAMESPACE,
+                getIdInNamespace(study)
+        );
+        return node == null
+                ? null
+                : new StudyNode(node);
+
+    }
+
+
+    public StudyNode getOrCreateStudyNode(Transaction tx, Study study) throws NodeFactoryException {
+        StudyNode studyNode;
+        studyNode = findStudyNode(tx, study);
+        return studyNode == null
+                ? createStudyNode(tx, study)
+                : studyNode;
+    }
+
+
     abstract protected void indexLocation(Location location, Node node) throws NodeFactoryException;
 
     protected abstract Node createLocationNode(Transaction transaction1);
@@ -155,9 +178,10 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
 
         try (Transaction tx = graphDb.beginTx()) {
-            SpecimenNode specimen = createSpecimen(tx);
+            StudyNode orCreateStudy = getOrCreateStudyNode(tx, study);
+            SpecimenNode specimen = createSpecimenNode(tx);
             for (RelTypes type : types) {
-                ((StudyNode) study).createRelationshipTo(specimen, type);
+                orCreateStudy.createRelationshipTo(specimen, type);
             }
 
             specimen.setOriginalTaxonDescription(taxon);
@@ -206,20 +230,25 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
 
-    private SpecimenNode createSpecimen(Transaction transaction) {
-        return new SpecimenNode(transaction.createNode(), transaction);
+    private SpecimenNode createSpecimenNode(Transaction transaction) {
+        return new SpecimenNode(transaction.createNode());
     }
 
     abstract void indexStudyNode(StudyNode studyNode) throws NodeFactoryException;
 
     @Override
-    public StudyNode createStudy(Study study) throws NodeFactoryException {
-        StudyNode studyNode = createStudyNode(getGraphDb().beginTx(), study);
-        indexStudyNode(studyNode);
-        return studyNode;
+    public Study createStudy(Study study) throws NodeFactoryException {
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            StudyNode studyNode = createStudyNode(transaction, study);
+            indexStudyNode(studyNode);
+            StudyImpl copyOf = new StudyImpl(studyNode.getTitle(), studyNode.getDOI(), studyNode.getCitation());
+            copyOf.setExternalId(studyNode.getExternalId());
+            transaction.commit();
+            return copyOf;
+        }
     }
 
-    private StudyNode createStudyNode(Transaction transaction, Study study) throws NodeFactoryException {
+    protected StudyNode createStudyNode(Transaction transaction, Study study) throws NodeFactoryException {
         Node node = transaction.createNode();
         StudyNode studyNode = new StudyNode(node, study.getTitle());
         studyNode.setCitation(study.getCitation());
@@ -310,12 +339,12 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     protected abstract Node createExternalIdNode(Transaction transaction);
 
     @Override
-    public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
+    public Study getOrCreateStudy(Study study) throws NodeFactoryException {
         if (StringUtils.isBlank(study.getTitle())) {
             throw new NodeFactoryException("null or empty study title");
         }
 
-        StudyNode studyNode = findStudy(study);
+        Study studyNode = findStudy(study);
 
         if (studyNode == null) {
             studyNode = createStudy(study);
@@ -331,7 +360,14 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public abstract StudyNode findStudy(Study study);
+    public Study findStudy(Study study) {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            StudyNode studyNode = findStudyNode(tx, study);
+            tx.commit();
+            return studyNode;
+        }
+    }
+
 
     String getIdInNamespace(Study study) {
         String namespace = namespaceOrNull(study);
@@ -478,7 +514,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         try (Transaction transaction = graphDb.beginTx()) {
 
             Node node = transaction.createNode();
-            StudyNode studyNode = getOrCreateStudy(study);
+            StudyNode studyNode = getOrCreateStudyNode(transaction, study);
             interactionNode = new InteractionNode(node);
             interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
