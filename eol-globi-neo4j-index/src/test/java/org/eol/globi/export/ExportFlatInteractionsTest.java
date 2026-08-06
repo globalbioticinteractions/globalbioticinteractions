@@ -123,7 +123,7 @@ public class ExportFlatInteractionsTest extends GraphDBNeo4jTestCase {
         LocationImpl location1 = new LocationImpl(12.0, -45.9, -60.0, null);
         location1.setLocality("some locale");
         location1.setLocalityId("some:localeid");
-        Location location = factory.getOrCreateLocationNode(location1);
+        Location location = factory.getOrCreateLocation(location1);
         specimen.caughtIn(location);
     }
 

@@ -51,7 +51,7 @@ public class ExportTestUtil {
             specimen1.setLengthInMm(length);
         }
 
-        Location location = factory.getOrCreateLocationNode(new LocationImpl(88.0, -120.0, -60.0, null));
+        Location location = factory.getOrCreateLocation(new LocationImpl(88.0, -120.0, -60.0, null));
         specimen1.caughtIn(location);
         return myStudy;
     }

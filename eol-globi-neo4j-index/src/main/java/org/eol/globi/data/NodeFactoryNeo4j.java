@@ -252,11 +252,16 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         try (Transaction transaction = getGraphDb().beginTx()) {
             StudyNode studyNode = createStudyNode(transaction, study);
             indexStudyNode(studyNode);
-            StudyImpl copyOf = new StudyImpl(studyNode.getTitle(), studyNode.getDOI(), studyNode.getCitation());
-            copyOf.setExternalId(studyNode.getExternalId());
+            Study copyOf = copyOf(studyNode);
             transaction.commit();
             return copyOf;
         }
+    }
+
+    protected static StudyImpl copyOf(StudyNode studyNode) {
+        StudyImpl copyOf = new StudyImpl(studyNode.getTitle(), studyNode.getDOI(), studyNode.getCitation());
+        copyOf.setExternalId(studyNode.getExternalId());
+        return copyOf;
     }
 
     protected StudyNode createStudyNode(Transaction transaction, Study study) throws NodeFactoryException {
@@ -355,13 +360,13 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             throw new NodeFactoryException("null or empty study title");
         }
 
-        Study studyNode = findStudy(study);
+        Study studyFoundOrCreated = findStudy(study);
 
-        if (studyNode == null) {
-            studyNode = createStudy(study);
+        if (studyFoundOrCreated == null) {
+            studyFoundOrCreated = createStudy(study);
         }
 
-        return studyNode;
+        return studyFoundOrCreated;
     }
 
     private String namespaceOrNull(Study study) {
@@ -374,8 +379,9 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Study findStudy(Study study) {
         try (Transaction tx = getGraphDb().beginTx()) {
             StudyNode studyNode = findStudyNode(tx, study);
+            Study copyOfStudy = copyOf(studyNode);
             tx.commit();
-            return studyNode;
+            return copyOfStudy;
         }
     }
 
@@ -394,7 +400,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
 
     @Override
-    public LocationNode getOrCreateLocationNode(org.eol.globi.domain.Location location) throws NodeFactoryException {
+    public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
         try (Transaction transaction = getGraphDb().beginTx()) {
             LocationNode location1 = findLocationNode(getGraphDb().beginTx(), location);
             if (location1 == null) {

@@ -160,7 +160,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
             String locationSpecific = columnValueOrNull(record, "Location_Specific");
             location.setLocality(StringUtils.join(Arrays.asList(locationRegion, locationSpecific), ":"));
 
-            Location locationNode = getNodeFactory().getOrCreateLocationNode(location);
+            Location locationNode = getNodeFactory().getOrCreateLocation(location);
             String habitat_type = columnValueOrNull(record, "Habitat_type");
             List<Term> habitatList = Arrays.stream(StringUtils.split(StringUtils.defaultIfBlank(habitat_type, ""), ";"))
                     .map(StringUtils::trim)

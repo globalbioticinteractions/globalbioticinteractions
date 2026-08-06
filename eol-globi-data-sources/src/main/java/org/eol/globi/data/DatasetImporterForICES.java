@@ -99,7 +99,7 @@ public class DatasetImporterForICES extends NodeBasedImporter {
         Double lon = parseDoubleField(parser, "Longitude");
         Double depth = parseDoubleField(parser, "Depth");
         try {
-            return getNodeFactory().getOrCreateLocationNode(new LocationImpl(lat, lon, depth == null ? null : -depth, null));
+            return getNodeFactory().getOrCreateLocation(new LocationImpl(lat, lon, depth == null ? null : -depth, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }

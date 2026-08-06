@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.bsd.RCommandClient;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
@@ -127,10 +126,10 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         LocationImpl location2 = new LocationImpl(1.2d, 1.4d, -1.0d, null);
         location2.setLocality("some locale");
         location2.setLocalityId("some:id");
-        Location location = getNodeFactory().getOrCreateLocationNode(location2);
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(2.2d, 1.4d, -1.0d, null));
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(1.2d, 2.4d, -1.0d, null));
-        Location locationNoDepth = getNodeFactory().getOrCreateLocationNode(new LocationImpl(1.5d, 2.8d, null, null));
+        Location location = getNodeFactory().getOrCreateLocation(location2);
+        getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
+        Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
         assertNotNull(location);
         Location location1 = getNodeFactory().findLocation(location2);
         assertNotNull(location1);
@@ -140,10 +139,10 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void createFindLocationWith() throws NodeFactoryException {
-        Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(1.2d, 1.4d, -1.0d, null));
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(2.2d, 1.4d, -1.0d, null));
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(1.2d, 2.4d, -1.0d, null));
-        Location locationNoDepth = getNodeFactory().getOrCreateLocationNode(new LocationImpl(1.5d, 2.8d, null, null));
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
+        Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
         assertNotNull(location);
         Location location1 = getNodeFactory().findLocation(new LocationImpl(location.getLatitude(), location.getLongitude(), location.getAltitude(), null));
         assertNotNull(location1);
@@ -153,30 +152,30 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void createFindLocationWKT() throws NodeFactoryException {
-        Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(2.0d, 1.0d, -1.0d, null));
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(2.0d, 1.0d, -1.0d, null));
         assertThat(location.getFootprintWKT(), is(nullValue()));
         final String expectedFootprintWKT = "POLYGON((10 20, 11 20, 11 21, 10 21, 10 20))";
         final LocationImpl otherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
                 expectedFootprintWKT);
 
-        final LocationNode locationWithFootprintWKT = getNodeFactory().getOrCreateLocationNode(otherLocation);
+        final LocationNode locationWithFootprintWKT = getNodeFactory().getOrCreateLocation(otherLocation);
         assertThat(locationWithFootprintWKT.getFootprintWKT(), is(expectedFootprintWKT));
         assertThat(getNodeFactory().findLocation(otherLocation).getFootprintWKT(), is(expectedFootprintWKT));
 
         final LocationImpl yetAnotherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
                 expectedFootprintWKT);
         yetAnotherLocation.setLocality("this is my place");
-        getNodeFactory().getOrCreateLocationNode(yetAnotherLocation);
+        getNodeFactory().getOrCreateLocation(yetAnotherLocation);
 
         assertThat(getNodeFactory().findLocation(yetAnotherLocation).getLocality(), is("this is my place"));
     }
 
     @Test(expected = NodeFactoryException.class)
     public void createInvalidLocation() throws NodeFactoryException {
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(91.3d, -104.0d, -1.0d, null));
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(-100.3d, 104d, -1.0d, null));
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(-10.3d, -200.0d, -1.0d, null));
-        getNodeFactory().getOrCreateLocationNode(new LocationImpl(-20.0d, 300.0d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(91.3d, -104.0d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(-100.3d, 104d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(-10.3d, -200.0d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(-20.0d, 300.0d, -1.0d, null));
     }
 
 
@@ -190,9 +189,9 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
                 return terms;
             }
         });
-        Location location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(0.0, 1.0, 2.0, null));
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
         List<Environment> first = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
-        location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(0.0, 1.0, 2.0, null));
+        location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
         List<Environment> second = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
         assertThat(((NodeBacked) first.get(0)).getNodeID(), is(not(((NodeBacked) second.get(0)).getNodeID())));
@@ -203,7 +202,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         assertThat(environment.getName(), is("this_and_that"));
         assertThat(environment.getExternalId(), is("NS:this and that"));
 
-        Location anotherLocation = getNodeFactory().getOrCreateLocationNode(new LocationImpl(48.2, 123.1, null, null));
+        Location anotherLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(48.2, 123.1, null, null));
         LocationNode anotherLocationNode = (LocationNode) anotherLocation;
         assertThat(anotherLocationNode.getEnvironments().size(), is(0));
         anotherLocationNode.addEnvironment((EnvironmentNode) environment);
@@ -219,10 +218,11 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void createStudyWithExternalIdNoDOI() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", null, "some citation");
-        study1.setExternalId("some:id");
+        StudyImpl study1 = new StudyImpl("title-" + UUID.randomUUID().toString(), null, "some citation");
+        String externalId = UUID.randomUUID().toString();
+        study1.setExternalId(externalId);
         Study study = getNodeFactory().getOrCreateStudy(study1);
-        assertThat(study.getExternalId(), is("some:id"));
+        assertThat(study.getExternalId(), is(externalId));
         assertThat(study.getDOI(), is(nullValue()));
 
     }

@@ -101,22 +101,22 @@ public class DatasetImporterForHechinger extends DatasetImporterNodesAndLinks {
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    Location loc = getNodeFactory().getOrCreateLocationNode(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
+                    Location loc = getNodeFactory().getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
                     if (loc != null) {
                         locations.add(loc);
                     }
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtCSM"))) {
-                    locations.add(getNodeFactory().getOrCreateLocationNode(new LocationImpl(34.403511, -119.537873, null, null)));
+                    locations.add(getNodeFactory().getOrCreateLocation(new LocationImpl(34.403511, -119.537873, null, null)));
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtEPB"))) {
-                    locations.add(getNodeFactory().getOrCreateLocationNode(new LocationImpl(31.748606, -116.626854, null, null)));
+                    locations.add(getNodeFactory().getOrCreateLocation(new LocationImpl(31.748606, -116.626854, null, null)));
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtBSQ"))) {
-                    locations.add(getNodeFactory().getOrCreateLocationNode(new LocationImpl(30.378207, -115.938835, null, null)));
+                    locations.add(getNodeFactory().getOrCreateLocation(new LocationImpl(30.378207, -115.938835, null, null)));
                 }
 
                 for (Location location : locations) {

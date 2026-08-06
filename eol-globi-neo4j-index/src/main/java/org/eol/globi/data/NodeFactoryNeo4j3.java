@@ -148,11 +148,12 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
+    public Study getOrCreateStudy(Study study) throws NodeFactoryException {
         try (Transaction tx = getGraphDb().beginTx()) {
             StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            Study copyOfStudy = copyOf(studyNode);
             tx.commit();
-            return studyNode;
+            return copyOfStudy;
         }
 
 

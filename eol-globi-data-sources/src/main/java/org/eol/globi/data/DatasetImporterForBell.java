@@ -150,7 +150,7 @@ public class DatasetImporterForBell extends NodeBasedImporter {
         String longitude = parser.getValueByLabel("DEC_LONG");
         Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            location = getNodeFactory().getOrCreateLocationNode(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
+            location = getNodeFactory().getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
         }
         return location;
     }

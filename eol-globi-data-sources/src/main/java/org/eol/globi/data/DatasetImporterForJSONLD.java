@@ -75,7 +75,7 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
                 Date date = parseDate(collTime);
                 getNodeFactory().setUnixEpochProperty(source, date);
                 getNodeFactory().setUnixEpochProperty(target, date);
-                Location loc = getNodeFactory().getOrCreateLocationNode(
+                Location loc = getNodeFactory().getOrCreateLocation(
                         new LocationImpl(solution.get("collLat").asLiteral().getDouble(), solution.get("collLng").asLiteral().getDouble(), null, null));
                 target.caughtIn(loc);
                 source.caughtIn(loc);

@@ -129,7 +129,7 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
 
             Location sampleLocation;
             try {
-                sampleLocation = getNodeFactory().getOrCreateLocationNode(new LocationImpl(latLng1.getLat(), latLng1.getLng(), altitude, null));
+                sampleLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng1.getLat(), latLng1.getLng(), altitude, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }

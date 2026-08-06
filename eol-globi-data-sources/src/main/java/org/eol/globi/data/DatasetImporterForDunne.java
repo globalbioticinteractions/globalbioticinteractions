@@ -53,7 +53,7 @@ public class DatasetImporterForDunne extends DatasetImporterNodesAndLinks {
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    Location loc = getNodeFactory().getOrCreateLocationNode(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
+                    Location loc = getNodeFactory().getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
                     if (loc != null) {
                         locations.add(loc);
                     }

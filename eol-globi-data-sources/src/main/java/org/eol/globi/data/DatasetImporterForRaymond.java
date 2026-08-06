@@ -212,7 +212,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
             double bottom = Double.parseDouble(southString);
             LatLng centroid = calculateCentroidOfBBox(left, top, right, bottom);
             try {
-                loc = getNodeFactory().getOrCreateLocationNode(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+                loc = getNodeFactory().getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
             } catch (NodeFactoryException ex) {
                 String locationString = StringUtils.join(Arrays.asList(westString, northString, eastString, southString), ",");
                 LOG.warn("found invalid locations [" + locationString + "] on line [" + (dietParser.lastLineNumber() + 1) + "]: " + ex.getMessage());
@@ -233,7 +233,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
                 if (centroid == null) {
                     getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
                 } else {
-                    loc = getNodeFactory().getOrCreateLocationNode(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+                    loc = getNodeFactory().getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
                 }
             } catch (IOException e) {
                 getLogger().warn(study, "failed to lookup point for location [" + location + "] on line [" + dietParser.lastLineNumber() + "]");

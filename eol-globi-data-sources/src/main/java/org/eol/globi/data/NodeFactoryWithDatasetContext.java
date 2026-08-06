@@ -81,8 +81,8 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public Location getOrCreateLocationNode(Location location) throws NodeFactoryException {
-        return factory.getOrCreateLocationNode(location);
+    public Location getOrCreateLocation(Location location) throws NodeFactoryException {
+        return factory.getOrCreateLocation(location);
     }
 
     @Override

@@ -117,7 +117,7 @@ public class ExporterOccurrencesTest extends GraphDBNeo4jTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocationNode(new LocationImpl(12.0, -1.0, -60.0, null));
+        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(12.0, -1.0, -60.0, null));
         specimen.caughtIn(location);
         Specimen wolf1 = eatWolf(specimen, myStudy);
         wolf1.caughtIn(location);
