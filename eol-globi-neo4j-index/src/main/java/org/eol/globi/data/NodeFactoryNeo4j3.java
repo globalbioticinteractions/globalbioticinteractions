@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
@@ -109,32 +110,29 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException {
-        try (Transaction transaction = tx) {
-            validate(location);
+        validate(location);
 
-            Node matchingLocation = null;
-            if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
-                Double latitude = location.getLatitude();
-                ResourceIterator<Node> nodes = transaction.findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+        Node matchingLocation = null;
+        if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+            Double latitude = location.getLatitude();
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+            matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+        }
+        if (matchingLocation == null) {
+            String locality = location.getLocality();
+            if (StringUtils.isNotBlank(locality)) {
+                ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
                 matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
             }
-            if (matchingLocation == null) {
-                String locality = location.getLocality();
-                if (StringUtils.isNotBlank(locality)) {
-                    ResourceIterator<Node> nodes = transaction.findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
-                    matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
-                }
-            }
-            if (matchingLocation == null) {
-                String localityId = location.getLocalityId();
-                if (StringUtils.isNotBlank(location.getLocalityId())) {
-                    ResourceIterator<Node> nodes = transaction.findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
-                    matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
-                }
-            }
-            transaction.commit();
-            return matchingLocation == null ? null : new LocationNode(matchingLocation);
         }
+        if (matchingLocation == null) {
+            String localityId = location.getLocalityId();
+            if (StringUtils.isNotBlank(location.getLocalityId())) {
+                ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+        }
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
     }
 
     @Override
@@ -142,8 +140,9 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         LocationNode locationNode;
         try (Transaction tx = getGraphDb().beginTx()) {
             locationNode = findLocationNode(tx, location);
+            Location copyOf = getCopyOf(locationNode);
             tx.commit();
-            return locationNode;
+            return copyOf;
         }
     }
 

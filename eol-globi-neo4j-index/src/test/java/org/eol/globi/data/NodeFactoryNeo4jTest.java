@@ -158,7 +158,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         final LocationImpl otherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
                 expectedFootprintWKT);
 
-        final LocationNode locationWithFootprintWKT = getNodeFactory().getOrCreateLocation(otherLocation);
+        final Location locationWithFootprintWKT = getNodeFactory().getOrCreateLocation(otherLocation);
         assertThat(locationWithFootprintWKT.getFootprintWKT(), is(expectedFootprintWKT));
         assertThat(getNodeFactory().findLocation(otherLocation).getFootprintWKT(), is(expectedFootprintWKT));
 

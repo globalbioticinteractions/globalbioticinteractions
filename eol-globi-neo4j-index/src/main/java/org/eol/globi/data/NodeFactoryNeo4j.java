@@ -10,6 +10,7 @@ import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.InteractionNode;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -169,7 +170,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     public SpecimenNode createSpecimenNode(Transaction tx, Study study, Taxon taxon) throws NodeFactoryException {
-        return createSpecimenNode(tx, study, taxon,RelTypes.COLLECTED, RelTypes.SUPPORTS);
+        return createSpecimenNode(tx, study, taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
     }
 
     @Override
@@ -261,6 +262,10 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     protected static StudyImpl copyOf(StudyNode studyNode) {
         StudyImpl copyOf = new StudyImpl(studyNode.getTitle(), studyNode.getDOI(), studyNode.getCitation());
         copyOf.setExternalId(studyNode.getExternalId());
+        Dataset originatingDataset = studyNode.getOriginatingDataset();
+        if (originatingDataset != null) {
+            copyOf.setOriginatingDataset(copyOf(studyNode.getOriginatingDataset()));
+        }
         return copyOf;
     }
 
@@ -400,14 +405,29 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
 
     @Override
-    public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
+    public Location getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
         try (Transaction transaction = getGraphDb().beginTx()) {
-            LocationNode location1 = findLocationNode(getGraphDb().beginTx(), location);
-            if (location1 == null) {
-                location1 = createLocationNode(transaction, location);
-            }
-            return location1;
+            LocationNode location1 = getOrCreateLocationNode(transaction, location);
+            Location copyOf = getCopyOf(location1);
+            transaction.commit();
+            return copyOf;
+
         }
+    }
+
+    public static Location getCopyOf(LocationNode location1) {
+        LocationImpl location = new LocationImpl(location1.getLatitude(), location1.getLongitude(), location1.getAltitude(), location1.getFootprintWKT());
+        location.setLocality(location1.getLocality());
+        location.setLocalityId(location1.getLocalityId());
+        return location;
+    }
+
+    private LocationNode getOrCreateLocationNode(Transaction transaction, Location location) throws NodeFactoryException {
+        LocationNode location1 = findLocationNode(transaction, location);
+        if (location1 == null) {
+            location1 = createLocationNode(transaction, location);
+        }
+        return location1;
     }
 
     protected abstract LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException;
@@ -524,11 +544,16 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Dataset getOrCreateDataset(Dataset originatingDataset) throws NodeFactoryException {
         try (Transaction tx = getGraphDb().beginTx()) {
             DatasetNode orCreateDatasetNode = getOrCreateDatasetNode(tx, originatingDataset);
-            DatasetImpl dataset = new DatasetImpl(orCreateDatasetNode.getNamespace(), null, orCreateDatasetNode.getArchiveURI());
-            dataset.setConfig(orCreateDatasetNode.getConfig());
+            Dataset dataset = copyOf(orCreateDatasetNode);
             tx.commit();
             return dataset;
         }
+    }
+
+    private static Dataset copyOf(Dataset orCreateDatasetNode) {
+        DatasetImpl dataset = new DatasetImpl(orCreateDatasetNode.getNamespace(), null, orCreateDatasetNode.getArchiveURI());
+        dataset.setConfig(orCreateDatasetNode.getConfig());
+        return dataset;
     }
 
     @Override
