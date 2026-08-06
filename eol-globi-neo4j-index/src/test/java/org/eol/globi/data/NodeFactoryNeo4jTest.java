@@ -398,8 +398,9 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void addDatasetToStudyNulls2() throws NodeFactoryException {
+        String namespace = UUID.randomUUID().toString();
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", null, getResourceService());
+        DatasetImpl dataset = new DatasetWithResourceMapping(namespace, null, getResourceService());
         study1.setOriginatingDataset(dataset);
         Study study = getNodeFactory().getOrCreateStudy(study1);
 
@@ -408,7 +409,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
             studyNode = getNodeFactory().findStudyNode(tx, study);
             Node datasetNode = NodeUtil.getDataSetForStudy(studyNode);
             assertNotNull(datasetNode);
-            assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
+            assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is(namespace));
             assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
             assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
             tx.commit();
