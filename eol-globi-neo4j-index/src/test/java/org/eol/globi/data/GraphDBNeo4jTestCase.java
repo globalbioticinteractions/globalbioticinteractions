@@ -7,7 +7,6 @@ import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j3;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j3;
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;

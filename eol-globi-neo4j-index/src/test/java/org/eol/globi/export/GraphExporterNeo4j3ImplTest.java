@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.Neo4jIndexType;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -26,11 +25,6 @@ public class GraphExporterNeo4j3ImplTest extends GraphDBNeo4jTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    @Override
-    protected Neo4jIndexType getSchemaType() {
-        return Neo4jIndexType.schema;
-    }
 
 
     @Test

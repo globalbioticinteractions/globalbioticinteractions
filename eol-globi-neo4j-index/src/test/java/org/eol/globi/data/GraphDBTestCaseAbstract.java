@@ -47,9 +47,7 @@ import static org.junit.Assert.assertNotNull;
 
 public abstract class GraphDBTestCaseAbstract {
 
-    private GraphServiceFactory graphFactory;
-
-    protected NodeFactory nodeFactory;
+    protected NodeFactoryNeo4j nodeFactory;
 
     protected TaxonIndex taxonIndex;
 
@@ -69,10 +67,6 @@ public abstract class GraphDBTestCaseAbstract {
         if (neo4j != null) {
             neo4j.close();
         }
-    }
-
-    protected Neo4jIndexType getSchemaType() {
-        return Neo4jIndexType.noSchema;
     }
 
 
@@ -181,7 +175,7 @@ public abstract class GraphDBTestCaseAbstract {
     }
 
 
-    abstract protected NodeFactory createNodeFactory();
+    abstract protected NodeFactoryNeo4j createNodeFactory();
 
     abstract protected TaxonIndex createTaxonIndex(PropertyEnricher enricher);
 
