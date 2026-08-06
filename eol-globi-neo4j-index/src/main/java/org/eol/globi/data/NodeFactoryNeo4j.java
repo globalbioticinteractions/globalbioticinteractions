@@ -257,12 +257,12 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return externalId;
     }
 
-    protected abstract Node createDatasetNode();
+    protected abstract Node createDatasetNode(Transaction tx);
 
     protected abstract void indexDatasetNode(Dataset dataset, Node datasetNode) throws NodeFactoryException;
 
-    Node createDatasetNode(Dataset dataset) throws NodeFactoryException {
-        Node datasetNode = createDatasetNode();
+    Node createDatasetNode(Transaction tx, Dataset dataset) throws NodeFactoryException {
+        Node datasetNode = createDatasetNode(tx);
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
         if (archiveURI != null) {

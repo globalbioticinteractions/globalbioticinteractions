@@ -91,12 +91,8 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Node createDatasetNode() {
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Node node = transaction.createNode(NodeLabel.Dataset);
-            transaction.commit();
-            return node;
-        }
+    protected Node createDatasetNode(Transaction tx) {
+        return tx.createNode(NodeLabel.Dataset);
     }
 
     @Override
@@ -189,7 +185,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
                                                  NodeLabel label,
                                                  String propertyName) {
-        try(Transaction transaction = graphDb.beginTx()) {
+        try (Transaction transaction = graphDb.beginTx()) {
             if (!transaction
                     .schema()
                     .getConstraints(label)
@@ -210,7 +206,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
                                             NodeLabel label,
                                             String propertyName) {
 
-        try(Transaction transaction = graphDb.beginTx()) {
+        try (Transaction transaction = graphDb.beginTx()) {
             Iterable<IndexDefinition> indexes = transaction
                     .schema()
                     .getIndexes(label);
@@ -242,14 +238,14 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         Dataset datasetCreated = null;
         if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
 
-            try(Transaction transaction = getGraphDb().beginTx()) {
+            try (Transaction transaction = getGraphDb().beginTx()) {
                 Node node = transaction
                         .findNode(NodeLabel.Dataset,
                                 DatasetConstant.NAMESPACE,
                                 originatingDataset.getNamespace());
 
                 Node datasetNode = node == null
-                        ? createDatasetNode(originatingDataset)
+                        ? createDatasetNode(transaction, originatingDataset)
                         : node;
 
                 datasetCreated = new DatasetNode(datasetNode);
@@ -264,7 +260,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         Node externalIdNode = null;
         if (StringUtils.isNotBlank(externalId)) {
 
-            try(Transaction transaction = getGraphDb().beginTx()) {
+            try (Transaction transaction = getGraphDb().beginTx()) {
                 Node node = transaction.findNode(NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
                 externalIdNode = node == null
                         ? createExternalId(externalId)
@@ -278,7 +274,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public Node createEnvironmentNode() {
-        try(Transaction transaction = getGraphDb().beginTx()) {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             Node node = transaction.createNode(NodeLabel.Environment);
             transaction.commit();
             return node;
