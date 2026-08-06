@@ -171,7 +171,7 @@ public abstract class GraphDBTestCaseAbstract {
 
     protected void resolveNames() {
         new NameResolver(
-                new GraphServiceFactoryProxy(getGraphDb()),
+                getGraphFactory(),
                 getNodeIdCollector(),
                 getTaxonIndex()
         ).index();
