@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,7 +56,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
+public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     private static final DOI SOME_DOI = new DOI("some", "doi");
 
@@ -259,13 +260,13 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     }
 
     @Test
-    public void getOrCreateDataset() throws NodeFactoryException, IOException {
-        assertDataset(DatasetConstant.CITATION, UUID.randomUUID().toString());
+    public void getOrCreateDataset() throws NodeFactoryException {
+        assertDataset2(DatasetConstant.CITATION, UUID.randomUUID().toString());
     }
 
     @Test
-    public void getOrCreateDatasetDWCABib() throws NodeFactoryException, IOException {
-        assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, UUID.randomUUID().toString());
+    public void getOrCreateDatasetDWCABib() throws NodeFactoryException {
+        assertDataset2(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, UUID.randomUUID().toString());
     }
 
     protected void assertDataset(String citationKey, String namespace) throws NodeFactoryException {
@@ -278,7 +279,6 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         dataset.setConfig(objectNode);
 
         Dataset origDataset = getNodeFactory().getOrCreateDataset(dataset);
-
 
         assertThat(origDataset, is(notNullValue()));
         assertThat(origDataset.getArchiveURI().toString(), is("some:uri"));
@@ -610,5 +610,34 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
                 getGraphDb()
         );
     }
+
+    @Override
+    protected NodeFactoryNeo4j createNodeFactory() {
+        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(getGraphDb(), getCacheDir());
+        nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
+        nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
+        return nodeFactoryNeo4j;
+    }
+
+    protected void assertDataset2(String citationKey, String namespace) throws NodeFactoryException {
+        try (Transaction transaction1 = getGraphDb()
+                .beginTx()) {
+            assertFalse(transaction1.execute("MATCH (ds:Dataset { namespace: '" + namespace + "' }) RETURN ds")
+                    .hasNext());
+            transaction1.commit();
+        }
+
+        assertDataset(citationKey, namespace);
+
+        try (Transaction transaction = getGraphDb()
+                .beginTx()) {
+            assertTrue(transaction
+                    .execute("MATCH (ds:Dataset) WHERE ds.namespace = '" + namespace + "' return ds")
+                    .hasNext());
+            transaction.commit();
+        }
+
+    }
+
 
 }
