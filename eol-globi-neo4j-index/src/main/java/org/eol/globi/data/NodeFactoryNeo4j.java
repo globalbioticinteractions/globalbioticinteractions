@@ -263,8 +263,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         createExternalIdRelationIfExists(node, externalId, RelTypes.HAS_EXTERNAL_ID);
 
-        Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-        if (dataset instanceof DatasetNode) {
+        DatasetNode dataset = getOrCreateDatasetNode(transaction, study.getOriginatingDataset());
+        if (dataset != null) {
             studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
         }
 
@@ -505,7 +505,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     @Override
     public Dataset getOrCreateDataset(Dataset originatingDataset) throws NodeFactoryException {
-        return getOrCreateDatasetNoTx(originatingDataset);
+        return getOrCreateDatasetNode(getGraphDb().beginTx(), originatingDataset);
     }
 
     @Override
@@ -517,7 +517,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             StudyNode studyNode = getOrCreateStudyNode(transaction, study);
             interactionNode = new InteractionNode(node);
             interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
-            Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
+            Dataset dataset = getOrCreateDatasetNode(getGraphDb().beginTx(), study.getOriginatingDataset());
             if (dataset instanceof DatasetNode) {
                 interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
             }
@@ -527,7 +527,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException;
 
-    abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) throws NodeFactoryException;
+    abstract protected DatasetNode getOrCreateDatasetNode(Transaction tx, Dataset originatingDataset) throws NodeFactoryException;
 
     protected void validate(Location location) throws NodeFactoryException {
         if (location.getLatitude() != null

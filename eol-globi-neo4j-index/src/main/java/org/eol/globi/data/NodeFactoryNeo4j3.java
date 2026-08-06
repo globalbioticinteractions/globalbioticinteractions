@@ -211,23 +211,19 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) throws NodeFactoryException {
-        Dataset datasetCreated = null;
+    protected DatasetNode getOrCreateDatasetNode(Transaction tx, Dataset originatingDataset) throws NodeFactoryException {
+        DatasetNode datasetCreated = null;
         if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
+            Node node = tx
+                    .findNode(NodeLabel.Dataset,
+                            DatasetConstant.NAMESPACE,
+                            originatingDataset.getNamespace());
 
-            try (Transaction transaction = getGraphDb().beginTx()) {
-                Node node = transaction
-                        .findNode(NodeLabel.Dataset,
-                                DatasetConstant.NAMESPACE,
-                                originatingDataset.getNamespace());
+            Node datasetNode = node == null
+                    ? createDatasetNode(tx, originatingDataset)
+                    : node;
 
-                Node datasetNode = node == null
-                        ? createDatasetNode(transaction, originatingDataset)
-                        : node;
-
-                datasetCreated = new DatasetNode(datasetNode);
-                transaction.commit();
-            }
+            datasetCreated = new DatasetNode(datasetNode);
         }
         return datasetCreated;
     }
