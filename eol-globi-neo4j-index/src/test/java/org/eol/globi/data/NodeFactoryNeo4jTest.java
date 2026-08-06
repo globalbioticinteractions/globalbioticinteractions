@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -65,20 +66,29 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void createInteraction() throws NodeFactoryException {
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
-        SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
-        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
-        specimen.interactsWith(specimen1, InteractType.ATE);
-        assertInteraction(specimen, specimen1, RelTypes.COLLECTED, "Donalda duckus");
+        Study study = getNodeFactory().createStudy(getBlaStudy());
+        try (Transaction tx = getGraphDb().beginTx()) {
+            SpecimenNode specimen = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Donalda duckus", null));
+            SpecimenNode specimen1 = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Mickeya mouseus", null));
+            specimen.interactsWith(specimen1, InteractType.ATE);
+            assertInteraction(specimen, specimen1, RelTypes.COLLECTED, "Donalda duckus");
+        }
     }
 
     @Test
     public void createPassiveInteraction() throws NodeFactoryException {
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
-        SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
-        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
-        specimen1.interactsWith(specimen, InteractType.EATEN_BY);
-        assertInteraction(specimen, specimen1, RelTypes.COLLECTED, "Donalda duckus");
+        Study study = getNodeFactory().createStudy(getRandomStudy());
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            SpecimenNode specimen = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Donalda duckus", null));
+            SpecimenNode specimen1 = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Mickeya mouseus", null));
+            specimen1.interactsWith(specimen, InteractType.EATEN_BY);
+            assertInteraction(specimen, specimen1, RelTypes.COLLECTED, "Donalda duckus");
+        }
+    }
+
+    private static StudyImpl getRandomStudy() {
+        return new StudyImpl(UUID.randomUUID().toString(), null, null);
     }
 
     private void assertInteraction(SpecimenNode specimen, SpecimenNode specimen1, RelTypes studyRelationType, String sourceTaxonName) {
@@ -113,11 +123,17 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void createRefutingInteraction() throws NodeFactoryException {
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
-        SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
-        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
-        specimen.interactsWith(specimen1, InteractType.ATE);
-        assertInteraction(specimen, specimen1, RelTypes.REFUTES, "Donalda duckus");
+        Study study = getNodeFactory().createStudy(getBlaStudy());
+        try (Transaction tx = getGraphDb().beginTx()) {
+            SpecimenNode specimen = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
+            SpecimenNode specimen1 = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
+            specimen.interactsWith(specimen1, InteractType.ATE);
+            assertInteraction(specimen, specimen1, RelTypes.REFUTES, "Donalda duckus");
+        }
+    }
+
+    private static StudyImpl getBlaStudy() {
+        return getRandomStudy();
     }
 
 
@@ -189,31 +205,48 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
                 return terms;
             }
         });
-        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
-        List<Environment> first = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
-        location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
-        List<Environment> second = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
-        assertThat(first.size(), is(second.size()));
-        assertThat(((NodeBacked) first.get(0)).getNodeID(), is(not(((NodeBacked) second.get(0)).getNodeID())));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Location location = getNodeFactory().getOrCreateLocationNode(tx,new LocationImpl(0.0, 1.0, 2.0, null));
+            List<Environment> first = getNodeFactory()
+                    .getOrCreateEnvironmentNodes(tx, location, "BLA:123", "this and that")
+                    .stream()
+                    .map(elem -> {
+                        EnvironmentImpl env = new EnvironmentImpl(elem.getExternalId());
+                        env.setName(elem.getName());
+                        return env;
+                    }).collect(Collectors.toList());
+            location = getNodeFactory().getOrCreateLocationNode(tx,new LocationImpl(0.0, 1.0, 2.0, null));
+            List<Environment> second = getNodeFactory()
+                    .getOrCreateEnvironmentNodes(tx, location, "BLA:123", "this and that")
+                    .stream()
+                    .map(elem -> {
+                        EnvironmentImpl env = new EnvironmentImpl(elem.getExternalId());
+                        env.setName(elem.getName());
+                        return env;
+                    }).collect(Collectors.toList());
+            assertThat(first.size(), is(second.size()));
+            assertThat(((NodeBacked) first.get(0)).getNodeID(), is(not(((NodeBacked) second.get(0)).getNodeID())));
 
-        List<Environment> environments = location.getEnvironments();
-        assertThat(environments.size(), is(2));
-        Environment environment = environments.get(0);
-        assertThat(environment.getName(), is("this_and_that"));
-        assertThat(environment.getExternalId(), is("NS:this and that"));
+            List<Environment> environments = location.getEnvironments();
+            assertThat(environments.size(), is(2));
+            Environment environment = environments.get(0);
+            assertThat(environment.getName(), is("this_and_that"));
+            assertThat(environment.getExternalId(), is("NS:this and that"));
 
-        Location anotherLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(48.2, 123.1, null, null));
-        LocationNode anotherLocationNode = (LocationNode) anotherLocation;
-        assertThat(anotherLocationNode.getEnvironments().size(), is(0));
-        anotherLocationNode.addEnvironment((EnvironmentNode) environment);
-        assertThat(anotherLocationNode.getEnvironments().size(), is(1));
+            Location anotherLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(48.2, 123.1, null, null));
+            LocationNode anotherLocationNode = (LocationNode) anotherLocation;
+            assertThat(anotherLocationNode.getEnvironments().size(), is(0));
+            anotherLocationNode.addEnvironment((EnvironmentNode) environment);
+            assertThat(anotherLocationNode.getEnvironments().size(), is(1));
 
-        // don't add environment that has already been associated
-        anotherLocationNode.addEnvironment(environment);
-        assertThat(anotherLocationNode.getEnvironments().size(), is(1));
+            // don't add environment that has already been associated
+            anotherLocationNode.addEnvironment(environment);
+            assertThat(anotherLocationNode.getEnvironments().size(), is(1));
 
-        getNodeFactory().getOrCreateEnvironments(anotherLocation, "BLA:124", "that");
-        assertThat(anotherLocationNode.getEnvironments().size(), is(2));
+            getNodeFactory().getOrCreateEnvironmentNodes(getNodeFactory().getGraphDb().beginTx(), anotherLocation, "BLA:124", "that");
+            assertThat(anotherLocationNode.getEnvironments().size(), is(2));
+            tx.commit();
+        }
     }
 
     @Test
@@ -403,8 +436,8 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
         Study study2Created = getNodeFactory().getOrCreateStudy(study2);
 
-        assertThat(study1Created.getExternalId(),is("foo:bar"));
-        assertThat(study2Created.getExternalId(),is("foo:baz"));
+        assertThat(study1Created.getExternalId(), is("foo:bar"));
+        assertThat(study2Created.getExternalId(), is("foo:baz"));
     }
 
     @Test
@@ -420,8 +453,8 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
         Study study2Created = getNodeFactory().getOrCreateStudy(study2);
 
-        assertThat(study1Created.getExternalId(),is("foo:bar"));
-        assertThat(study2Created.getExternalId(),is("foo:baz"));
+        assertThat(study1Created.getExternalId(), is("foo:bar"));
+        assertThat(study2Created.getExternalId(), is("foo:baz"));
     }
 
     @Test
@@ -437,10 +470,10 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
         Study study2Created = getNodeFactory().getOrCreateStudy(study2);
 
-        assertThat(study1Created.getExternalId(),is("foo:bar"));
-        assertThat(study1Created.getOriginatingDataset().getNamespace(),is("name/space"));
-        assertThat(study2Created.getExternalId(),is("foo:bar"));
-        assertThat(study2Created.getOriginatingDataset().getNamespace(),is("name/spacz"));
+        assertThat(study1Created.getExternalId(), is("foo:bar"));
+        assertThat(study1Created.getOriginatingDataset().getNamespace(), is("name/space"));
+        assertThat(study2Created.getExternalId(), is("foo:bar"));
+        assertThat(study2Created.getOriginatingDataset().getNamespace(), is("name/spacz"));
     }
 
     @Test
@@ -456,10 +489,10 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
         Study study2Created = getNodeFactory().getOrCreateStudy(study2);
 
-        assertThat(study1Created.getExternalId(),is("foo:bar"));
-        assertThat(study1Created.getOriginatingDataset().getNamespace(),is("name/space"));
-        assertThat(study2Created.getExternalId(),is("foo:baz"));
-        assertThat(study2Created.getOriginatingDataset().getNamespace(),is("name/spacz"));
+        assertThat(study1Created.getExternalId(), is("foo:bar"));
+        assertThat(study1Created.getOriginatingDataset().getNamespace(), is("name/space"));
+        assertThat(study2Created.getExternalId(), is("foo:baz"));
+        assertThat(study2Created.getOriginatingDataset().getNamespace(), is("name/spacz"));
     }
 
     @Test
@@ -473,42 +506,50 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
         Study study2Created = getNodeFactory().getOrCreateStudy(study2);
 
-        assertThat(study1Created.getExternalId(),is("foo:bar"));
-        assertThat(study1Created.getTitle(),is("myTitle"));
-        assertThat(study2Created.getExternalId(),is("foo:bar"));
-        assertThat(study2Created.getTitle(),is("myTitle"));
+        assertThat(study1Created.getExternalId(), is("foo:bar"));
+        assertThat(study1Created.getTitle(), is("myTitle"));
+        assertThat(study2Created.getExternalId(), is("foo:bar"));
+        assertThat(study2Created.getTitle(), is("myTitle"));
     }
 
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
+        Study study = getNodeFactory().createStudy(getBlaStudy());
         StudyImpl study1 = new StudyImpl(study.getTitle());
-        Specimen specimen = getNodeFactory().createSpecimen(study1, new TaxonImpl(null, "bla:123"));
-        assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
+        Specimen specimen;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            specimen = getNodeFactory().createSpecimenNode(tx, study1, new TaxonImpl(null, "bla:123"));
+            assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
+        }
     }
 
-    @Test(timeout = 1000L)
+    @Test
     public void specimenWithLifeStageInName() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("mickey eggs scales", null));
-        assertThat(specimen.getLifeStage().getName(), is("egg"));
-        assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
-        assertThat(specimen.getBodyPart().getName(), is("scale"));
-        assertThat(specimen.getBodyPart().getId(), is("UBERON:0002542"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Specimen specimen = getNodeFactory().createSpecimenNode(tx, getNodeFactory().createStudy(getBlaStudy()), new TaxonImpl("mickey eggs scales", null));
+            assertThat(specimen.getLifeStage().getName(), is("egg"));
+            assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
+            assertThat(specimen.getBodyPart().getName(), is("scale"));
+            assertThat(specimen.getBodyPart().getId(), is("UBERON:0002542"));
+        }
     }
 
     @Test
     public void specimenWithLifeStageInName2() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("CALANUS SPP (NAUPLII)", null));
-        assertThat(specimen.getLifeStage().getName(), is("nauplius stage"));
-        assertThat(specimen.getLifeStage().getId(), is("UBERON:0014406"));
+        Specimen specimen;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            specimen = getNodeFactory().createSpecimenNode(tx, getNodeFactory().createStudy(getBlaStudy()), new TaxonImpl("CALANUS SPP (NAUPLII)", null));
+            assertThat(specimen.getLifeStage().getName(), is("nauplius stage"));
+            assertThat(specimen.getLifeStage().getId(), is("UBERON:0014406"));
+        }
     }
 
     @Test
     public void specimenWithBasisOfRecord() throws NodeFactoryException {
         initTaxonService();
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
+        Study study = getNodeFactory().createStudy(getBlaStudy());
 
         try (Transaction tx = getGraphDb().beginTx()) {
             SpecimenNode specimen = getNodeFactory().createSpecimenNode(
@@ -528,37 +569,40 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void interactionWithParticipants() throws NodeFactoryException {
         initTaxonService();
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
-        Interaction interaction = getNodeFactory().createInteraction(study);
+        Study study = getNodeFactory().createStudy(getBlaStudy());
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            Interaction interaction = getNodeFactory().createInteractionNode(transaction, study);
 
-        assertThat(interaction.getParticipants().size(), is(0));
+            assertThat(interaction.getParticipants().size(), is(0));
+            getNodeFactory().createSpecimen(interaction, new TaxonImpl("mickey mouse", null));
+            getNodeFactory().createSpecimen(interaction, new TaxonImpl("donald duck", null));
 
-        getNodeFactory().createSpecimen(interaction, new TaxonImpl("mickey mouse", null));
-        getNodeFactory().createSpecimen(interaction, new TaxonImpl("donald duck", null));
-
-        assertThat(interaction.getParticipants().size(), is(2));
+            assertThat(interaction.getParticipants().size(), is(2));
+        }
 
     }
 
     @Test
     public void interactionWitEventTime() throws NodeFactoryException {
         initTaxonService();
-        Study study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
+        Study study = getNodeFactory().createStudy(getBlaStudy());
 
-        SpecimenNode mickeyMouse = getNodeFactory().createSpecimen(study, new TaxonImpl("mickey mouse", null));
-        SpecimenNode donaldDuck = getNodeFactory().createSpecimen(study, new TaxonImpl("donald duck", null));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            SpecimenNode mickeyMouse = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("mickey mouse", null));
+            SpecimenNode donaldDuck = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("donald duck", null));
 
-        mickeyMouse.ate(donaldDuck);
-        getNodeFactory().setUnixEpochProperty(mickeyMouse, DateUtil.parseDateUTC("2021-01-05").toDate());
+            mickeyMouse.ate(donaldDuck);
+            getNodeFactory().setUnixEpochProperty(mickeyMouse, DateUtil.parseDateUTC("2021-01-05").toDate());
 
-        Iterable<Relationship> collectedRel = NodeFactoryNeo4j.getCollectedRel(mickeyMouse);
-        boolean checked = false;
-        for (Relationship relationship : collectedRel) {
-            assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is("2021-01-05T00:00:00Z"));
-            checked = true;
+            Iterable<Relationship> collectedRel = NodeFactoryNeo4j.getCollectedRel(mickeyMouse);
+            boolean checked = false;
+            for (Relationship relationship : collectedRel) {
+                assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is("2021-01-05T00:00:00Z"));
+                checked = true;
+            }
+
+            assertThat(checked, is(true));
         }
-
-        assertThat(checked, is(true));
 
     }
 

@@ -20,7 +20,6 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractionListenerIndexing;
 import org.eol.globi.util.InteractionListenerResolving;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
