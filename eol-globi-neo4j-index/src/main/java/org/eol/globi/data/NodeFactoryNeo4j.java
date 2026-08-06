@@ -37,6 +37,7 @@ import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.joda.time.DateTime;
 import org.neo4j.graphdb.Direction;
@@ -505,7 +506,13 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     @Override
     public Dataset getOrCreateDataset(Dataset originatingDataset) throws NodeFactoryException {
-        return getOrCreateDatasetNode(getGraphDb().beginTx(), originatingDataset);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            DatasetNode orCreateDatasetNode = getOrCreateDatasetNode(tx, originatingDataset);
+            DatasetImpl dataset = new DatasetImpl(orCreateDatasetNode.getNamespace(), null, orCreateDatasetNode.getArchiveURI());
+            dataset.setConfig(orCreateDatasetNode.getConfig());
+            tx.commit();
+            return dataset;
+        }
     }
 
     @Override

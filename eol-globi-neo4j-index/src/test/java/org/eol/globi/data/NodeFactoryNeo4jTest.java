@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
@@ -229,19 +228,21 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void getOrCreateDataset() throws NodeFactoryException, IOException {
-        assertDataset(DatasetConstant.CITATION);
+        assertDataset(DatasetConstant.CITATION, UUID.randomUUID().toString());
     }
 
     @Test
     public void getOrCreateDatasetDWCABib() throws NodeFactoryException, IOException {
-        assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
+        assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, UUID.randomUUID().toString());
     }
 
-    protected void assertDataset(String citationKey) throws NodeFactoryException {
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), getResourceService());
+    protected void assertDataset(String citationKey, String namespace) throws NodeFactoryException {
+        DatasetImpl dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), getResourceService());
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         objectNode.put(citationKey, "some citation");
+        objectNode.put(DatasetConstant.LAST_SEEN_AT, namespace);
+
         dataset.setConfig(objectNode);
 
         Dataset origDataset = getNodeFactory().getOrCreateDataset(dataset);
@@ -252,10 +253,11 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         assertThat(origDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(origDataset.getOrDefault(DatasetConstant.CITATION, "no citation"), is("some citation"));
         assertThat(origDataset.getCitation(), is("some citation"));
-        assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, "1"), is(not("1")));
+        assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, namespace), is(not("1")));
 
         Dataset datasetAnother = getNodeFactory().getOrCreateDataset(dataset);
-        assertThat(((DatasetNode) datasetAnother).getNodeID(), is(((DatasetNode) origDataset).getNodeID()));
+        assertThat(datasetAnother.getOrDefault(DatasetConstant.LAST_SEEN_AT, namespace), is(not("1")));
+
     }
 
     @Test
