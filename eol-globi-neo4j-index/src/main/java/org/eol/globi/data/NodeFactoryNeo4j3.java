@@ -106,12 +106,8 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Node createExternalIdNode() {
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Node node = transaction.createNode(NodeLabel.ExternalId);
-            transaction.commit();
-            return node;
-        }
+    protected Node createExternalIdNode(Transaction transaction) {
+        return transaction.createNode(NodeLabel.ExternalId);
     }
 
     @Override
@@ -263,7 +259,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
             try (Transaction transaction = getGraphDb().beginTx()) {
                 Node node = transaction.findNode(NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
                 externalIdNode = node == null
-                        ? createExternalId(externalId)
+                        ? createExternalId(transaction, externalId)
                         : node;
                 transaction.commit();
             }

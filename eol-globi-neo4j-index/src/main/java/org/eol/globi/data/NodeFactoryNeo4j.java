@@ -296,8 +296,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return datasetNode;
     }
 
-    Node createExternalId(String externalId) throws NodeFactoryException {
-        Node externalIdNode = createExternalIdNode();
+    Node createExternalId(Transaction transaction, String externalId) throws NodeFactoryException {
+        Node externalIdNode = createExternalIdNode(transaction);
         externalIdNode.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         indexExternalIdNode(externalId, externalIdNode);
         return externalIdNode;
@@ -306,7 +306,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract void indexExternalIdNode(String externalId, Node externalIdNode) throws NodeFactoryException;
 
-    protected abstract Node createExternalIdNode();
+    protected abstract Node createExternalIdNode(Transaction transaction);
 
     @Override
     public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
