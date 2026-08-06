@@ -4,13 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -47,7 +45,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,6 +52,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
@@ -283,7 +281,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
         assertThat(origDataset, is(notNullValue()));
         assertThat(origDataset.getArchiveURI().toString(), is("some:uri"));
         assertThat(origDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
-        assertThat(origDataset.getOrDefault(DatasetConstant.CITATION, "no citation"), is("some citation"));
+        assertThat(origDataset.getOrDefault(citationKey, "no citation"), is("some citation"));
         assertThat(origDataset.getCitation(), is("some citation"));
         assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, namespace), is(not("1")));
 
@@ -622,8 +620,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     protected void assertDataset2(String citationKey, String namespace) throws NodeFactoryException {
         try (Transaction transaction1 = getGraphDb()
                 .beginTx()) {
-            assertFalse(transaction1.execute("MATCH (ds:Dataset { namespace: '" + namespace + "' }) RETURN ds")
-                    .hasNext());
+            assertNull(transaction1.findNode(NodeLabel.Dataset, "namespace", namespace));
             transaction1.commit();
         }
 
@@ -631,9 +628,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
         try (Transaction transaction = getGraphDb()
                 .beginTx()) {
-            assertTrue(transaction
-                    .execute("MATCH (ds:Dataset) WHERE ds.namespace = '" + namespace + "' return ds")
-                    .hasNext());
+            assertNotNull(transaction.findNode(NodeLabel.Dataset, "namespace", namespace));
             transaction.commit();
         }
 
