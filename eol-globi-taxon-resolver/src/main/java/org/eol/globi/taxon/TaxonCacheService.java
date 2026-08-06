@@ -5,7 +5,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.MMapDirectory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -182,7 +181,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private void buildIndex(Path luceneDir) throws IOException {
         Path tmpLuceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene" + UUID.randomUUID());
         CacheServiceUtil.createCacheDir(tmpLuceneDir.toFile());
-        FSDirectory indexDir = new MMapDirectory(tmpLuceneDir);
+        MMapDirectory indexDir = new MMapDirectory(tmpLuceneDir);
         TaxonLookupBuilder taxonLookupService = new TaxonLookupBuilder(indexDir) {{
             start();
         }};
