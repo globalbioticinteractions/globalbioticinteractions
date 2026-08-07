@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,7 +55,13 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     public final void createTaxonExternalIdIndex() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl(null, "foo:123");
         taxon1.setPath(null);
+
+        getNodeFactory().shouldStartNextBatch();
         Taxon taxon = taxonService.getOrCreateTaxon(taxon1);
+        getNodeFactory().shouldStartNextBatch();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
     }

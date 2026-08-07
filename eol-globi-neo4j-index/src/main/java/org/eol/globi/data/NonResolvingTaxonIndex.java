@@ -12,12 +12,15 @@ public class NonResolvingTaxonIndex extends NonResolvingTaxonIndexNoTx {
     }
 
     @Override
-    public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
-        try (Transaction tx = getGraphDbService().beginTx()) {
-            Taxon orCreateTaxon = super.getOrCreateTaxon(taxon);
-            tx.commit();
-            return orCreateTaxon;
+    public Taxon getOrCreateTaxon( Taxon taxon) throws NodeFactoryException {
+        Taxon created = null;
+        if (taxon != null)  {
+            try (Transaction tx = getGraphDbService().beginTx()) {
+                created = super.getOrCreateTaxon(taxon);
+                tx.commit();
+            }
         }
+        return created;
     }
 
     @Override

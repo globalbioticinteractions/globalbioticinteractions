@@ -1,6 +1,8 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -21,16 +23,21 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
 
     @Override
     public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
-        Taxon taxonFound = findTaxonById(taxon.getExternalId());
+        Taxon taxonFound = taxon == null || StringUtils.isBlank(taxon.getExternalId())
+                ? null
+                : findTaxonById(taxon.getExternalId());
 
-        if (taxonFound == null) {
+        if (taxonFound == null
+                && taxon != null
+                && !StringUtils.isBlank(taxon.getName())) {
             taxonFound = findTaxonByName(taxon.getName());
         }
 
         if (taxonFound == null) {
             try(Transaction transaction = getGraphDbService().beginTx()) {
-                taxonFound = new TaxonNode(transaction.createNode());
+                taxonFound = new TaxonNode(transaction.createNode(NodeLabel.Taxon));
                 TaxonUtil.copy(taxon, taxonFound);
+                transaction.commit();
             }
         }
         return taxonFound;
