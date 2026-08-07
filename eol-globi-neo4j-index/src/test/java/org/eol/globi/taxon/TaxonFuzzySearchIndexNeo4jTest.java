@@ -2,8 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
+import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
@@ -19,7 +18,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
+public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void fuzzyMatch() throws StudyImporterException {
@@ -89,7 +88,7 @@ public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
     }
 
     private void assertQueryHits(String query, long expectedNumberOfHits) throws StudyImporterException {
-        NonResolvingTaxonIndexNeo4j3 taxonService = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
+        NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
@@ -104,13 +103,13 @@ public class TaxonFuzzySearchIndexNeo4j2Test extends GraphDBNeo4jTestCase {
     }
 
     private TaxonFuzzySearchIndex getFuzzySearch() {
-        return new TaxonFuzzySearchIndexNeo4j3(getGraphDb());
+        return new TaxonFuzzySearchIndexNeo4j(getGraphDb());
     }
 
     public static Taxon setTaxonProps(Taxon taxon) {
         taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
         taxon.setExternalId("anExternalId");
-        taxon.setCommonNames(ResolvingTaxonIndexNoTxNeo4j2Test.EXPECTED_COMMON_NAMES);
+        taxon.setCommonNames(ResolvingTaxonIndexNoTxTest.EXPECTED_COMMON_NAMES);
         taxon.setName("this is the actual name");
         return taxon;
     }

@@ -37,7 +37,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
+public class IndexInteractionsTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void indexInteractions() throws StudyImporterException {
@@ -107,9 +107,8 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
 
     }
 
-
     protected IndexerNeo4j getInteractionIndexer() {
-        return null;
-        //return new IndexInteractionsNeo4j2(new GraphServiceFactoryProxy(getGraphDb()));
+        return new IndexInteractionsNeo4j(new GraphServiceFactoryProxy(getGraphDb()));
     }
+
 }

@@ -2,7 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j3;
+import org.eol.globi.taxon.ResolvingTaxonIndexNoTx;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
@@ -38,7 +38,7 @@ public class CmdInterpretTaxa extends CmdNeo4J {
             new IndexerTaxa(
                     taxonCacheService,
                     getGraphServiceFactory(),
-                    new ResolvingTaxonIndexNoTxNeo4j3(taxonCacheService, getGraphServiceFactory().getGraphService()),
+                    new ResolvingTaxonIndexNoTx(taxonCacheService, getGraphServiceFactory().getGraphService()),
                     new NodeIdCollectorNeo4j3()
             ).index();
         } catch (StudyImporterException e) {

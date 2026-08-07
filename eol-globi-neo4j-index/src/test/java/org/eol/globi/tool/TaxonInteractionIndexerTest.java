@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
-public class TaxonInteractionIndexerNeo4j2Test extends GraphDBNeo4jTestCase {
+public class TaxonInteractionIndexerTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void buildTaxonInterIndex() throws StudyImporterException {

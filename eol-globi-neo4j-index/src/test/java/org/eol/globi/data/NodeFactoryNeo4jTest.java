@@ -604,7 +604,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     }
 
     private void initTaxonService() {
-        this.taxonIndex = new NonResolvingTaxonIndexNeo4j3(
+        this.taxonIndex = new NonResolvingTaxonIndex(
                 getGraphDb()
         );
     }

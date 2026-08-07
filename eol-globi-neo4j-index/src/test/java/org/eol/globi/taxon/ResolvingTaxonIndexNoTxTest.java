@@ -34,9 +34,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
+public class ResolvingTaxonIndexNoTxTest extends GraphDBNeo4jTestCase {
 
-    private NonResolvingTaxonIndexNoTxNeo4j3 taxonService;
+    private NonResolvingTaxonIndexNoTx taxonService;
 
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 
@@ -56,7 +56,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public void ensureThatEnrichedPropertiesAreLinked() throws StudyImporterException {
-        this.taxonService = new ResolvingTaxonIndexNeo4j3(new PropertyEnricher() {
+        this.taxonService = new ResolvingTaxonIndex(new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return enrichAllMatches(properties).get(0);
@@ -138,7 +138,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public void noMatch() throws NodeFactoryException {
-        this.taxonService = new ResolvingTaxonIndexNeo4j3(new PropertyEnricher() {
+        this.taxonService = new ResolvingTaxonIndex(new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return properties;
@@ -196,7 +196,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
             }
         };
-        ResolvingTaxonIndexNeo4j3 taxonService = createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         taxonService.setEnricher(enricher);
         this.taxonService = taxonService;
         Taxon taxon = this.taxonService.getOrCreateTaxon(new TaxonImpl("bla bla bla"));
@@ -223,14 +223,14 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
         assertNotNull(unresolvedTaxon);
         assertFalse(TaxonUtil.isResolved(unresolvedTaxon));
 
-        final ResolvingTaxonIndexNeo4j3 indexResolvedOnly = getIndex();
+        final ResolvingTaxonIndex indexResolvedOnly = getIndex();
         indexResolvedOnly.setIndexResolvedTaxaOnly(true);
         assertNull(indexResolvedOnly.getOrCreateTaxon(new TaxonImpl("no resolving either", null)));
     }
 
     @Test
     public void createTaxonWithExplicitRanks() throws NodeFactoryException {
-        ((ResolvingTaxonIndexNeo4j3) this.taxonService).setEnricher(new PropertyEnricherSingle() {
+        ((ResolvingTaxonIndex) this.taxonService).setEnricher(new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return properties;
@@ -271,8 +271,8 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 //        return NonResolvingTaxonIndexNeo4jTest.propertyOf(taxon, kingdomName);
     }
 
-    public ResolvingTaxonIndexNeo4j3 getIndex() {
-        return new ResolvingTaxonIndexNeo4j3(new PropertyEnricherSingle() {
+    public ResolvingTaxonIndex getIndex() {
+        return new ResolvingTaxonIndex(new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return new TreeMap<>(properties);
@@ -285,8 +285,8 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
         }, getGraphDb());
     }
 
-    private static ResolvingTaxonIndexNeo4j3 createTaxonService(GraphDatabaseService graphDb) {
-        return new ResolvingTaxonIndexNeo4j3(new PropertyEnricherSingle() {
+    private static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
+        return new ResolvingTaxonIndex(new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
@@ -308,7 +308,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public final void synonymsAddedToIndexOnce() throws NodeFactoryException {
-        ResolvingTaxonIndexNeo4j3 taxonService = createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         taxonService.setEnricher(new PropertyEnricherSingle() {
             private boolean firstTime = true;
 
@@ -358,7 +358,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
     @Test
     public final void doNotMatchHomonyms() throws NodeFactoryException {
 
-        ResolvingTaxonIndexNeo4j3 taxonService = createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         taxonService.skipHomonymMatches(true);
         taxonService.setEnricher(new PropertyEnricherSingle() {
             @Override
@@ -399,7 +399,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public final void labelUnambiguousMatchesByPath() throws NodeFactoryException {
-        ResolvingTaxonIndexNeo4j3 taxonService = createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         configureAnuraHits(taxonService);
 
         TaxonImpl anura = new TaxonImpl("Anura", null);
@@ -418,7 +418,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public final void labelUnambiguousMatchesById() throws NodeFactoryException {
-        ResolvingTaxonIndexNeo4j3 taxonService = createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         configureAnuraHits(taxonService);
         this.taxonService = taxonService;
 
@@ -437,7 +437,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public final void shortName() throws NodeFactoryException {
-        ResolvingTaxonIndexNeo4j3 taxonService = createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         configureIaHits(taxonService);
         this.taxonService = taxonService;
 
@@ -459,7 +459,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
         }
     }
 
-    public void configureAnuraHits(ResolvingTaxonIndexNeo4j3 taxonService) {
+    public void configureAnuraHits(ResolvingTaxonIndex taxonService) {
         taxonService.setEnricher(new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
@@ -485,7 +485,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
         });
     }
 
-    public void configureIaHits(ResolvingTaxonIndexNeo4j3 taxonService) {
+    public void configureIaHits(ResolvingTaxonIndex taxonService) {
         taxonService.setEnricher(new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {

@@ -1,13 +1,13 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNoTxNeo4j3;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNoTx;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-public class NonResolvingTaxonIndexNeo4j3 extends NonResolvingTaxonIndexNoTxNeo4j3 {
+public class NonResolvingTaxonIndex extends NonResolvingTaxonIndexNoTx {
 
-    public NonResolvingTaxonIndexNeo4j3(GraphDatabaseService graphDbService) {
+    public NonResolvingTaxonIndex(GraphDatabaseService graphDbService) {
         super(graphDbService);
     }
 

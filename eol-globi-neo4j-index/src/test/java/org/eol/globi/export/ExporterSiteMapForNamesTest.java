@@ -4,7 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
+import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -26,7 +26,7 @@ public class ExporterSiteMapForNamesTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void writeSiteMapWithNames() throws StudyImporterException, IOException {
-        taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation 123"));
         TaxonImpl homoSapiens = new TaxonImpl("Homo sapiens", "homoSapiensId");
         homoSapiens.setPath("one two three");

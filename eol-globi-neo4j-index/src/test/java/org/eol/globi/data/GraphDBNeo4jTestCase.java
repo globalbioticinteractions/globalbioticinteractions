@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j3;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
 import org.eol.globi.util.InputStreamFactoryNoop;
@@ -42,7 +42,7 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
     }
 
     protected TaxonIndex createTaxonIndex(PropertyEnricher enricher) {
-        return new ResolvingTaxonIndexNeo4j3(enricher, getGraphDb());
+        return new ResolvingTaxonIndex(enricher, getGraphDb());
     }
 
     public GraphDatabaseService getGraphDb() {

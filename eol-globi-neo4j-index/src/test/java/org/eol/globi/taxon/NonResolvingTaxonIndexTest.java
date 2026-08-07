@@ -2,7 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
+import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -19,8 +19,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class NonResolvingTaxonIndexNeo4jTest extends GraphDBNeo4jTestCase {
-    private NonResolvingTaxonIndexNeo4j3 taxonService;
+public class NonResolvingTaxonIndexTest extends GraphDBNeo4jTestCase {
+    private NonResolvingTaxonIndex taxonService;
 
     @Before
     public void init() {
@@ -197,7 +197,7 @@ public class NonResolvingTaxonIndexNeo4jTest extends GraphDBNeo4jTestCase {
     }
 
 
-    private static NonResolvingTaxonIndexNeo4j3 createTaxonService(GraphDatabaseService graphDb) {
-        return new NonResolvingTaxonIndexNeo4j3(graphDb);
+    private static NonResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
+        return new NonResolvingTaxonIndex(graphDb);
     }
 }

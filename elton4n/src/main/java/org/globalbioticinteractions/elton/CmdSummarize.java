@@ -1,9 +1,6 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdGenerateReportNeo4j2;
-import org.eol.globi.tool.CmdIndexTaxa;
-import org.eol.globi.tool.CmdIndexTaxonStrings;
-import org.eol.globi.tool.CmdInterpretTaxa;
+import org.eol.globi.tool.CmdGenerateReport;
 import org.eol.globi.tool.CmdNeo4J;
 import picocli.CommandLine;
 
@@ -11,7 +8,7 @@ import picocli.CommandLine;
         name = "summarize",
         description = "generates summary reports for ",
         subcommands = {
-                CmdGenerateReportNeo4j2.class,
+                CmdGenerateReport.class,
         }
 )
 public class CmdSummarize extends CmdNeo4J {
@@ -20,7 +17,7 @@ public class CmdSummarize extends CmdNeo4J {
     @Override
     public void run() {
         if ("2".equals(getNeo4jVersion())) {
-            configureAndRun(new CmdGenerateReportNeo4j2());
+            configureAndRun(new CmdGenerateReport());
         }
     }
 

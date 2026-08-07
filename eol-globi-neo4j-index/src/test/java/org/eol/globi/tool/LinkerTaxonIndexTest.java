@@ -9,7 +9,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j3;
+import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
+public class LinkerTaxonIndexTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void linking() throws StudyImporterException {
@@ -56,8 +56,8 @@ public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
                 , is("Bar:123 | FOO:444"));
     }
 
-    private TaxonFuzzySearchIndexNeo4j3 getTaxonFuzzySearchIndexNeo4j2() {
-        return new TaxonFuzzySearchIndexNeo4j3(getGraphDb());
+    private TaxonFuzzySearchIndexNeo4j getTaxonFuzzySearchIndexNeo4j2() {
+        return new TaxonFuzzySearchIndexNeo4j(getGraphDb());
     }
 
     protected void assertV2() {

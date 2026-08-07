@@ -12,11 +12,11 @@ import org.neo4j.graphdb.Transaction;
 
 import java.util.NoSuchElementException;
 
-public class TaxonFuzzySearchIndexNeo4j3 implements TaxonFuzzySearchIndex {
+public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
     private final GraphDatabaseService graphDbService;
 
-    public TaxonFuzzySearchIndexNeo4j3(GraphDatabaseService graphDbService) {
+    public TaxonFuzzySearchIndexNeo4j(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
             Result execute = tx.execute("CALL db.indexes YIELD indexName");

@@ -1,13 +1,10 @@
 package org.eol.globi.tool;
 
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -15,17 +12,13 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
-public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
+public class CmdGenerateReportTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException, IOException {
@@ -193,8 +186,8 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
         }
     }
 
-    private CmdGenerateReportNeo4j2 getCmdGenerateReport() throws IOException {
-        CmdGenerateReportNeo4j2 cmdGenerateReport = new CmdGenerateReportNeo4j2();
+    private CmdGenerateReport getCmdGenerateReport() throws IOException {
+        CmdGenerateReport cmdGenerateReport = new CmdGenerateReport();
         final File cacheDir2 = folder.newFolder();
         cmdGenerateReport.setCacheDir(cacheDir2.getAbsolutePath());
         cmdGenerateReport.setNodeFactoryFactory((factory, cacheDir) -> nodeFactory);

@@ -9,13 +9,13 @@ import org.eol.globi.service.TaxonUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-import static org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j3.findTaxonOrRelated;
+import static org.eol.globi.taxon.ResolvingTaxonIndexNoTx.findTaxonOrRelated;
 
-public class NonResolvingTaxonIndexNoTxNeo4j3 implements TaxonIndex {
+public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
 
     private final GraphDatabaseService graphDb;
 
-    public NonResolvingTaxonIndexNoTxNeo4j3(GraphDatabaseService graphDbService) {
+    public NonResolvingTaxonIndexNoTx(GraphDatabaseService graphDbService) {
         this.graphDb = graphDbService;
     }
 

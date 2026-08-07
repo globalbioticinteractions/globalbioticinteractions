@@ -1,12 +1,12 @@
 package org.eol.globi.server;
 
 import org.eol.globi.data.NodeFactoryNeo4j3;
-import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
+import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.server.util.ResultField;
-import org.eol.globi.tool.CmdGenerateReportNeo4j2;
+import org.eol.globi.tool.CmdGenerateReport;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j3;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
@@ -33,10 +33,10 @@ public class CypherTestUtil {
         try(Transaction tx = graphDatabaseService.beginTx()) {
             File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
             new NodeFactoryNeo4j3(graphDatabaseService);
-            new NonResolvingTaxonIndexNeo4j3(graphDatabaseService);
+            new NonResolvingTaxonIndex(graphDatabaseService);
             new LinkerTaxonIndexNeo4j3(new GraphServiceFactoryProxy(graphDatabaseService),
                     new NodeIdCollectorNeo4j3()).index();
-            CmdGenerateReportNeo4j2 reportGenerator = new CmdGenerateReportNeo4j2();
+            CmdGenerateReport reportGenerator = new CmdGenerateReport();
             reportGenerator.setCacheDir(cacheDir.getAbsolutePath());
             reportGenerator.setGraphServiceFactory(new GraphServiceFactory() {
                 @Override

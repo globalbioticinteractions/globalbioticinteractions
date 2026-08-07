@@ -2,7 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
+import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -35,7 +35,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
 
     @Before
     public void setEnricher() {
-        taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
     }
 
     @Test

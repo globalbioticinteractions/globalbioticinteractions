@@ -13,7 +13,7 @@ import org.eol.globi.data.StudyImporterTestFactory;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.GraphExporterImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNoTxNeo4j3;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNoTx;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
@@ -138,7 +138,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             indexerDataset.index();
-            new NonResolvingTaxonIndexNoTxNeo4j3(getGraphDb()).findTaxonByName("bla");
+            new NonResolvingTaxonIndexNoTx(getGraphDb()).findTaxonByName("bla");
             tx.commit();
         }
 

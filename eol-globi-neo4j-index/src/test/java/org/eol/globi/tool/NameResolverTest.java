@@ -2,7 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndexNeo4j3;
+import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
@@ -26,7 +26,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 
-public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
+public class NameResolverTest extends GraphDBNeo4jTestCase {
 
 
     @Test
@@ -139,7 +139,7 @@ public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
         someOtherOrganism.ate(someOtherOrganism4);
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
-        NonResolvingTaxonIndexNeo4j3 taxonIndexNew = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
+        NonResolvingTaxonIndex taxonIndexNew = new NonResolvingTaxonIndex(getGraphDb());
         taxonIndexNew.skipHomonymMatches(true);
         taxonIndex = taxonIndexNew;
 

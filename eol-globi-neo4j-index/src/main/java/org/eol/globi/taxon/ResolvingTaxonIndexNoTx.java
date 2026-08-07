@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo4j3 implements ResolvingTaxonIndex {
+public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
 
     private final PropertyEnricher enricher;
 
-    public ResolvingTaxonIndexNoTxNeo4j3(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
+    public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(graphDbService);
         this.enricher = enricher;
     }

@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
@@ -141,7 +140,7 @@ public abstract class GraphDBTestCaseAbstract {
 
     protected TaxonIndex getTaxonIndex() {
         if (taxonIndex == null) {
-            taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
+            taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
         }
         return taxonIndex;
     }

@@ -1,9 +1,7 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -24,7 +22,7 @@ import java.util.Collection;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LinkerTermMatcherNeo4j2Test extends GraphDBNeo4jTestCase {
+public class LinkerTermMatcherNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Rule
     public TemporaryFolder tmpDir = new TemporaryFolder();
