@@ -178,11 +178,11 @@ public class GraphDBTestCase {
     }
 
     protected void resolveNames() {
-        new NameResolver(
-                getGraphFactory(),
-                getNodeIdCollector(),
-                getTaxonIndex()
-        ).index();
+//        new NameResolver(
+//                getGraphFactory(),
+//                getNodeIdCollector(),
+//                getTaxonIndex()
+//        ).index();
     }
 
     protected TermLookupService getTermLookupService() {
