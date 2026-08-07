@@ -91,9 +91,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         try (Transaction transaction = getGraphDb()
                 .beginTx()) {
             execute = transaction.execute(
-                    "CYPHER 2.3 START study = node:studies('*:*') " +
-                            "MATCH study-[:COLLECTED]->specimen " +
-                            "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
+                    "MATCH (study:Reference { externalId: 'https://db.fieldmuseum.org/1234' })-[:COLLECTED]->(specimen) " +
                             "RETURN count(distinct(study)) as study_count"
             );
             transaction.commit();
@@ -126,9 +124,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         try (Transaction transaction = getGraphDb()
                 .beginTx()) {
             execute = transaction.execute(
-                    "CYPHER 2.3 START study = node:studies('*:*') " +
-                            "MATCH study-[:COLLECTED]->specimen " +
-                            "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
+                    "MATCH (study:Reference { externalId: 'https://db.fieldmuseum.org/1234'})-[:COLLECTED]->(specimen) " +
                             "RETURN count(distinct(study)) as study_count"
             );
         }

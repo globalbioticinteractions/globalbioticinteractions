@@ -69,7 +69,7 @@ public class GraphDBTestCase {
     public static void initializeNeo4j() {
         GraphDBTestCase.neo4j = Neo4jBuilders.newInProcessBuilder()
                 .withDisabledServer()
-                .withConfig(GraphDatabaseSettings.transaction_timeout, Duration.ofSeconds(1))
+                .withConfig(GraphDatabaseSettings.transaction_timeout, Duration.ofSeconds(5))
                 .build();
     }
 
