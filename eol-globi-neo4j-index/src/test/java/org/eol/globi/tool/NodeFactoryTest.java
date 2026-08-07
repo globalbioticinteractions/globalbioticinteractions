@@ -110,12 +110,12 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
     @Test
     public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
         createNeo4j2(getGraphDb());
-        doSingleImportExport(new NodeFactoryFactoryTransactingOnDatasetNeo4j3(getGraphFactory()));
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
     }
 
     @Test
     public void doSingleImportExportV3() throws StudyImporterException, URISyntaxException {
-        doSingleImportExport(new NodeFactoryFactoryTransactingOnDatasetNeo4j3(getGraphFactory()));
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
     }
 
     public void doSingleImportExport(NodeFactoryFactory nodeFactoryFactory) throws URISyntaxException, StudyImporterException {

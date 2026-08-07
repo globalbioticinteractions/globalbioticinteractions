@@ -5,7 +5,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j3;
 import org.eol.globi.tool.NodeFactoryFactory;
-import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j3;
+import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.eol.globi.util.ResourceServiceHTTP;
@@ -59,7 +59,7 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
 
         final GraphDatabaseService graphDatabaseService = neo4j.defaultDatabaseService();
         factoryFactory
-                = new NodeFactoryFactoryTransactingOnDatasetNeo4j3(new GraphServiceFactory() {
+                = new NodeFactoryFactoryTransactingOnDataset(new GraphServiceFactory() {
             @Override
             public GraphDatabaseService getGraphService() {
                 return graphDatabaseService;

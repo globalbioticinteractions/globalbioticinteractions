@@ -91,7 +91,7 @@ public abstract class CmdNeo4J implements Cmd {
 
 
     private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
-        return new NodeFactoryFactoryTransactingOnDatasetNeo4j3(graphServiceFactory);
+        return new NodeFactoryFactoryTransactingOnDataset(graphServiceFactory);
     }
 
     private static GraphServiceFactoryImpl getGraphServiceFactory(String graphDbDir) {

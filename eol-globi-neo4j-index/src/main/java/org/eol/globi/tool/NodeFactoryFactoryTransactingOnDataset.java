@@ -12,10 +12,10 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NodeFactoryFactoryTransactingOnDatasetNeo4j3 implements NodeFactoryFactory {
+public class NodeFactoryFactoryTransactingOnDataset implements NodeFactoryFactory {
     private GraphServiceFactory graphServiceFactory;
 
-    public NodeFactoryFactoryTransactingOnDatasetNeo4j3(GraphServiceFactory graphServiceFactory) {
+    public NodeFactoryFactoryTransactingOnDataset(GraphServiceFactory graphServiceFactory) {
         this.graphServiceFactory = graphServiceFactory;
     }
 
