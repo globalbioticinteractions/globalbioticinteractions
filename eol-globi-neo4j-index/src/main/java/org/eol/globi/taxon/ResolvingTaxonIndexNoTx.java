@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jena.ext.com.google.common.collect.Streams;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
@@ -64,10 +65,10 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
-        Taxon taxonFound = findTaxonById(taxon.getExternalId());
+        Taxon taxonFound = StringUtils.isBlank(taxon.getExternalId()) ? null : findTaxonById(taxon.getExternalId());
 
         if (taxonFound == null) {
-            taxonFound = findTaxonByName(taxon.getName());
+            taxonFound = StringUtils.isBlank(taxon.getName()) ? null :findTaxonByName(taxon.getName());
         }
 
         if (taxonFound == null) {
@@ -82,7 +83,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                         .map(this::taxonNodeFor)
                         .collect(Collectors.toList());
 
-                TaxonNode primary = matchCandidates.size() == 0
+                TaxonNode primary = matchCandidates.isEmpty()
                         ? createNoMatch(taxon)
                         : matchCandidates.get(0);
                 taxonFound = primary;

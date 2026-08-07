@@ -9,6 +9,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.IndexType;
 
 import java.util.NoSuchElementException;
 
@@ -19,31 +20,24 @@ public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     public TaxonFuzzySearchIndexNeo4j(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
-            Result execute = tx.execute("CALL db.indexes YIELD indexName");
-            ResourceIterator<String> indexName = execute.columnAs("indexName");
-            long size = indexName
-                    .stream()
-                    .filter(name -> StringUtils.equals(TAXON_NAME_SUGGESTIONS, name))
-                    .limit(1)
-                    .count();
-            if (size == 0) {
-
-                tx.execute("CALL db.index.fulltext.createNodeIndex(" +
-                        "'" + TAXON_NAME_SUGGESTIONS + "', " +
-                        "['" + NodeLabel.Taxon.name() + "'], " +
-                        "['" + PropertyAndValueDictionary.COMMON_NAMES + "','" + PropertyAndValueDictionary.NAME + "'])");
-            }
-
+            tx.schema()
+                    .indexFor(NodeLabel.Taxon)
+                    .withIndexType(IndexType.FULLTEXT)
+                    .withName(TAXON_NAME_SUGGESTIONS)
+                    .on(PropertyAndValueDictionary.NAME)
+                    .create();
             tx.commit();
         }
     }
 
     @Override
     public ResourceIterator<Node> query(String luceneQueryString) {
-        try(Transaction transaction = graphDbService.beginTx()) {
+        try (Transaction transaction = graphDbService.beginTx()) {
             Result execute = transaction.execute("CALL db.index.fulltext.queryNodes(" +
                     "\"" + TAXON_NAME_SUGGESTIONS + "\"" +
-                    ", \"" + StringUtils.replace(luceneQueryString, "name:", "") + "\")");
+                    ", \"" + StringUtils.replace(luceneQueryString, "name:", "") + "\")" +
+                    "YIELD node, score\n" +
+                    "RETURN node, score");
 
             return execute.hasNext()
                     ? execute.columnAs("node")

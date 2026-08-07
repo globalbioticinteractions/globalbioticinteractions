@@ -11,14 +11,29 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
 import org.eol.globi.util.NodeUtil;
+import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
+
+    private TaxonFuzzySearchIndex index;
+
+    @Before
+    public void initIndex() {
+        getNodeFactory().shouldStartNextBatch();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
+        index = getFuzzySearch();
+        getNodeFactory().shouldStartNextBatch();
+    }
+
 
     @Test
     public void fuzzyMatch() throws StudyImporterException {
@@ -35,8 +50,6 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
         resolveNames();
 
         createIndexer().index();
-
-        TaxonFuzzySearchIndex index = getFuzzySearch();
 
         assertThat(index.query("name:sapienz~").stream().count(), is(1L));
         assertThat(index.query("name:sapienz").stream().count(), is(0L));
