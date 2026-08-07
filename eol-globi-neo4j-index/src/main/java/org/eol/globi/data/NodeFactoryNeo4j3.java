@@ -9,7 +9,6 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -18,9 +17,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.schema.IndexDefinition;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,85 +27,9 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         super(graphDb);
     }
 
-    public static void initSchema(GraphDatabaseService graphDb) {
-        initConstraints(graphDb);
-        initIndexes(graphDb);
-    }
 
-    private static void initIndexes(GraphDatabaseService graphDb) {
-        createIndexIfNeeded(
-                graphDb,
-                NodeLabel.Location,
-                LocationConstant.LATITUDE
-        );
-        createIndexIfNeeded(
-                graphDb,
-                NodeLabel.Reference,
-                StudyConstant.TITLE_IN_NAMESPACE
-        );
-    }
 
-    private static void initConstraints(GraphDatabaseService graphDb) {
-        createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.Dataset,
-                DatasetConstant.NAMESPACE
-        );
-        createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.Reference,
-                StudyConstant.TITLE_IN_NAMESPACE
-        );
-        createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.ExternalId,
-                PropertyAndValueDictionary.EXTERNAL_ID
-        );
-    }
 
-    @Override
-    protected Node createSeasonNode() {
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Node node = transaction.createNode(NodeLabel.Season);
-            transaction.commit();
-            return node;
-        }
-    }
-
-    @Override
-    protected void indexLocation(Location location, Node node) throws NodeFactoryException {
-        // should already be taken care of by constraints: do nothing
-    }
-
-    @Override
-    protected Node createLocationNode(Transaction transaction1) {
-        return transaction1.createNode(NodeLabel.Location);
-    }
-
-    @Override
-    void indexStudyNode(StudyNode studyNode) {
-        // indexing already done via constraint: do nothing
-    }
-
-    @Override
-    protected Node createDatasetNode(Transaction tx) {
-        return tx.createNode(NodeLabel.Dataset);
-    }
-
-    @Override
-    protected void indexDatasetNode(Dataset dataset, Node datasetNode) {
-        // indexing already done via constraint; do nothing
-    }
-
-    @Override
-    protected void indexExternalIdNode(String externalId, Node externalIdNode) {
-        // external ids already indexed through constraint, do nothing.
-    }
-
-    @Override
-    protected Node createExternalIdNode(Transaction transaction) {
-        return transaction.createNode(NodeLabel.ExternalId);
-    }
 
 
     @Override
@@ -187,57 +108,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
 
-    private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
-                                                 NodeLabel label,
-                                                 String propertyName) {
-        try (Transaction transaction = graphDb.beginTx()) {
-            if (!transaction
-                    .schema()
-                    .getConstraints(label)
-                    .iterator()
-                    .hasNext()) {
-
-                transaction
-                        .schema()
-                        .constraintFor(label)
-                        .assertPropertyIsUnique(propertyName)
-                        .create();
-                transaction.commit();
-            }
-        }
-    }
-
-    private static void createIndexIfNeeded(GraphDatabaseService graphDb,
-                                            NodeLabel label,
-                                            String propertyName) {
-
-        try (Transaction transaction = graphDb.beginTx()) {
-            Iterable<IndexDefinition> indexes = transaction
-                    .schema()
-                    .getIndexes(label);
-
-            IndexDefinition indexMatching = null;
-            for (IndexDefinition index : indexes) {
-                Iterator<String> keyIterator = index.getPropertyKeys().iterator();
-                if (keyIterator.hasNext()) {
-                    if (StringUtils.equals(keyIterator.next(), propertyName)) {
-                        indexMatching = index;
-                        break;
-                    }
-                }
-
-            }
-            if (indexMatching == null) {
-                transaction
-                        .schema()
-                        .indexFor(NodeLabel.Location)
-                        .on(propertyName)
-                        .create();
-            }
-            transaction.commit();
-        }
-    }
-
     @Override
     protected DatasetNode getOrCreateDatasetNode(Transaction tx, Dataset originatingDataset) throws NodeFactoryException {
         DatasetNode datasetCreated = null;
@@ -277,6 +147,8 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     public Node createEnvironmentNode(Transaction tx) {
         return tx.createNode(NodeLabel.Environment);
     }
+
+
 
 }
 

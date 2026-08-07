@@ -79,7 +79,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
     public void doSingleImportNeo4j3() throws StudyImporterException {
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            NodeFactoryNeo4j3.initSchema(getGraphDb());
+            NodeFactoryNeo4j.initSchema(getGraphDb());
             tx.commit();
         }
 
