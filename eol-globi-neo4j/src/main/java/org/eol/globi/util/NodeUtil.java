@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
@@ -60,10 +61,11 @@ public class NodeUtil {
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
         try (Transaction transaction = graphDb.beginTx()) {
-            Node node = transaction.createNode();
+            Node node = transaction.createNode(NodeLabel.Taxon);
             TaxonNode sameAsTaxon = new TaxonNode(node);
             TaxonUtil.copy(taxon, sameAsTaxon);
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
+            transaction.commit();
         }
     }
 

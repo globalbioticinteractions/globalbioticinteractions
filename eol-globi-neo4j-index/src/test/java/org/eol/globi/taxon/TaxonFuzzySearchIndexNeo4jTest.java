@@ -24,7 +24,6 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
 
     private TaxonFuzzySearchIndex index;
 
-    @Before
     public void initIndex() {
         getNodeFactory().shouldStartNextBatch();
         try (Transaction tx = getGraphDb().beginTx()) {
@@ -46,12 +45,21 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
         NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
         NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+        getNodeFactory().shouldStartNextBatch();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
 
         resolveNames();
 
+        initIndex();
+
         createIndexer().index();
 
-        assertThat(index.query("name:sapienz~").stream().count(), is(1L));
+
+
+        assertThat(index.query("Hom~").stream().count(), is(3L));
+        assertThat(index.query("sapienz~").stream().count(), is(3L));
         assertThat(index.query("name:sapienz").stream().count(), is(0L));
 
     }

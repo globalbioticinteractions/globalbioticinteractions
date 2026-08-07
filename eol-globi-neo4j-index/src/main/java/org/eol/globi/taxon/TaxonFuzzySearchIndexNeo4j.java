@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -9,9 +10,12 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.IndexSetting;
 import org.neo4j.graphdb.schema.IndexType;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
@@ -25,6 +29,8 @@ public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
                     .withIndexType(IndexType.FULLTEXT)
                     .withName(TAXON_NAME_SUGGESTIONS)
                     .on(PropertyAndValueDictionary.NAME)
+                    .on(PropertyAndValueDictionary.PATH)
+                    .on(PropertyAndValueDictionary.EXTERNAL_ID)
                     .create();
             tx.commit();
         }
@@ -33,12 +39,13 @@ public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     @Override
     public ResourceIterator<Node> query(String luceneQueryString) {
         try (Transaction transaction = graphDbService.beginTx()) {
-            Result execute = transaction.execute("CALL db.index.fulltext.queryNodes(" +
+
+            String query = "CALL db.index.fulltext.queryNodes(" +
                     "\"" + TAXON_NAME_SUGGESTIONS + "\"" +
                     ", \"" + StringUtils.replace(luceneQueryString, "name:", "") + "\")" +
-                    "YIELD node, score\n" +
-                    "RETURN node, score");
-
+                    " YIELD node, score " +
+                    "RETURN node, score";
+            Result execute = transaction.execute(query);
             return execute.hasNext()
                     ? execute.columnAs("node")
                     : new ResourceIterator<Node>() {
