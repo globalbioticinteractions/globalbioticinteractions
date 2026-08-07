@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class DatasetImporterForBroseTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForBroseTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {

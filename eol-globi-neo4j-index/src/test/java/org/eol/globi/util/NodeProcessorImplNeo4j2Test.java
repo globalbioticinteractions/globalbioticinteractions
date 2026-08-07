@@ -1,6 +1,6 @@
 package org.eol.globi.util;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-public class NodeProcessorImplNeo4j2Test extends GraphDBNeo4jTestCase {
+public class NodeProcessorImplNeo4j2Test extends GraphDBTestCase {
 
     @Test
     public void processEmpty() {

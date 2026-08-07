@@ -1,21 +1,16 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,33 +18,17 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.eol.globi.data.DatasetImporterForTSV.ASSOCIATED_TAXA;
-import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
-import static org.eol.globi.data.DatasetImporterForTSV.HABITAT_ID;
-import static org.eol.globi.data.DatasetImporterForTSV.HABITAT_NAME;
-import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
-import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_ID;
-import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_NAME;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForJSONTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForJSONTest extends GraphDBTestCase {
 
 
     @Test

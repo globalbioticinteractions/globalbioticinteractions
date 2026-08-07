@@ -1,7 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
@@ -18,7 +18,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBNeo4jTestCase {
+public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void fuzzyMatch() throws StudyImporterException {

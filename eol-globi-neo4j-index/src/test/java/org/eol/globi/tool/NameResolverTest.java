@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
@@ -26,7 +26,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 
-public class NameResolverTest extends GraphDBNeo4jTestCase {
+public class NameResolverTest extends GraphDBTestCase {
 
 
     @Test

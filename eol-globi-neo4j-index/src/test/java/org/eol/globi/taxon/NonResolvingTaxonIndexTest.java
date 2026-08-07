@@ -1,6 +1,6 @@
 package org.eol.globi.taxon;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -19,7 +19,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class NonResolvingTaxonIndexTest extends GraphDBNeo4jTestCase {
+public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     private NonResolvingTaxonIndex taxonService;
 
     @Before

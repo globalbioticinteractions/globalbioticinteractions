@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NodeBacked;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class LinkerTaxonIndexTest extends GraphDBNeo4jTestCase {
+public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void linking() throws StudyImporterException {

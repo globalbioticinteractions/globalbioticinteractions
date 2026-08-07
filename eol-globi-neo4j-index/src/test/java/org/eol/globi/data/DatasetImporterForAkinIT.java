@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForAkinIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForAkinIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {

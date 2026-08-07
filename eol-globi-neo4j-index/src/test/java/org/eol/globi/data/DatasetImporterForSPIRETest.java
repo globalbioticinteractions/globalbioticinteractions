@@ -37,7 +37,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForSPIRETest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void parseIllegalTitle() {

@@ -54,7 +54,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
+public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     private static final DOI SOME_DOI = new DOI("some", "doi");
 

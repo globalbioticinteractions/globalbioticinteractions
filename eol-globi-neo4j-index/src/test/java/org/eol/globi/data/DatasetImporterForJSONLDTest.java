@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForJSONLDTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
 
     @Test
     public void importStatic() throws StudyImporterException, URISyntaxException {

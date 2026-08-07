@@ -14,7 +14,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForBroseIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForBroseIT extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {

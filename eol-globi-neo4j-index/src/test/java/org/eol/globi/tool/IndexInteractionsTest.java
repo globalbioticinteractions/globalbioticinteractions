@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.StudyImporterException;
@@ -37,7 +37,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class IndexInteractionsTest extends GraphDBNeo4jTestCase {
+public class IndexInteractionsTest extends GraphDBTestCase {
 
     @Test
     public void indexInteractions() throws StudyImporterException {

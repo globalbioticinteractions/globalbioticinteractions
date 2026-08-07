@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.eol.globi.data.DatasetImporterForSPIRE;
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
@@ -19,7 +19,6 @@ import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 
@@ -39,7 +38,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertTrue;
 
-public class ExporterRDFTest extends GraphDBNeo4jTestCase {
+public class ExporterRDFTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {

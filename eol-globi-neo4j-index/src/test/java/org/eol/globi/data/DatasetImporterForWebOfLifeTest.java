@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.nullValue;
 
-public class DatasetImporterForWebOfLifeTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForWebOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void generateArchiveURL() {

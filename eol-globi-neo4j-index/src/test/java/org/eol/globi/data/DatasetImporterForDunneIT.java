@@ -16,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetImporterForDunneIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForDunneIT extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {

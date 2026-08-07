@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Specimen;
@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-public class CmdGenerateReportTest extends GraphDBNeo4jTestCase {
+public class CmdGenerateReportTest extends GraphDBTestCase {
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException, IOException {

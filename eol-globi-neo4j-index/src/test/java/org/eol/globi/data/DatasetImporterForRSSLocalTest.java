@@ -46,7 +46,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 
-public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();

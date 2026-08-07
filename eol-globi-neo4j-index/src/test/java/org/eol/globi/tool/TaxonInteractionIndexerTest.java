@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
-public class TaxonInteractionIndexerTest extends GraphDBNeo4jTestCase {
+public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
     @Test
     public void buildTaxonInterIndex() throws StudyImporterException {

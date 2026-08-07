@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import java.text.ParseException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterOccurrencesTest extends GraphDBNeo4jTestCase {
+public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {

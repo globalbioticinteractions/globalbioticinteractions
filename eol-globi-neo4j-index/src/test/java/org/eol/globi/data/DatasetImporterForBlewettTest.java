@@ -43,7 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForBlewettTest extends GraphDBTestCase {
 
     static String dateToString(Date time) {
         DateTime dateTime = new DateTime(time);
