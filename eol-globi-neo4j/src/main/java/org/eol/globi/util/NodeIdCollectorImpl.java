@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
-public class NodeIdCollectorNeo4j3 implements NodeIdCollector {
+public class NodeIdCollectorImpl implements NodeIdCollector {
 
     private static final Map<String, NodeLabel> INDEX_NAME_TO_LABEL = Collections.unmodifiableMap(new TreeMap<String, NodeLabel>() {{
         put("taxons", NodeLabel.Taxon);

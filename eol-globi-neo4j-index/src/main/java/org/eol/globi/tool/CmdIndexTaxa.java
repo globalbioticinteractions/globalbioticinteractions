@@ -3,7 +3,7 @@ package org.eol.globi.tool;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.TaxonIndex;
-import org.eol.globi.util.NodeIdCollectorNeo4j3;
+import org.eol.globi.util.NodeIdCollectorImpl;
 import picocli.CommandLine;
 
 import java.util.Arrays;
@@ -19,8 +19,8 @@ public class CmdIndexTaxa extends CmdNeo4J {
     @Override
     public void run() {
         final TaxonIndex taxonIndex = new NonResolvingTaxonIndex(getGraphServiceFactory().getGraphService());
-        final IndexerNeo4j nameResolver = new NameResolver(getGraphServiceFactory(), new NodeIdCollectorNeo4j3(), taxonIndex);
-        final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(getGraphServiceFactory(), new NodeIdCollectorNeo4j3());
+        final IndexerNeo4j nameResolver = new NameResolver(getGraphServiceFactory(), new NodeIdCollectorImpl(), taxonIndex);
+        final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(getGraphServiceFactory(), new NodeIdCollectorImpl());
         index(nameResolver, taxonInteractionIndexer);
     }
 

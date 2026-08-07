@@ -1,7 +1,6 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
@@ -75,7 +74,7 @@ public class NodeUtil {
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener) {
-        findStudies(graphService, listener, "title", "*", new NodeIdCollectorNeo4j3());
+        findStudies(graphService, listener, "title", "*", new NodeIdCollectorImpl());
     }
 
     public static void findStudies(GraphDatabaseService graphService,

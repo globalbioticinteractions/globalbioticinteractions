@@ -9,7 +9,7 @@ import org.eol.globi.server.util.ResultField;
 import org.eol.globi.tool.CmdGenerateReport;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
 import org.eol.globi.util.CypherQuery;
-import org.eol.globi.util.NodeIdCollectorNeo4j3;
+import org.eol.globi.util.NodeIdCollectorImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.helpers.NOPLogger;
@@ -35,7 +35,7 @@ public class CypherTestUtil {
             new NodeFactoryNeo4j(graphDatabaseService);
             new NonResolvingTaxonIndex(graphDatabaseService);
             new LinkerTaxonIndexNeo4j(new GraphServiceFactoryProxy(graphDatabaseService),
-                    new NodeIdCollectorNeo4j3()).index();
+                    new NodeIdCollectorImpl()).index();
             CmdGenerateReport reportGenerator = new CmdGenerateReport();
             reportGenerator.setCacheDir(cacheDir.getAbsolutePath());
             reportGenerator.setGraphServiceFactory(new GraphServiceFactory() {

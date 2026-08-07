@@ -2,7 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.eol.globi.util.NodeIdCollectorNeo4j3;
+import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class CmdGenerateReport extends CmdNeo4J {
             if (StringUtils.isNotBlank(namespace)) {
                 namespaceGroups.add(namespaceHandler.parse(namespace));
             }
-        }, "namespace", "*", new NodeIdCollectorNeo4j3());
+        }, "namespace", "*", new NodeIdCollectorImpl());
 
         final Set<Long> distinctTaxonIds = reportCache
                 .createHashSet("distinctTaxonIds")
@@ -177,7 +177,7 @@ public class CmdGenerateReport extends CmdNeo4J {
                     distinctSources.add(namespace);
                     distinctDatasets.add(namespace);
                 }
-            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup), new NodeIdCollectorNeo4j3());
+            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup), new NodeIdCollectorImpl());
 
             final Node node;
             try (Transaction transaction = getGraphDb().beginTx()) {

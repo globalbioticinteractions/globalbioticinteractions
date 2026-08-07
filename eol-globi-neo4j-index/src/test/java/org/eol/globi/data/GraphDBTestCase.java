@@ -13,7 +13,8 @@ import org.eol.globi.tool.NameResolver;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.NodeIdCollectorNeo4j3;
+import org.eol.globi.util.NodeIdCollector;
+import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
@@ -227,8 +228,8 @@ public class GraphDBTestCase {
         return getNodeFactory().getGraphDb();
     }
 
-    protected NodeIdCollectorNeo4j3 getNodeIdCollector() {
-        return new NodeIdCollectorNeo4j3();
+    protected NodeIdCollector getNodeIdCollector() {
+        return new NodeIdCollectorImpl();
     }
 
     protected NodeFactoryNeo4j createNodeFactory() {
