@@ -52,20 +52,8 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                             key,
                             value
                     );
-            while (foundNames.hasNext()) {
-                Node next = foundNames.next();
-                Iterable<Relationship> rels = next
-                        .getRelationships(
-                                NodeUtil.asNeo4j(RelTypes.SAME_AS),
-                                NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)
-                        );
-                for (Relationship rel : rels) {
-                    foundNode = rel.getEndNode();
-                    if (foundNode != null) {
-                        break;
-                    }
-                }
-
+            if (foundNames.hasNext()) {
+                foundNode = foundNames.next();
             }
             transaction.commit();
             return foundNode == null

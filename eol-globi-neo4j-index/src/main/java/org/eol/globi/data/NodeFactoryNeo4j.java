@@ -133,11 +133,6 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
                 NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE
         );
-        NodeFactoryNeo4j.createIndexIfNeeded(
-                graphDb,
-                NodeLabel.Taxon,
-                "externalId"
-        );
     }
 
     private static void initConstraints(GraphDatabaseService graphDb) {

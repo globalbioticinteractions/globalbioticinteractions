@@ -55,28 +55,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
-    public void checkIndexes() {
-        NodeFactoryNeo4j.initSchema(getGraphDb());
-        getNodeFactory().shouldStartNextBatch();
-
-
-        try (Transaction tx = getGraphDb().beginTx()) {
-            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon);
-            assertThat(indexes.iterator().hasNext(), is(true));
-            for (IndexDefinition index : indexes) {
-                System.out.println(index);
-            }
-            tx.commit();
-        }
-
-
-    }
-
-    @Test
     public final void createTaxonExternalIdIndex() throws NodeFactoryException {
-        NodeFactoryNeo4j.initSchema(getGraphDb());
-        getNodeFactory().shouldStartNextBatch();
-
         Taxon taxon1 = new TaxonImpl(null, "foo:123");
         taxon1.setPath(null);
         Taxon taxon = taxonService.getOrCreateTaxon(taxon1);
@@ -206,16 +185,18 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public final void indexHomonymExplicitly() throws NodeFactoryException {
-        Taxon taxon1 = new TaxonImpl("some name", "foo:123");
+        String externalId = "foo:123";
+        Taxon taxon1 = new TaxonImpl("some name", externalId);
         taxon1.setPath("one | two | three | some name");
         taxon1.setPathNames("kingdom | family | genus | species");
+        assertThat(taxonService.findTaxon(taxon1), is(nullValue()));
         Taxon taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
 
-        assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
+        assertThat(taxonService.findTaxonById(externalId), is(notNullValue()));
 
-        Taxon taxon2 = new TaxonImpl("some name", "foo:123");
+        Taxon taxon2 = new TaxonImpl("some name", externalId);
         taxon2.setPath("some name");
         taxon2.setPathNames("species");
         assertThat(taxonService.findTaxon(taxon2), is(not(nullValue())));
