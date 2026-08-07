@@ -35,6 +35,12 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
 
 
     @Test
+    public void alreadyExists() {
+        initIndex();
+        initIndex();
+    }
+
+    @Test
     public void fuzzyMatch() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");

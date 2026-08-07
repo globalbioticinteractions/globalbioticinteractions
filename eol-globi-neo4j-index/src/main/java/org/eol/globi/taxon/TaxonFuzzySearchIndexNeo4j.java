@@ -10,6 +10,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.graphdb.schema.IndexSetting;
 import org.neo4j.graphdb.schema.IndexType;
 
@@ -24,14 +25,24 @@ public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     public TaxonFuzzySearchIndexNeo4j(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
-            tx.schema()
-                    .indexFor(NodeLabel.Taxon)
-                    .withIndexType(IndexType.FULLTEXT)
-                    .withName(TAXON_NAME_SUGGESTIONS)
-                    .on(PropertyAndValueDictionary.NAME)
-                    .on(PropertyAndValueDictionary.PATH)
-                    .on(PropertyAndValueDictionary.EXTERNAL_ID)
-                    .create();
+            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon);
+            boolean needsIndex = true;
+            for (IndexDefinition index : indexes) {
+                if (index.isNodeIndex() && StringUtils.equals(index.getName(), TAXON_NAME_SUGGESTIONS)) {
+                    needsIndex = false;
+                    break;
+                }
+            }
+            if (needsIndex) {
+                tx.schema()
+                        .indexFor(NodeLabel.Taxon)
+                        .withIndexType(IndexType.FULLTEXT)
+                        .withName(TAXON_NAME_SUGGESTIONS)
+                        .on(PropertyAndValueDictionary.NAME)
+                        .on(PropertyAndValueDictionary.PATH)
+                        .on(PropertyAndValueDictionary.EXTERNAL_ID)
+                        .create();
+            }
             tx.commit();
         }
     }
