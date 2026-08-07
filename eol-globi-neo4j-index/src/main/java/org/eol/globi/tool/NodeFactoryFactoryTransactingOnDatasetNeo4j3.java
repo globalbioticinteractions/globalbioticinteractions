@@ -23,7 +23,7 @@ public class NodeFactoryFactoryTransactingOnDatasetNeo4j3 implements NodeFactory
     public NodeFactory create(GraphDatabaseService service, final File cacheDir) {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
         try (Transaction tx = graphService.beginTx()) {
-            NodeFactory nodeFactory = new NodeFactoryNeo4j3(graphService, cacheDir) {
+            NodeFactory nodeFactory = new NodeFactoryNeo4j3(graphService) {
                 final AtomicReference<Transaction> tx = new AtomicReference<>();
                 final AtomicBoolean closing = new AtomicBoolean(false);
 

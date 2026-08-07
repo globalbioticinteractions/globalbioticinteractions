@@ -32,7 +32,7 @@ public class CypherTestUtil {
     public static void validate(CypherQuery cypherQuery, GraphDatabaseService graphDatabaseService) throws StudyImporterException {
         try(Transaction tx = graphDatabaseService.beginTx()) {
             File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
-            new NodeFactoryNeo4j3(graphDatabaseService, cacheDir);
+            new NodeFactoryNeo4j3(graphDatabaseService);
             new NonResolvingTaxonIndexNeo4j3(graphDatabaseService);
             new LinkerTaxonIndexNeo4j3(new GraphServiceFactoryProxy(graphDatabaseService),
                     new NodeIdCollectorNeo4j3()).index();

@@ -20,15 +20,14 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
-    public NodeFactoryNeo4j3(GraphDatabaseService graphDb, File cacheDir) {
-        super(graphDb, cacheDir);
+    public NodeFactoryNeo4j3(GraphDatabaseService graphDb) {
+        super(graphDb);
     }
 
     public static void initSchema(GraphDatabaseService graphDb) {

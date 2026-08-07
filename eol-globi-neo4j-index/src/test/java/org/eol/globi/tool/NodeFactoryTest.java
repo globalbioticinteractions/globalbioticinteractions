@@ -54,7 +54,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
     private NodeFactory createNeo4j2(GraphDatabaseService graphDb) {
         NodeFactory factory;
         try (Transaction tx = getGraphDb().beginTx()) {
-            factory = new NodeFactoryNeo4j3(graphDb, getCacheDir());
+            factory = new NodeFactoryNeo4j3(graphDb);
             tx.commit();
         }
         return factory;
@@ -83,7 +83,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
             tx.commit();
         }
 
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb(), getCacheDir());
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
         try (Transaction tx = getGraphDb().beginTx()) {
             assertGraphDBImportNativeIndexes(factory, getGraphDb());
         }

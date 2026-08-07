@@ -49,7 +49,6 @@ import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -72,8 +71,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     private final TermLookupService bodyPartLookupService;
     private AtomicBoolean shouldStartNextBatch = new AtomicBoolean(false);
 
-    public NodeFactoryNeo4j(GraphDatabaseService graphDb, File cacheDir) {
-        this.graphDb = getGraphDatabaseServiceFacade(graphDb);
+    public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
+        this.graphDb = new GraphDatabaseServiceProxy(graphDb, shouldStartNextBatch);
 
         InputStreamFactory inputStreamFactory = new InputStreamFactoryNoop();
         this.termLookupService = new UberonLookupService(
@@ -96,10 +95,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
                 new ResourceServiceLocal(inputStreamFactory)
         );
 
-    }
-
-    private GraphDatabaseService getGraphDatabaseServiceFacade(GraphDatabaseService graphDb) {
-        return new GraphDatabaseServiceProxy(graphDb, shouldStartNextBatch);
     }
 
     public void shouldStartNextBatch() {

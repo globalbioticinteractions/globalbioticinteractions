@@ -611,7 +611,7 @@ public class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
-        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(neo4j.defaultDatabaseService(), getCacheDir());
+        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(neo4j.defaultDatabaseService());
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;
