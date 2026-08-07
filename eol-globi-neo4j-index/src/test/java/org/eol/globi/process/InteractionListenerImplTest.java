@@ -3,6 +3,7 @@ package org.eol.globi.process;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.ResourceService;
@@ -11,6 +12,8 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
@@ -206,14 +209,11 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         Result execute;
         try (Transaction transaction = getGraphDb()
                 .beginTx()) {
-            execute = transaction.execute(
-                    "START study = node:studies('*:*') " +
-                            "RETURN count(study) as study_count"
-            );
+            ResourceIterator<Node> nodes = transaction.findNodes(NodeLabel.Reference);
+            assertThat(nodes.stream().count(), Is.is(expectedStudyCount));
             transaction.commit();
         }
 
-        assertThat(execute.next().get("study_count"), Is.is(expectedStudyCount));
     }
 
 }

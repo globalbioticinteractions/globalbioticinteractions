@@ -70,12 +70,12 @@ class TransactionProxy implements Transaction {
 
     @Override
     public Result execute(String query) throws QueryExecutionException {
-        return execute(query);
+        return tx.execute(query);
     }
 
     @Override
     public Result execute(String query, Map<String, Object> parameters) throws QueryExecutionException {
-        return execute(query, parameters);
+        return tx.execute(query, parameters);
     }
 
     @Override
