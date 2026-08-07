@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.InteractionNode;
@@ -58,6 +59,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
@@ -408,13 +410,14 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             throw new NodeFactoryException("null or empty study title");
         }
 
-        Study studyFoundOrCreated = findStudy(study);
-
-        if (studyFoundOrCreated == null) {
-            studyFoundOrCreated = createStudy(study);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            Study copyOfStudy = copyOf(studyNode);
+            tx.commit();
+            return copyOfStudy;
         }
 
-        return studyFoundOrCreated;
+
     }
 
     private String namespaceOrNull(Study study) {
@@ -473,8 +476,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return location1;
     }
 
-    protected abstract LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException;
-
 
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
@@ -516,7 +517,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         List<Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
-            if (terms.size() == 0) {
+            if (terms.isEmpty()) {
                 terms.add(new TermImpl(externalId, name));
             }
         } catch (TermLookupServiceException e) {
@@ -537,8 +538,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
         return normalizedEnvironments;
     }
-
-    abstract public Node createEnvironmentNode(Transaction tx);
 
     @Override
     public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
@@ -621,8 +620,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return interactionNode;
     }
 
-    protected abstract Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException;
-
     private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
                                                  NodeLabel label,
                                                  String propertyName) {
@@ -674,8 +671,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
     }
 
-    abstract protected DatasetNode getOrCreateDatasetNode(Transaction tx, Dataset originatingDataset) throws NodeFactoryException;
-
     protected void validate(Location location) throws NodeFactoryException {
         if (location.getLatitude() != null
                 && !LocationUtil.isValidLatitude(location.getLatitude())) {
@@ -706,6 +701,108 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     protected Node createExternalIdNode(Transaction transaction) {
         return transaction.createNode(NodeLabel.ExternalId);
     }
+
+    public LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException {
+        validate(location);
+
+        Node matchingLocation = null;
+        if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+            Double latitude = location.getLatitude();
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+            matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+        }
+        if (matchingLocation == null) {
+            String locality = location.getLocality();
+            if (StringUtils.isNotBlank(locality)) {
+                ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+        }
+        if (matchingLocation == null) {
+            String localityId = location.getLocalityId();
+            if (StringUtils.isNotBlank(location.getLocalityId())) {
+                ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+        }
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
+    }
+
+    @Override
+    public Location findLocation(Location location) throws NodeFactoryException {
+        LocationNode locationNode;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            locationNode = findLocationNode(tx, location);
+            Location copyOf = getCopyOf(locationNode);
+            tx.commit();
+            return copyOf;
+        }
+    }
+
+
+    @Override
+    public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            List<EnvironmentNode> orCreateEnvironmentNodes = getOrCreateEnvironmentNodes(tx, location, externalId, name);
+            List<Environment> collect = orCreateEnvironmentNodes.stream().map(nodes -> {
+                EnvironmentImpl environment = new EnvironmentImpl(nodes.getExternalId());
+                environment.setName(nodes.getName());
+                return environment;
+            }).collect(Collectors.toList());
+            tx.commit();
+            return collect;
+        }
+
+    }
+
+    @Override
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException {
+        List<EnvironmentNode> environmentNodes = addEnvironmentNodesToLocationNodes(getGraphDb().beginTx(), location, terms);
+        return environmentNodes.stream().map(environ -> {
+            EnvironmentImpl environment = new EnvironmentImpl(environ.getExternalId());
+            environment.setName(environ.getName());
+            return environment;
+        }).collect(Collectors.toList());
+    }
+
+
+    protected DatasetNode getOrCreateDatasetNode(Transaction tx, Dataset originatingDataset) throws NodeFactoryException {
+        DatasetNode datasetCreated = null;
+        if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
+            Node node = tx
+                    .findNode(NodeLabel.Dataset,
+                            DatasetConstant.NAMESPACE,
+                            originatingDataset.getNamespace());
+
+            Node datasetNode = node == null
+                    ? createDatasetNode(tx, originatingDataset)
+                    : node;
+
+            datasetCreated = new DatasetNode(datasetNode);
+        }
+        return datasetCreated;
+    }
+
+    protected Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException {
+        Node externalIdNode = null;
+        if (StringUtils.isNotBlank(externalId)) {
+
+            try (Transaction transaction = getGraphDb().beginTx()) {
+                Node node = transaction.findNode(NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+                externalIdNode = node == null
+                        ? createExternalId(transaction, externalId)
+                        : node;
+                transaction.commit();
+            }
+        }
+        return externalIdNode;
+    }
+
+    public Node createEnvironmentNode(Transaction tx) {
+        return tx.createNode(NodeLabel.Environment);
+    }
+
+
 
 
 }
