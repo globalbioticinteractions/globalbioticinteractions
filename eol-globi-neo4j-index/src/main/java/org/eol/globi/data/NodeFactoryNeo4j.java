@@ -133,6 +133,11 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
                 NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE
         );
+        NodeFactoryNeo4j.createIndexIfNeeded(
+                graphDb,
+                NodeLabel.Taxon,
+                "externalId"
+        );
     }
 
     private static void initConstraints(GraphDatabaseService graphDb) {
@@ -662,7 +667,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
             if (indexMatching == null) {
                 transaction
                         .schema()
-                        .indexFor(NodeLabel.Location)
+                        .indexFor(label)
                         .on(propertyName)
                         .create();
             }

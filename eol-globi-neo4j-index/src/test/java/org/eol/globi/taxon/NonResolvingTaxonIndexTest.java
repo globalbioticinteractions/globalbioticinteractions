@@ -2,6 +2,8 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NodeFactoryNeo4j;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -11,6 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.IndexDefinition;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,16 +55,31 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
-    public final void createTaxonExternalIdIndex() throws NodeFactoryException {
-        Taxon taxon1 = new TaxonImpl(null, "foo:123");
-        taxon1.setPath(null);
+    public void checkIndexes() {
+        NodeFactoryNeo4j.initSchema(getGraphDb());
+        getNodeFactory().shouldStartNextBatch();
 
-        getNodeFactory().shouldStartNextBatch();
-        Taxon taxon = taxonService.getOrCreateTaxon(taxon1);
-        getNodeFactory().shouldStartNextBatch();
+
         try (Transaction tx = getGraphDb().beginTx()) {
+            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon);
+            assertThat(indexes.iterator().hasNext(), is(true));
+            for (IndexDefinition index : indexes) {
+                System.out.println(index);
+            }
             tx.commit();
         }
+
+
+    }
+
+    @Test
+    public final void createTaxonExternalIdIndex() throws NodeFactoryException {
+        NodeFactoryNeo4j.initSchema(getGraphDb());
+        getNodeFactory().shouldStartNextBatch();
+
+        Taxon taxon1 = new TaxonImpl(null, "foo:123");
+        taxon1.setPath(null);
+        Taxon taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
     }
@@ -99,9 +117,9 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
 
 //    static Object propertyOf(Node taxon, String propertyName) {
 //
-////        return taxon.getUnderlyingNode().getProperty(propertyName);
-//    }
 
+    /// /        return taxon.getUnderlyingNode().getProperty(propertyName);
+//    }
     @Test
     public final void doNotIndexMagicValuesTaxon() throws NodeFactoryException {
         assertNotIndexed(PropertyAndValueDictionary.NO_NAME);
