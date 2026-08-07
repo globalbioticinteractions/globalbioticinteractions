@@ -61,7 +61,7 @@ public class GraphDBTestCase {
 
     protected TaxonIndex taxonIndex;
 
-    private static Neo4j neo4j = null;
+    static Neo4j neo4j = null;
 
 
     @BeforeClass
