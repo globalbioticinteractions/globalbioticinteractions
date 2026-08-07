@@ -454,9 +454,8 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Location getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
         try (Transaction transaction = getGraphDb().beginTx()) {
             LocationNode location1 = getOrCreateLocationNode(transaction, location);
-            Location copyOf = getCopyOf(location1);
             transaction.commit();
-            return copyOf;
+            return location1;
 
         }
     }
@@ -591,10 +590,10 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
     }
 
-    private static Dataset copyOf(Dataset orCreateDatasetNode) {
-        DatasetImpl dataset = new DatasetImpl(orCreateDatasetNode.getNamespace(), null, orCreateDatasetNode.getArchiveURI());
-        dataset.setConfig(orCreateDatasetNode.getConfig());
-        return dataset;
+    private static Dataset copyOf(Dataset src) {
+        DatasetImpl dst = new DatasetImpl(src.getNamespace(), null, src.getArchiveURI());
+        dst.setConfig(src.getConfig());
+        return dst;
     }
 
     @Override
@@ -729,13 +728,12 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public Location findLocation(Location location) throws NodeFactoryException {
+    public LocationNode findLocation(Location location) throws NodeFactoryException {
         LocationNode locationNode;
         try (Transaction tx = getGraphDb().beginTx()) {
             locationNode = findLocationNode(tx, location);
-            Location copyOf = getCopyOf(locationNode);
             tx.commit();
-            return copyOf;
+            return locationNode;
         }
     }
 
