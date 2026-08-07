@@ -91,6 +91,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -378,6 +379,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             LocationNode sampleLocation = someSpecimen.getSampleLocation();
+            assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude(), is(12.2d));
             assertThat(sampleLocation.getLongitude(), is(13.2d));
             assertThat(sampleLocation.getLocality(), is("my back yard"));
@@ -546,6 +548,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
     }
 
     public void assertLocation(LocationNode sampleLocation) {
+        assertNotNull(sampleLocation);
         assertThat(sampleLocation.getLatitude(), is(12.1d));
         assertThat(sampleLocation.getLongitude(), is(13.2d));
     }

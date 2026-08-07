@@ -65,8 +65,9 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void caughtIn(Location sampleLocation) {
+
         if ((sampleLocation instanceof LocationNode)) {
-            createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
+            createRelationshipTo(RelTypes.COLLECTED_AT, (NodeBacked) sampleLocation);
         }
     }
 
@@ -78,7 +79,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void caughtDuring(Season season) {
-        createRelationshipTo(season, RelTypes.CAUGHT_DURING);
+        createRelationshipTo(RelTypes.CAUGHT_DURING, (NodeBacked) season);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void classifyAs(Taxon taxon) {
-        createRelationshipTo(taxon, RelTypes.CLASSIFIED_AS);
+        createRelationshipTo(RelTypes.CLASSIFIED_AS, (NodeBacked) taxon);
     }
 
     @Override

@@ -40,8 +40,8 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public Relationship createRelationshipTo(Object endNode, RelType relType) {
-        return createRelationshipToNoTx((NodeBacked) endNode, relType, CHECK_EXISTING_REL_DEFAULT);
+    public Relationship createRelationshipTo(RelType relType, NodeBacked endNode1) {
+        return createRelationshipToNoTx(endNode1, relType, CHECK_EXISTING_REL_DEFAULT);
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType, boolean checkExisting) {
@@ -49,7 +49,7 @@ public class NodeBacked {
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
-        return createRelationshipToNoTx(endNode, relType, CHECK_EXISTING_REL_DEFAULT);
+        return createRelationshipTo(relType, endNode);
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType, boolean checkExisting) {
@@ -135,7 +135,7 @@ public class NodeBacked {
     public void setOriginalTaxonNodeDescription(Taxon taxon, Transaction tx1) {
         TaxonNode taxonNode = new TaxonNode(tx1.createNode(), taxon.getName());
         TaxonUtil.copy(taxon, taxonNode);
-        createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
+        createRelationshipTo(RelTypes.ORIGINALLY_DESCRIBED_AS, (NodeBacked) taxonNode);
     }
 
     protected String getProperty(String propertyName) {

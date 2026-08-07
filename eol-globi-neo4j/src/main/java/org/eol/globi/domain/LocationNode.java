@@ -86,7 +86,7 @@ public class LocationNode extends NodeBacked implements Location {
             }
         }
         if (needsAssociation) {
-            createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
+            createRelationshipTo(RelTypes.HAS_ENVIRONMENT, (NodeBacked) environment);
         }
     }
 

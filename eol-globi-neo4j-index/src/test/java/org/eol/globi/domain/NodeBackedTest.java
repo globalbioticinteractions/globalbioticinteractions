@@ -48,7 +48,7 @@ public class NodeBackedTest extends GraphDBTestCase {
                 Node node2 = transaction.createNode();
                 nodeId2 = node2.getId();
                 NodeBacked nodeBacked2 = new NodeBacked(node2);
-                nodeBacked1.createRelationshipTo(nodeBacked2, RelTypes.COLLECTED);
+                nodeBacked1.createRelationshipTo(RelTypes.COLLECTED, (NodeBacked) nodeBacked2);
             }
 
             assertThat(nodeId2, Is.is(not(-1)));
@@ -71,12 +71,12 @@ public class NodeBackedTest extends GraphDBTestCase {
             Node node2 = transaction.createNode();
             nodeId2 = node2.getId();
             NodeBacked nodeBacked2 = new NodeBacked(node2);
-            nodeBacked1.createRelationshipTo(nodeBacked2, RelTypes.COLLECTED);
+            nodeBacked1.createRelationshipTo(RelTypes.COLLECTED, (NodeBacked) nodeBacked2);
 
             for (int i = 0; i < 10; i++) {
+                final NodeBacked endNode = new NodeBacked(transaction.createNode());
                 nodeBacked2.createRelationshipTo(
-                        new NodeBacked(transaction.createNode()),
-                        RelTypes.COLLECTED);
+                        RelTypes.COLLECTED, (NodeBacked) endNode);
             }
 
             assertThat(nodeId2, Is.is(not(-1)));
@@ -106,7 +106,7 @@ public class NodeBackedTest extends GraphDBTestCase {
             node1 = transaction.createNode();
             nodeId1 = node1.getId();
             NodeBacked nodeBacked1 = new NodeBacked(node1);
-            nodeBacked1.createRelationshipTo(nodeBacked1, RelTypes.COLLECTED);
+            nodeBacked1.createRelationshipTo(RelTypes.COLLECTED, (NodeBacked) nodeBacked1);
             result = nodeId1;
             long nodeId = result;
             Node nodeById = transaction.getNodeById(nodeId);

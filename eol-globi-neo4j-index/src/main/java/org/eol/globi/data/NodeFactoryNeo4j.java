@@ -216,7 +216,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public SpecimenNode createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
         SpecimenNode specimen = createSpecimen(interaction.getStudy(), taxon);
-        ((InteractionNode) interaction).createRelationshipTo(specimen, RelTypes.HAS_PARTICIPANT);
+        ((InteractionNode) interaction).createRelationshipTo(RelTypes.HAS_PARTICIPANT, (NodeBacked) specimen);
         return specimen;
     }
 
@@ -250,7 +250,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         StudyNode orCreateStudy = getOrCreateStudyNode(tx, study);
         SpecimenNode specimen = createSpecimenNode(tx);
         for (RelTypes type : types) {
-            orCreateStudy.createRelationshipTo(specimen, type);
+            orCreateStudy.createRelationshipTo(type, (NodeBacked) specimen);
         }
 
         specimen.setOriginalTaxonNodeDescription(taxon, tx);
@@ -340,7 +340,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         DatasetNode dataset = getOrCreateDatasetNode(transaction, study.getOriginatingDataset());
         if (dataset != null) {
-            studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
+            studyNode.createRelationshipTo(RelTypes.IN_DATASET, (NodeBacked) dataset);
         }
 
         studyNode.getUnderlyingNode().setProperty(StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(study));
@@ -612,10 +612,10 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         Node node = transaction.createNode();
         StudyNode studyNode = getOrCreateStudyNode(transaction, study);
         interactionNode = new InteractionNode(node);
-        interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
+        interactionNode.createRelationshipTo(RelTypes.DERIVED_FROM, (NodeBacked) studyNode);
         Dataset dataset = getOrCreateDatasetNode(getGraphDb().beginTx(), study.getOriginatingDataset());
         if (dataset instanceof DatasetNode) {
-            interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+            interactionNode.createRelationshipTo(RelTypes.ACCESSED_AT, (NodeBacked) dataset);
         }
         return interactionNode;
     }
