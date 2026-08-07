@@ -6,7 +6,6 @@ import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
@@ -41,9 +40,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 
     @Test
-    public void doSingleImportNeo4j2() throws StudyImporterException {
+    public void doSingleImport() throws StudyImporterException {
         GraphDatabaseService graphDb = getGraphDb();
-        NodeFactory factory = createNeo4j2(graphDb);
+        NodeFactory factory = createNodeFactory(graphDb);
 
         try (Transaction tx = getGraphDb().beginTx()) {
             importWithGraphDB(factory);
@@ -51,10 +50,10 @@ public class NodeFactoryTest extends GraphDBTestCase {
         }
     }
 
-    private NodeFactory createNeo4j2(GraphDatabaseService graphDb) {
+    private NodeFactory createNodeFactory(GraphDatabaseService graphDb) {
         NodeFactory factory;
         try (Transaction tx = getGraphDb().beginTx()) {
-            factory = new NodeFactoryNeo4j3(graphDb);
+            factory = new NodeFactoryNeo4j(graphDb);
             tx.commit();
         }
         return factory;
@@ -83,7 +82,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
             tx.commit();
         }
 
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j(getGraphDb());
         try (Transaction tx = getGraphDb().beginTx()) {
             assertGraphDBImportNativeIndexes(factory, getGraphDb());
         }
@@ -109,7 +108,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
-        createNeo4j2(getGraphDb());
+        createNodeFactory(getGraphDb());
         doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
     }
 

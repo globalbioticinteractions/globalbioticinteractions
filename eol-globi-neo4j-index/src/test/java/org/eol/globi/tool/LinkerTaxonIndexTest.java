@@ -86,7 +86,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     }
 
     protected IndexerNeo4j createIndexer() {
-        return new LinkerTaxonIndexNeo4j3(
+        return new LinkerTaxonIndexNeo4j(
                 new GraphServiceFactoryProxy(getGraphDb()),
                 new NodeIdCollectorNeo4j3()
         );

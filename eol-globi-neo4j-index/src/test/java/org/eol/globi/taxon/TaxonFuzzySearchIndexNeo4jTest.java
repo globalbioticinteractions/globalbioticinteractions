@@ -9,7 +9,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.tool.LinkerTaxonIndexNeo4j3;
+import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -43,8 +43,8 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
 
     }
 
-    private LinkerTaxonIndexNeo4j3 createIndexer() {
-        return new LinkerTaxonIndexNeo4j3(
+    private LinkerTaxonIndexNeo4j createIndexer() {
+        return new LinkerTaxonIndexNeo4j(
                 new GraphServiceFactoryProxy(getGraphDb()),
                 getNodeIdCollector()
         );

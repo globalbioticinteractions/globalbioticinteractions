@@ -1,13 +1,13 @@
 package org.eol.globi.server;
 
-import org.eol.globi.data.NodeFactoryNeo4j3;
+import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.tool.CmdGenerateReport;
-import org.eol.globi.tool.LinkerTaxonIndexNeo4j3;
+import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -32,9 +32,9 @@ public class CypherTestUtil {
     public static void validate(CypherQuery cypherQuery, GraphDatabaseService graphDatabaseService) throws StudyImporterException {
         try(Transaction tx = graphDatabaseService.beginTx()) {
             File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
-            new NodeFactoryNeo4j3(graphDatabaseService);
+            new NodeFactoryNeo4j(graphDatabaseService);
             new NonResolvingTaxonIndex(graphDatabaseService);
-            new LinkerTaxonIndexNeo4j3(new GraphServiceFactoryProxy(graphDatabaseService),
+            new LinkerTaxonIndexNeo4j(new GraphServiceFactoryProxy(graphDatabaseService),
                     new NodeIdCollectorNeo4j3()).index();
             CmdGenerateReport reportGenerator = new CmdGenerateReport();
             reportGenerator.setCacheDir(cacheDir.getAbsolutePath());

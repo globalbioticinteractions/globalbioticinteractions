@@ -16,7 +16,7 @@ public class CmdIndexTaxonStrings extends CmdNeo4J {
     @Override
     public void run() {
         List<IndexerNeo4j> linkers = new ArrayList<>();
-        linkers.add(new LinkerTaxonIndexNeo4j3(getGraphServiceFactory()));
+        linkers.add(new LinkerTaxonIndexNeo4j(getGraphServiceFactory()));
 
         for (IndexerNeo4j linker : linkers) {
             try {
