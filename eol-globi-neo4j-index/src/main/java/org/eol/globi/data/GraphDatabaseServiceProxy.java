@@ -35,7 +35,7 @@ class GraphDatabaseServiceProxy implements GraphDatabaseService {
     public Transaction beginTx() {
         if (shouldStartNextBatch.get() || tx.get() == null) {
             Transaction previousTx = tx.getAndSet(new TransactionProxy(graphDb.beginTx(), shouldStartNextBatch));
-            if (shouldStartNextBatch.get() && previousTx != null) {
+            if (previousTx != null) {
                 previousTx.commit();
                 previousTx.close();
                 shouldStartNextBatch.set(false);

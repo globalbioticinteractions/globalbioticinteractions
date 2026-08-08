@@ -15,11 +15,14 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.traversal.BidirectionalTraversalDescription;
 import org.neo4j.graphdb.traversal.TraversalDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class TransactionProxy implements Transaction {
+    private final Logger LOG = LoggerFactory.getLogger(TransactionProxy.class);
     private final Transaction tx;
     private final AtomicBoolean shouldStartNextBatch;
 
@@ -72,7 +75,6 @@ class TransactionProxy implements Transaction {
     public Result execute(String query) throws QueryExecutionException {
         return tx.execute(query);
     }
-
     @Override
     public Result execute(String query, Map<String, Object> parameters) throws QueryExecutionException {
         return tx.execute(query, parameters);
@@ -206,6 +208,7 @@ class TransactionProxy implements Transaction {
     @Override
     public void commit() {
         if (shouldStartNextBatch.get()) {
+            LOG.info("commit");
             tx.commit();
         }
     }

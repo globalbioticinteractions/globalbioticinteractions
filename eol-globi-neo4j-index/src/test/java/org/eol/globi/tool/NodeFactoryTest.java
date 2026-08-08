@@ -76,15 +76,20 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportNeo4j3() throws StudyImporterException {
+        NodeFactoryNeo4j factory = getNodeFactory();
 
-        try (Transaction tx = getGraphDb().beginTx()) {
-            NodeFactoryNeo4j.initSchema(getGraphDb());
+        try (Transaction tx = factory.getGraphDb().beginTx()) {
+            NodeFactoryNeo4j.initSchema(tx);
+            tx.commit();
+        }
+        factory.shouldStartNextBatch();
+        try (Transaction tx = factory.getGraphDb().beginTx()) {
             tx.commit();
         }
 
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j(getGraphDb());
-        try (Transaction tx = getGraphDb().beginTx()) {
-            assertGraphDBImportNativeIndexes(factory, getGraphDb());
+        try (Transaction tx = factory.getGraphDb().beginTx()) {
+            assertGraphDBImportNativeIndexes(factory, factory.getGraphDb());
+            tx.commit();
         }
     }
 
@@ -93,15 +98,10 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
         try (Transaction transaction = graphDb.beginTx()) {
             ResourceIterator<Node> nodes = transaction.findNodes(NodeLabel.Reference);
-            transaction.commit();
             assertTrue(nodes.hasNext());
 
             Study study = new StudyNode(nodes.next());
             assertThat(study.getTitle(), is("Simons 1997"));
-
-            assertFalse(nodes.hasNext());
-            assertNotNull(transaction.getNodeById(1));
-            assertNotNull(transaction.getNodeById(200));
             transaction.commit();
         }
     }

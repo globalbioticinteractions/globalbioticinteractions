@@ -117,38 +117,35 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return season;
     }
 
-    public static void initSchema(GraphDatabaseService graphDb) {
-        NodeFactoryNeo4j.initConstraints(graphDb);
-        NodeFactoryNeo4j.initIndexes(graphDb);
+    public static void initSchema(Transaction tx) {
+        NodeFactoryNeo4j.initConstraints(tx);
+        NodeFactoryNeo4j.initIndexes(tx);
     }
 
-    private static void initIndexes(GraphDatabaseService graphDb) {
+    private static void initIndexes(Transaction tx) {
         NodeFactoryNeo4j.createIndexIfNeeded(
-                graphDb,
+                tx,
                 NodeLabel.Location,
                 LocationConstant.LATITUDE
         );
         NodeFactoryNeo4j.createIndexIfNeeded(
-                graphDb,
+                tx,
                 NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE
         );
     }
 
-    private static void initConstraints(GraphDatabaseService graphDb) {
+    private static void initConstraints(Transaction tx) {
         NodeFactoryNeo4j.createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.Dataset,
+                tx, NodeLabel.Dataset,
                 DatasetConstant.NAMESPACE
         );
         NodeFactoryNeo4j.createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.Reference,
+                tx, NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE
         );
         NodeFactoryNeo4j.createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.ExternalId,
+                tx, NodeLabel.ExternalId,
                 PropertyAndValueDictionary.EXTERNAL_ID
         );
     }
@@ -612,61 +609,54 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         StudyNode studyNode = getOrCreateStudyNode(transaction, study);
         interactionNode = new InteractionNode(node);
         interactionNode.createRelationshipTo(RelTypes.DERIVED_FROM, (NodeBacked) studyNode);
-        Dataset dataset = getOrCreateDatasetNode(getGraphDb().beginTx(), study.getOriginatingDataset());
-        if (dataset instanceof DatasetNode) {
+        DatasetNode dataset = getOrCreateDatasetNode(getGraphDb().beginTx(), study.getOriginatingDataset());
+        if (dataset != null) {
             interactionNode.createRelationshipTo(RelTypes.ACCESSED_AT, (NodeBacked) dataset);
         }
         return interactionNode;
     }
 
-    private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
+    private static void createConstraintIfNeeded(Transaction transaction,
                                                  NodeLabel label,
                                                  String propertyName) {
-        try (Transaction transaction = graphDb.beginTx()) {
-            if (!transaction
-                    .schema()
-                    .getConstraints(label)
-                    .iterator()
-                    .hasNext()) {
+        if (!transaction
+                .schema()
+                .getConstraints(label)
+                .iterator()
+                .hasNext()) {
 
-                transaction
-                        .schema()
-                        .constraintFor(label)
-                        .assertPropertyIsUnique(propertyName)
-                        .create();
-                transaction.commit();
-            }
+            transaction
+                    .schema()
+                    .constraintFor(label)
+                    .assertPropertyIsUnique(propertyName)
+                    .create();
         }
     }
 
-    private static void createIndexIfNeeded(GraphDatabaseService graphDb,
-                                            NodeLabel label,
+    private static void createIndexIfNeeded(Transaction tx, NodeLabel label,
                                             String propertyName) {
 
-        try (Transaction transaction = graphDb.beginTx()) {
-            Iterable<IndexDefinition> indexes = transaction
-                    .schema()
-                    .getIndexes(label);
+        Iterable<IndexDefinition> indexes = tx
+                .schema()
+                .getIndexes(label);
 
-            IndexDefinition indexMatching = null;
-            for (IndexDefinition index : indexes) {
-                Iterator<String> keyIterator = index.getPropertyKeys().iterator();
-                if (keyIterator.hasNext()) {
-                    if (StringUtils.equals(keyIterator.next(), propertyName)) {
-                        indexMatching = index;
-                        break;
-                    }
+        IndexDefinition indexMatching = null;
+        for (IndexDefinition index : indexes) {
+            Iterator<String> keyIterator = index.getPropertyKeys().iterator();
+            if (keyIterator.hasNext()) {
+                if (StringUtils.equals(keyIterator.next(), propertyName)) {
+                    indexMatching = index;
+                    break;
                 }
+            }
 
-            }
-            if (indexMatching == null) {
-                transaction
-                        .schema()
-                        .indexFor(label)
-                        .on(propertyName)
-                        .create();
-            }
-            transaction.commit();
+        }
+        if (indexMatching == null) {
+            tx
+                    .schema()
+                    .indexFor(label)
+                    .on(propertyName)
+                    .create();
         }
     }
 
@@ -799,8 +789,6 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Node createEnvironmentNode(Transaction tx) {
         return tx.createNode(NodeLabel.Environment);
     }
-
-
 
 
 }
