@@ -53,7 +53,7 @@ public class ExportFlatInteractions implements GraphExporter {
         return prefix +
                 "MATCH (dataset)<-[:IN_DATASET]-(study)-[c:" + argumentType + "]->(sourceSpecimen)-[:" + taxonRelation.name() + "]->(sourceTaxon), " +
                 "(sourceSpecimen)-[r:" + InteractUtil.allInteractionsCypherClause() + "]->(targetSpecimen)-[:" + taxonRelation.name() + "]->(targetTaxon) " +
-                "WHERE NOT exists(r.inverted) " +
+                "WHERE r.inverted IS NULL " +
                 "WITH dataset, study, c, sourceSpecimen, sourceTaxon, targetSpecimen, targetTaxon, r " +
                 "OPTIONAL MATCH (sourceSpecimen)-[:COLLECTED_AT]->(loc) " +
                 "RETURN " +

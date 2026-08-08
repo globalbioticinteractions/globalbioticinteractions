@@ -40,9 +40,9 @@ public class ExportNCBIResourceFile implements GraphExporter {
     }
 
     protected void export(GraphDatabaseService graphService, OutputStreamFactory fileFactory) throws StudyImporterException {
-        String query = "CYPHER 2.3 START taxon = node:taxons('*:*') " +
-                "MATCH taxon-[:SAME_AS*0..1]->linkedTaxon " +
-                "WHERE exists(linkedTaxon.externalId) AND linkedTaxon.externalId =~ 'NCBI:.*'" +
+        String query =
+                "MATCH (taxon)-[:SAME_AS*0..1]->(linkedTaxon) " +
+                "WHERE linkedTaxon.externalId IS NOT NULL AND linkedTaxon.externalId =~ 'NCBI:.*'" +
                 "RETURN distinct(linkedTaxon.externalId) as id";
 
         try(Transaction transaction = graphService.beginTx()) {

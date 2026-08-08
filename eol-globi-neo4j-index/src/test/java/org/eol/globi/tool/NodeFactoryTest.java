@@ -107,13 +107,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
-        createNodeFactory(getGraphDb());
-        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
-    }
-
-    @Test
-    public void doSingleImportExportV3() throws StudyImporterException, URISyntaxException {
+    public void doSingleImportExport() throws StudyImporterException, URISyntaxException {
         doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
     }
 

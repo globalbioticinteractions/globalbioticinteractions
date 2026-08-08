@@ -19,7 +19,7 @@ public class ExportNamespacesTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         createDataset("namespace1");
         createDataset("namespace2");
-        ExportUtil.export(ExportUtil.AppenderWriter.of(writer), getGraphDb(), ExportNamespaces.CYPHER_QUERY);
+        ExportUtil.export(ExportUtil.AppenderWriter.of(writer), getGraphDb(), ExportNamespaces.CYPHER_QUERY_V3);
 
         assertThat(writer.toString(), Is.is("namespace\nnamespace1\nnamespace2\n"
         ));
