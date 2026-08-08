@@ -151,13 +151,13 @@ public class NameResolverTest extends GraphDBTestCase {
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
-        Taxon resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:50999");
+        Taxon resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:50999", taxon);
         assertThat(resolvedTaxon, is(notNullValue()));
         assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:50999"));
         assertThat(resolvedTaxon.getName(), is("Ficus"));
         assertThat(resolvedTaxon.getPath(), is("Plantae | Tracheophyta | Magnoliopsida | Rosales | Moraceae | Ficus"));
 
-        resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:208863");
+        resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:208863", taxon);
         assertThat(resolvedTaxon, is(notNullValue()));
         assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:208863"));
         assertThat(resolvedTaxon.getName(), is("Ficus"));

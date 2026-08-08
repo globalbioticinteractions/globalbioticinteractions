@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNoTx;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -24,18 +25,18 @@ public class NonResolvingTaxonIndex extends NonResolvingTaxonIndexNoTx {
     }
 
     @Override
-    public Taxon findTaxonById(String externalId) {
+    public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
         try (Transaction tx = getGraphDbService().beginTx()) {
-            Taxon taxonById = super.findTaxonById(externalId);
+            TaxonNode taxonById = super.findTaxonById(externalId, taxonContext);
             tx.commit();
             return taxonById;
         }
     }
 
     @Override
-    public Taxon findTaxonByName(String name) throws NodeFactoryException {
+    public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
         try (Transaction tx = getGraphDbService().beginTx()) {
-            Taxon taxonById = super.findTaxonByName(name);
+            TaxonNode taxonById = super.findTaxonByName(name, taxonContext);
             tx.commit();
             return taxonById;
         }

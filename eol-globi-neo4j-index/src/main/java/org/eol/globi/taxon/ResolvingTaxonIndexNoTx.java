@@ -44,11 +44,16 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public TaxonNode findTaxonByName(String name) throws NodeFactoryException {
+        return findTaxonByName(name, null);
+    }
+
+    @Override
+    public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
         return findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService());
     }
 
     @Override
-    public TaxonNode findTaxonById(String externalId) {
+    public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
         return findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService());
     }
 
@@ -99,12 +104,12 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
         Taxon taxonFound = StringUtils.isBlank(taxon.getExternalId())
                 ? null
-                : findTaxonById(taxon.getExternalId());
+                : findTaxonById(taxon.getExternalId(), taxon);
 
         if (taxonFound == null) {
             taxonFound = StringUtils.isBlank(taxon.getName())
                     ? null
-                    : findTaxonByName(taxon.getName());
+                    : findTaxonByName(taxon.getName(), taxon);
         }
 
         if (taxonFound == null) {

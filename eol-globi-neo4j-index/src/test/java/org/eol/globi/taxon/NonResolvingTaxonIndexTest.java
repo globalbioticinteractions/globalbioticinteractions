@@ -2,8 +2,6 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -12,8 +10,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.schema.IndexDefinition;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -60,7 +56,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         taxon1.setPath(null);
         Taxon taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
-        assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
+        assertThat(taxonService.findTaxonById("foo:123", taxon), is(notNullValue()));
     }
 
     @Test
@@ -170,7 +166,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(taxon.getPath(), is("seven | eight | nine | some name"));
         assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
 
-        assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
+        assertThat(taxonService.findTaxonById("foo:123", taxon), is(notNullValue()));
 
         Taxon taxon2 = new TaxonImpl("some name", "foo:123");
         taxon2.setPath("ten | eleven | twelve | some name");
@@ -194,7 +190,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
 
-        assertThat(taxonService.findTaxonById(externalId), is(notNullValue()));
+        assertThat(taxonService.findTaxonById(externalId, taxon), is(notNullValue()));
 
         Taxon taxon2 = new TaxonImpl("some name", externalId);
         taxon2.setPath("some name");
