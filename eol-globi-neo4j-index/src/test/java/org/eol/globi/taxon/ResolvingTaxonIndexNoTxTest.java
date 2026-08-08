@@ -320,6 +320,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
         assertThat(first.getName(), is("preferred"));
         assertThat(first.getPath(), is("one | two | three"));
         assertThat(first.getPathIds(), is("1 | 2 | 3"));
+
         Taxon taxon1 = new TaxonImpl("not pref", null);
         taxon1.setPath(null);
         Taxon second = this.taxonService.getOrCreateTaxon(taxon1);
@@ -353,11 +354,11 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
         this.taxonService = taxonService;
 
         Taxon taxon2 = new TaxonImpl("some name", "some:id");
-
         taxon2.setPath("one | two | three | some name");
         taxon2.setPathNames("kingdom | family | genus | species");
 
         Taxon first = this.taxonService.getOrCreateTaxon(taxon2);
+
         assertThat(first.getName(), is("some name"));
         assertThat(first.getPath(), is("one | two | three | some name"));
 
@@ -365,8 +366,8 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
         taxon1.setPath("four | five | six | some name");
         taxon1.setPathNames("kingdom | family | genus | species");
 
-
         Taxon second = this.taxonService.getOrCreateTaxon(taxon1);
+
         assertThat(second.getName(), is("some name"));
         assertThat(second.getPath(), is("four | five | six | some name"));
 

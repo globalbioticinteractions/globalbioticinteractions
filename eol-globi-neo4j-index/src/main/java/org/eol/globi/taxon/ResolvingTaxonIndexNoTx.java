@@ -12,23 +12,30 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.tool.UnlikelyTaxonNameException;
 import org.eol.globi.util.NodeUtil;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
 
     private final PropertyEnricher enricher;
     private boolean skipHomonymMatches;
     private boolean indexResolvedOnly;
+
+    public static final Pattern POSSIBLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
 
     public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(graphDbService);
@@ -48,15 +55,19 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
     public static TaxonNode findTaxonOrRelated(String key, String value, GraphDatabaseService graphDbService) {
         Node foundNode = null;
         try (Transaction transaction = graphDbService.beginTx()) {
-            ResourceIterator<Node> foundNames = transaction
-                    .findNodes(
-                            NodeLabel.Taxon,
-                            key,
-                            value
-                    );
-            if (foundNames.hasNext()) {
-                foundNode = foundNames.next();
+            foundNode = findNode(key, value, transaction, NodeLabel.Taxon);
+
+            if (foundNode == null) {
+                foundNode = findNode(key, value, transaction, NodeLabel.Taxon_Verbatim);
+                if (foundNode != null) {
+                    try (ResourceIterable<Relationship> relationships = foundNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ALIGNED_TO))) {
+                        Optional<Relationship> first = relationships.stream().findFirst();
+                        foundNode = first.map(Relationship::getStartNode).orElse(null);
+                    }
+                }
+
             }
+
             transaction.commit();
             return foundNode == null
                     ? null
@@ -64,8 +75,28 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
         }
     }
 
+    private static Node findNode(String key, String value, Transaction transaction, NodeLabel nodeLabel) {
+        Node foundNode = null;
+        ResourceIterator<Node> foundNames = transaction
+                .findNodes(
+                        nodeLabel,
+                        key,
+                        value
+                );
+        if (foundNames.hasNext()) {
+            foundNode = foundNames.next();
+        }
+        return foundNode;
+    }
+
     @Override
     public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
+        if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
+            if (!POSSIBLE_SHORT_NAME_PATTERN.matcher(taxon.getName()).matches()) {
+                throw new UnlikelyTaxonNameException("taxon name [" + taxon.getName() + "] is a short and unlikely taxonomic name, and no externalId is provided");
+            }
+        }
+
         Taxon taxonFound = StringUtils.isBlank(taxon.getExternalId())
                 ? null
                 : findTaxonById(taxon.getExternalId());
@@ -84,6 +115,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                         .stream()
                         .filter(TaxonUtil::isResolved)
                         .map(TaxonUtil::mapToTaxon)
+                        .filter(t -> includeAfterHomonymCheck(taxon, t))
                         .filter(t -> !TaxonUtil.hasLiteratureReference(t))
                         .map(r -> taxonNodeFor(r, NodeLabel.Taxon))
                         .collect(Collectors.toList());
@@ -93,13 +125,12 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                     taxonFound = indexResolvedOnly ? null : noMatch;
                 } else {
                     TaxonNode primary = matchCandidates.get(0);
-
-                    taxonFound = primary;
-
+                    taxonNodeFor(taxon, NodeLabel.Taxon_Verbatim).createRelationshipTo(RelTypes.ALIGNED_TO, primary);
                     Streams.concat(matchCandidates.stream().skip(1))
                             .forEach(n -> {
                                 n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
                             });
+                    taxonFound = primary;
                 }
             } catch (PropertyEnricherException e) {
                 // ignore
@@ -107,6 +138,10 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
         }
         return taxonFound;
+    }
+
+    private boolean includeAfterHomonymCheck(Taxon taxon, Taxon t) {
+        return !(skipHomonymMatches && TaxonUtil.likelyHomonym(t, taxon));
     }
 
     private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {

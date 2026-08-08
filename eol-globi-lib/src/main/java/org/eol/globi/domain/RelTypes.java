@@ -19,7 +19,8 @@ public enum RelTypes implements RelType {
     SUPPORTS,
     REFUTES,
     HAS_EXTERNAL_ID,
-    HAS_DOI;
+    HAS_DOI,
+    ALIGNED_TO;
 
     private final NameType type;
 
