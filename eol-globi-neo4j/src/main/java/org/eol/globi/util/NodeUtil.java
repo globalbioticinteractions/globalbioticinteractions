@@ -61,7 +61,7 @@ public class NodeUtil {
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
         try (Transaction transaction = graphDb.beginTx()) {
-            Node node = transaction.createNode(NodeLabel.Taxon);
+            Node node = transaction.createNode(NodeLabel.Taxon_Verbatim);
             TaxonNode sameAsTaxon = new TaxonNode(node);
             TaxonUtil.copy(taxon, sameAsTaxon);
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));

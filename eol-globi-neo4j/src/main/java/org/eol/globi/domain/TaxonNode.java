@@ -10,7 +10,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     public TaxonNode(Node node) {
         super(node);
-        node.addLabel(NodeLabel.Taxon);
+        node.addLabel(NodeLabel.Taxon_Verbatim);
     }
 
     public TaxonNode(Node node, String name) {

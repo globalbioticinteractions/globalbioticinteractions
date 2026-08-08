@@ -15,7 +15,6 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
@@ -49,7 +48,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
         try (Transaction transaction = graphDbService.beginTx()) {
             ResourceIterator<Node> foundNames = transaction
                     .findNodes(
-                            NodeLabel.Taxon,
+                            NodeLabel.Taxon_Verbatim,
                             key,
                             value
                     );

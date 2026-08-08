@@ -35,7 +35,7 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
 
         if (taxonFound == null) {
             try(Transaction transaction = getGraphDbService().beginTx()) {
-                taxonFound = new TaxonNode(transaction.createNode(NodeLabel.Taxon));
+                taxonFound = new TaxonNode(transaction.createNode(NodeLabel.Taxon_Verbatim));
                 TaxonUtil.copy(taxon, taxonFound);
                 transaction.commit();
             }

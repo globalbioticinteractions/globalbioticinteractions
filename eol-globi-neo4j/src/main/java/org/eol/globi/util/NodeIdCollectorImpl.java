@@ -14,7 +14,7 @@ import java.util.TreeMap;
 public class NodeIdCollectorImpl implements NodeIdCollector {
 
     private static final Map<String, NodeLabel> INDEX_NAME_TO_LABEL = Collections.unmodifiableMap(new TreeMap<String, NodeLabel>() {{
-        put("taxons", NodeLabel.Taxon);
+        put("taxons", NodeLabel.Taxon_Verbatim);
         put("studies", NodeLabel.Reference);
         put("datasets", NodeLabel.Dataset);
     }});

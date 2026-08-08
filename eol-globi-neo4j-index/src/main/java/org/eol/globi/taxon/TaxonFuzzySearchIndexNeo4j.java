@@ -1,6 +1,5 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -11,12 +10,9 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
-import org.neo4j.graphdb.schema.IndexSetting;
 import org.neo4j.graphdb.schema.IndexType;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.TreeMap;
 
 public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
@@ -25,7 +21,7 @@ public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
     public TaxonFuzzySearchIndexNeo4j(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
-            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon);
+            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon_Verbatim);
             boolean needsIndex = true;
             for (IndexDefinition index : indexes) {
                 if (index.isNodeIndex() && StringUtils.equals(index.getName(), TAXON_NAME_SUGGESTIONS)) {
@@ -35,7 +31,7 @@ public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
             }
             if (needsIndex) {
                 tx.schema()
-                        .indexFor(NodeLabel.Taxon)
+                        .indexFor(NodeLabel.Taxon_Verbatim)
                         .withIndexType(IndexType.FULLTEXT)
                         .withName(TAXON_NAME_SUGGESTIONS)
                         .on(PropertyAndValueDictionary.NAME)
