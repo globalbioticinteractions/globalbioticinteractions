@@ -9,7 +9,6 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.ResolvingTaxonIndex;
-import org.eol.globi.tool.NameResolver;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
 import org.eol.globi.util.InputStreamFactoryNoop;
@@ -30,9 +29,8 @@ import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.configuration.GraphDatabaseSettings;
@@ -62,19 +60,18 @@ public class GraphDBTestCase {
 
     protected TaxonIndex taxonIndex;
 
-    static Neo4j neo4j = null;
+    Neo4j neo4j = null;
 
 
-    @BeforeClass
-    public static void initializeNeo4j() {
-        GraphDBTestCase.neo4j = Neo4jBuilders.newInProcessBuilder()
+    public void initializeNeo4j() {
+        neo4j = Neo4jBuilders.newInProcessBuilder()
                 .withDisabledServer()
                 .withConfig(GraphDatabaseSettings.transaction_timeout, Duration.ofSeconds(5))
                 .build();
     }
 
-    @AfterClass
-    public static void closeNeo4j() {
+    @After
+    public void closeNeo4j() {
         if (neo4j != null) {
             neo4j.close();
         }
@@ -135,6 +132,7 @@ public class GraphDBTestCase {
 
     @Before
     public void startGraphDb() throws IOException {
+        initializeNeo4j();
         nodeFactory = createNodeFactory();
         try (Transaction tx = getGraphDb().beginTx()) {
             getTaxonIndex();
