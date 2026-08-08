@@ -36,7 +36,7 @@ import static org.junit.Assert.fail;
 
 public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
-    private NonResolvingTaxonIndexNoTx taxonService;
+    private ResolvingTaxonIndex taxonService;
 
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 
@@ -89,50 +89,14 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
         }, getGraphDb()
         );
 
-
-//        assertThat(getGraphDb().index().existsForNodes("taxons"), is(false));
-//        assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
-
         Taxon indexedTaxonNode = taxonService.getOrCreateTaxon(new TaxonImpl("some name1"));
 
-//        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertEnrichedPropertiesSet(indexedTaxonNode, "1");
         Taxon someFoundTaxonNode = taxonService.findTaxonByName("some name1");
-//        assertThat(someFoundTaxonNode.getNodeID(), is(indexedTaxonNode.getNodeID()));
         assertEnrichedPropertiesSet(someFoundTaxonNode, "1");
-
-
-//        {
-//            Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,
-//                    MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-//
-//            assertThat(
-//                    ids.query("path:\"some name2\"").size(),
-//                    is(0)
-//            );
-//        }
-
-        LinkerTaxonIndexNeo4j linkerTaxonIndexNeo4j2 = new LinkerTaxonIndexNeo4j(
-                new GraphServiceFactoryProxy(getGraphDb()),
-                new NodeIdCollectorImpl()
-        );
-        linkerTaxonIndexNeo4j2.index();
-
-    //    {
-//            Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,
-//                    MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-//            IndexHits<Node> hits = ids.query("path:\"a kingdom name2\"");
-//            assertThat(hits.size(), is(1));
-//            for (Node hit : hits) {
-//                TaxonNode taxonHit = new TaxonNode(hit);
-//                assertNotNull(taxonHit);
-//                assertThat(taxonHit.getNodeID(), is(indexedTaxonNode.getNodeID()));
-//            }
-//        }
 
         Taxon someOtherFoundTaxonNodeTake2 = taxonService.findTaxonByName("some name2");
         assertNull(someOtherFoundTaxonNodeTake2);
-
     }
 
 
@@ -196,9 +160,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
             }
         };
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        taxonService.setEnricher(enricher);
-        this.taxonService = taxonService;
+        this.taxonService = createTaxonService(getGraphDb(), enricher);
         Taxon taxon = this.taxonService.getOrCreateTaxon(new TaxonImpl("bla bla bla"));
         assertEquals("bla bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
@@ -219,18 +181,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public void indexResolvedOnly() throws NodeFactoryException {
-        Taxon unresolvedTaxon = getIndex().getOrCreateTaxon(new TaxonImpl("not resolved"));
-        assertNotNull(unresolvedTaxon);
-        assertFalse(TaxonUtil.isResolved(unresolvedTaxon));
-
-        final ResolvingTaxonIndex indexResolvedOnly = getIndex();
-        indexResolvedOnly.setIndexResolvedTaxaOnly(true);
-        assertNull(indexResolvedOnly.getOrCreateTaxon(new TaxonImpl("no resolving either", null)));
-    }
-
-    @Test
-    public void createTaxonWithExplicitRanks() throws NodeFactoryException {
-        ((ResolvingTaxonIndex) this.taxonService).setEnricher(new PropertyEnricherSingle() {
+        this.taxonService = createTaxonService(getGraphDb(), new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return properties;
@@ -241,6 +192,30 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
             }
         });
+        Taxon unresolvedTaxon = taxonService.getOrCreateTaxon(new TaxonImpl("not resolved"));
+        assertNotNull(unresolvedTaxon);
+        assertFalse(TaxonUtil.isResolved(unresolvedTaxon));
+
+        taxonService.setIndexResolvedTaxaOnly(true);
+        Taxon taxon = new TaxonImpl("no resolving either", null);
+        assertFalse(TaxonUtil.isResolved(taxon));
+        assertNull(taxonService.getOrCreateTaxon(taxon));
+    }
+
+    @Test
+    public void createTaxonWithExplicitRanks() throws NodeFactoryException {
+        PropertyEnricherSingle propertyEnricherSingle = new PropertyEnricherSingle() {
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                return properties;
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        };
+        this.taxonService = createTaxonService(getGraphDb(), propertyEnricherSingle);
         Taxon taxon1 = new TaxonImpl("foo", "foo:123");
         taxon1.setPath("a kingdom name | a phylum name | boo name | a class name | an order name | a family name | a genus name | a species name");
         taxon1.setPathIds("a kingdom id | a phylum id | boo id | a class id | an order id | a family id | a genus id | a species id");
@@ -286,7 +261,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
     }
 
     private static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
-        return new ResolvingTaxonIndex(new PropertyEnricherSingle() {
+        PropertyEnricherSingle enricher = new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
@@ -302,14 +277,17 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
             public void shutdown() {
 
             }
-        }, graphDb
-        );
+        };
+        return createTaxonService(graphDb, enricher);
+    }
+
+    private static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb, PropertyEnricher enricher) {
+        return new ResolvingTaxonIndex(enricher, graphDb);
     }
 
     @Test
     public final void synonymsAddedToIndexOnce() throws NodeFactoryException {
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        taxonService.setEnricher(new PropertyEnricherSingle() {
+        PropertyEnricherSingle enricher = new PropertyEnricherSingle() {
             private boolean firstTime = true;
 
             @Override
@@ -332,8 +310,9 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
             public void shutdown() {
 
             }
-        });
-        this.taxonService = taxonService;
+        };
+
+        this.taxonService = createTaxonService(getGraphDb(), enricher);
 
         Taxon taxon2 = new TaxonImpl("not pref", null);
         taxon2.setPath(null);
@@ -358,9 +337,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
     @Test
     public final void doNotMatchHomonyms() throws NodeFactoryException {
 
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        taxonService.skipHomonymMatches(true);
-        taxonService.setEnricher(new PropertyEnricherSingle() {
+        PropertyEnricherSingle enricher = new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return TaxonUtil.taxonToMap(TaxonUtil.mapToTaxon(properties));
@@ -370,7 +347,9 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
             public void shutdown() {
 
             }
-        });
+        };
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb(), enricher);
+        taxonService.skipHomonymMatches(true);
         this.taxonService = taxonService;
 
         Taxon taxon2 = new TaxonImpl("some name", "some:id");
@@ -399,8 +378,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public final void labelUnambiguousMatchesByPath() throws NodeFactoryException {
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        configureAnuraHits(taxonService);
+        this.taxonService = createTaxonService(getGraphDb(), getAnuraEnricher());
 
         TaxonImpl anura = new TaxonImpl("Anura", null);
         anura.setPath("four | five | six | some name");
@@ -418,9 +396,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public final void labelUnambiguousMatchesById() throws NodeFactoryException {
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        configureAnuraHits(taxonService);
-        this.taxonService = taxonService;
+        this.taxonService = createTaxonService(getGraphDb(), getAnuraEnricher());
 
         TaxonImpl anura = new TaxonImpl("Anura", "frogs:1");
 
@@ -437,9 +413,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public final void shortName() throws NodeFactoryException {
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        configureIaHits(taxonService);
-        this.taxonService = taxonService;
+        this.taxonService = createTaxonService(getGraphDb(), getIaHits());
 
         TaxonImpl ia = new TaxonImpl("Ia", null);
 
@@ -453,14 +427,14 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
         try {
             this.taxonService.getOrCreateTaxon(new TaxonImpl("I_", null));
-        } catch(NodeFactoryException ex) {
+        } catch (NodeFactoryException ex) {
             assertThat(ex.getMessage(), is("taxon name [I_] is a short and unlikely taxonomic name, and no externalId is provided"));
             throw ex;
         }
     }
 
-    public void configureAnuraHits(ResolvingTaxonIndex taxonService) {
-        taxonService.setEnricher(new PropertyEnricher() {
+    private static PropertyEnricher getAnuraEnricher() {
+        return new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return enrichAllMatches(properties).get(0);
@@ -482,11 +456,11 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
             public void shutdown() {
 
             }
-        });
+        };
     }
 
-    public void configureIaHits(ResolvingTaxonIndex taxonService) {
-        taxonService.setEnricher(new PropertyEnricher() {
+    private static PropertyEnricher getIaHits() {
+        return new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return enrichAllMatches(properties).get(0);
@@ -505,6 +479,6 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
             public void shutdown() {
 
             }
-        });
+        };
     }
 }

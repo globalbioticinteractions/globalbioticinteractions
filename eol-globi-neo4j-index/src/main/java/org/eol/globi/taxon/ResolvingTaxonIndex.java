@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Transaction;
 
 public class ResolvingTaxonIndex extends ResolvingTaxonIndexNoTx {
 
+
     public ResolvingTaxonIndex(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(enricher, graphDbService);
     }
@@ -28,14 +29,5 @@ public class ResolvingTaxonIndex extends ResolvingTaxonIndexNoTx {
             tx.commit();
             return taxonById;
         }
-    }
-
-
-    public void setEnricher(PropertyEnricher enricher) {
-
-    }
-
-    public void skipHomonymMatches(boolean skipHomonymMatches) {
-
     }
 }

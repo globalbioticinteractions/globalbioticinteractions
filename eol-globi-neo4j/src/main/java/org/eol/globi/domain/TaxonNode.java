@@ -9,8 +9,12 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 public class TaxonNode extends NamedNode implements Taxon {
 
     public TaxonNode(Node node) {
+        this(node, NodeLabel.Taxon_Verbatim);
+    }
+
+    public TaxonNode(Node node, NodeLabel taxonLabel) {
         super(node);
-        node.addLabel(NodeLabel.Taxon_Verbatim);
+        node.addLabel(taxonLabel);
     }
 
     public TaxonNode(Node node, String name) {

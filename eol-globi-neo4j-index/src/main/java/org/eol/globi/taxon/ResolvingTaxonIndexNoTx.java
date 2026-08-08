@@ -27,6 +27,8 @@ import java.util.stream.Stream;
 public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
 
     private final PropertyEnricher enricher;
+    private boolean skipHomonymMatches;
+    private boolean indexResolvedOnly;
 
     public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(graphDbService);
@@ -48,7 +50,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
         try (Transaction transaction = graphDbService.beginTx()) {
             ResourceIterator<Node> foundNames = transaction
                     .findNodes(
-                            NodeLabel.Taxon_Verbatim,
+                            NodeLabel.Taxon,
                             key,
                             value
                     );
@@ -64,10 +66,14 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
-        Taxon taxonFound = StringUtils.isBlank(taxon.getExternalId()) ? null : findTaxonById(taxon.getExternalId());
+        Taxon taxonFound = StringUtils.isBlank(taxon.getExternalId())
+                ? null
+                : findTaxonById(taxon.getExternalId());
 
         if (taxonFound == null) {
-            taxonFound = StringUtils.isBlank(taxon.getName()) ? null :findTaxonByName(taxon.getName());
+            taxonFound = StringUtils.isBlank(taxon.getName())
+                    ? null
+                    : findTaxonByName(taxon.getName());
         }
 
         if (taxonFound == null) {
@@ -79,18 +85,22 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                         .filter(TaxonUtil::isResolved)
                         .map(TaxonUtil::mapToTaxon)
                         .filter(t -> !TaxonUtil.hasLiteratureReference(t))
-                        .map(this::taxonNodeFor)
+                        .map(r -> taxonNodeFor(r, NodeLabel.Taxon))
                         .collect(Collectors.toList());
 
-                TaxonNode primary = matchCandidates.isEmpty()
-                        ? createNoMatch(taxon)
-                        : matchCandidates.get(0);
-                taxonFound = primary;
+                if (matchCandidates.isEmpty()) {
+                    TaxonNode noMatch = createNoMatch(taxon);
+                    taxonFound = indexResolvedOnly ? null : noMatch;
+                } else {
+                    TaxonNode primary = matchCandidates.get(0);
 
-                Streams.concat(matchCandidates.stream().skip(1), Stream.of(taxonNodeFor(taxon)))
-                        .forEach(n -> {
-                            n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
-                        });
+                    taxonFound = primary;
+
+                    Streams.concat(matchCandidates.stream().skip(1))
+                            .forEach(n -> {
+                                n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+                            });
+                }
             } catch (PropertyEnricherException e) {
                 // ignore
             }
@@ -99,9 +109,9 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
         return taxonFound;
     }
 
-    private TaxonNode taxonNodeFor(Taxon r) {
+    private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {
         try (Transaction transaction = getGraphDbService().beginTx()) {
-            TaxonNode t = new TaxonNode(transaction.createNode());
+            TaxonNode t = new TaxonNode(transaction.createNode(), nodeLabel);
             TaxonUtil.copy(r, t);
             transaction.commit();
             return t;
@@ -109,17 +119,21 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
     }
 
     private TaxonNode createNoMatch(Taxon taxon) {
-        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon));
+        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon), NodeLabel.Taxon_No_Match);
     }
 
 
     @Override
     public void setIndexResolvedTaxaOnly(boolean indexResolvedOnly) {
-
+        this.indexResolvedOnly = indexResolvedOnly;
     }
 
     @Override
     public boolean isIndexResolvedOnly() {
-        return true;
+        return indexResolvedOnly;
+    }
+
+    public void skipHomonymMatches(boolean skipHomonymMatches) {
+        this.skipHomonymMatches = skipHomonymMatches;
     }
 }

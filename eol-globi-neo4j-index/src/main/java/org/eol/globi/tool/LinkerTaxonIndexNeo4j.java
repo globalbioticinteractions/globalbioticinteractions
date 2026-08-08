@@ -20,7 +20,7 @@ public class LinkerTaxonIndexNeo4j implements IndexerNeo4j {
         this.factory = factory;
     }
 
-    public LinkerTaxonIndexNeo4j(GraphServiceFactoryProxy factory, NodeIdCollector nodeIdCollectorNeo4j3) {
+    public LinkerTaxonIndexNeo4j(GraphServiceFactory factory, NodeIdCollector nodeIdCollectorNeo4j3) {
         this(factory);
     }
 

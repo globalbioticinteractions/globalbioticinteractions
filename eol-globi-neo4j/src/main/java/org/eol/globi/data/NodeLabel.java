@@ -10,6 +10,8 @@ public enum NodeLabel implements Label {
     Environment,
     Dataset,
     Specimen,
-    Taxon_Verbatim
+    Taxon_Verbatim,
+    Taxon,
+    Taxon_No_Match
 }
 
