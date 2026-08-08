@@ -49,21 +49,21 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
-        return findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService());
+        return findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(),taxonContext);
     }
 
     @Override
     public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
-        return findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService());
+        return findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
     }
 
-    public static TaxonNode findTaxonOrRelated(String key, String value, GraphDatabaseService graphDbService) {
+    public static TaxonNode findTaxonOrRelated(String key, String value, GraphDatabaseService graphDbService, Taxon taxonContext) {
         Node foundNode = null;
         try (Transaction transaction = graphDbService.beginTx()) {
-            foundNode = findNode(key, value, transaction, NodeLabel.Taxon);
+            foundNode = findNode(key, value, transaction, NodeLabel.Taxon, taxonContext);
 
             if (foundNode == null) {
-                foundNode = findNode(key, value, transaction, NodeLabel.Taxon_Verbatim);
+                foundNode = findNode(key, value, transaction, NodeLabel.Taxon_Verbatim, taxonContext);
                 if (foundNode != null) {
                     try (ResourceIterable<Relationship> relationships = foundNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ALIGNED_TO))) {
                         Optional<Relationship> first = relationships.stream().findFirst();
@@ -80,7 +80,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
         }
     }
 
-    private static Node findNode(String key, String value, Transaction transaction, NodeLabel nodeLabel) {
+    private static Node findNode(String key, String value, Transaction transaction, NodeLabel nodeLabel, Taxon taxonContext) {
         Node foundNode = null;
         ResourceIterator<Node> foundNames = transaction
                 .findNodes(
@@ -88,8 +88,12 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                         key,
                         value
                 );
-        if (foundNames.hasNext()) {
-            foundNode = foundNames.next();
+        while (foundNames.hasNext()) {
+            Node candidate = foundNames.next();
+            if (!TaxonUtil.likelyHomonym(new TaxonNode(candidate), taxonContext)) {
+                foundNode = candidate;
+                break;
+            }
         }
         return foundNode;
     }

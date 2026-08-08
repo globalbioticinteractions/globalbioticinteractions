@@ -321,15 +321,16 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
         Taxon taxon1 = new TaxonImpl("not pref", null);
         taxon1.setPath(null);
         Taxon second = this.taxonService.getOrCreateTaxon(taxon1);
-//        assertThat(second.getNodeID(), is(first.getNodeID()));
+        assertThat(((TaxonNode)second).getNodeID(), is(((TaxonNode)first).getNodeID()));
 
         Taxon third = this.taxonService.getOrCreateTaxon(new TaxonImpl("not pref"));
-//        assertThat(third.getNodeID(), is(first.getNodeID()));
+        assertThat(((TaxonNode)third).getNodeID(), is(((TaxonNode)first).getNodeID()));
 
-        Taxon foundTaxon = this.taxonService.findTaxonByName("not pref");
-//        assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
+        TaxonNode foundTaxon = this.taxonService.findTaxonByName("not pref");
+        assertThat(foundTaxon.getNodeID(), is(((TaxonNode)first).getNodeID()));
+
         foundTaxon = this.taxonService.findTaxonByName("preferred");
-//        assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
+        assertThat(foundTaxon.getNodeID(), is(((TaxonNode)first).getNodeID()));
     }
 
     @Test

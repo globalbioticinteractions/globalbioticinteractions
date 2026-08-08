@@ -50,7 +50,7 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
 
     @Override
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
-        return findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService());
+        return findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(), taxonContext);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
     }
     @Override
     public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
-        return findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService());
+        return findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
     }
 
     public GraphDatabaseService getGraphDbService() {
