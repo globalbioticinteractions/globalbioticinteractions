@@ -17,8 +17,7 @@ public class CmdExportNeo4j2 extends CmdExportNeo4J {
         try {
             new GraphExporterImpl().export(
                     getGraphServiceFactory().getGraphService(),
-                    new File(getBaseDir()),
-                    getNeo4jVersion()
+                    new File(getBaseDir())
             );
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);

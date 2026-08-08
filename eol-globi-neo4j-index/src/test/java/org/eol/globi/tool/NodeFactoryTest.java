@@ -40,41 +40,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 
     @Test
-    public void doSingleImport() throws StudyImporterException {
-        GraphDatabaseService graphDb = getGraphDb();
-        NodeFactory factory = createNodeFactory(graphDb);
-
-        try (Transaction tx = getGraphDb().beginTx()) {
-            importWithGraphDB(factory);
-            tx.commit();
-        }
-    }
-
-    private NodeFactory createNodeFactory(GraphDatabaseService graphDb) {
-        NodeFactory factory;
-        try (Transaction tx = getGraphDb().beginTx()) {
-            factory = new NodeFactoryNeo4j(graphDb);
-            tx.commit();
-        }
-        return factory;
-    }
-
-    private void importWithGraphDB(NodeFactory factory) throws StudyImporterException {
-
-        importData(DatasetImporterForSimons.class, factory);
-
-        GraphDatabaseService graphService = getGraphDb();
-        Study study = getStudySingleton(graphService);
-        assertThat(study.getTitle(), is("Simons 1997"));
-
-        try (Transaction transaction = graphService.beginTx()) {
-            assertNotNull(transaction.getNodeById(1));
-            assertNotNull(transaction.getNodeById(200));
-            transaction.commit();
-        }
-    }
-
-    @Test
     public void doSingleImportNeo4j3() throws StudyImporterException {
         NodeFactoryNeo4j factory = getNodeFactory();
 
@@ -92,6 +57,31 @@ public class NodeFactoryTest extends GraphDBTestCase {
             tx.commit();
         }
     }
+
+    @Test
+    public void doSingleImport() throws StudyImporterException {
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            importWithGraphDB(getNodeFactory());
+            tx.commit();
+        }
+    }
+
+    private void importWithGraphDB(NodeFactory factory) throws StudyImporterException {
+
+        importData(DatasetImporterForSimons.class, factory);
+
+        GraphDatabaseService graphService = getGraphDb();
+        Study study = getStudySingleton(graphService);
+        assertThat(study.getTitle(), is("Simons 1997"));
+
+        try (Transaction transaction = graphService.beginTx()) {
+            assertNotNull(transaction.getNodeById(1));
+            assertNotNull(transaction.getNodeById(200));
+            transaction.commit();
+        }
+    }
+
 
     public static void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory, GraphDatabaseService graphDb) throws StudyImporterException {
         importData(DatasetImporterForSimons.class, factory);
@@ -145,7 +135,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         FileUtils.deleteQuietly(baseDir);
         try (Transaction tx = getGraphDb().beginTx()) {
             new GraphExporterImpl()
-                    .export(getGraphDb(), baseDir, "2");
+                    .export(getGraphDb(), baseDir);
             tx.commit();
         }
     }

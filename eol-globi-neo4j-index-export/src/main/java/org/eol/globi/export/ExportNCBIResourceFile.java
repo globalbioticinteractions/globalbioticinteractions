@@ -26,7 +26,7 @@ public class ExportNCBIResourceFile implements GraphExporter {
 
 
     @Override
-    public void export(GraphDatabaseService graphService, final File baseDir, String neo4jVersion) throws StudyImporterException {
+    public void export(GraphDatabaseService graphService, final File baseDir) throws StudyImporterException {
         OutputStreamFactory fileFactory = new OutputStreamFactory() {
             @Override
             public OutputStream create(int i) throws IOException {

@@ -39,7 +39,7 @@ public class GraphExporterNeo4j3ImplTest extends GraphDBTestCase {
         resolveNames();
 
         String neo4jVersion = "3";
-        new GraphExporterInteractionsTSVImpl(neo4jVersion).export(getGraphDb(), tmpDir, neo4jVersion);
+        new GraphExporterInteractionsTSVImpl(neo4jVersion).export(getGraphDb(), tmpDir);
 
 
         File tsvDir = new File(tmpDir, "tsv");

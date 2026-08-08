@@ -14,13 +14,12 @@ public class GraphExporterInteractionsTSVImpl extends GraphExporterBase {
     }
 
     @Override
-    public void doExport(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
+    public void doExport(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         GraphExporterUtil.exportInteractionsAndCitations(
                 graphService,
                 baseDir,
                 "tsv",
-                new ExportUtil.TsvValueJoiner(),
-                neo4jVersion
+                new ExportUtil.TsvValueJoiner()
         );
     }
 

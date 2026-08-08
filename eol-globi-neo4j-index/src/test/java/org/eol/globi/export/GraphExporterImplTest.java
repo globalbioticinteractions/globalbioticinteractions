@@ -34,9 +34,9 @@ public class GraphExporterImplTest extends GraphDBTestCase {
         human.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", "BLA:444")));
         resolveNames();
 
-        new GraphExporterImpl().export(getGraphDb(), tmpDir, "2");
+        new GraphExporterImpl().export(getGraphDb(), tmpDir);
         new GraphExporterInteractionsTSVImpl("2")
-                .export(getGraphDb(), tmpDir, "2");
+                .export(getGraphDb(), tmpDir);
         assertThat(tmpDir.list().length, is(8));
 
     }

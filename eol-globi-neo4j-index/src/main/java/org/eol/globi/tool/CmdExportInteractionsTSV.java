@@ -19,8 +19,7 @@ public class CmdExportInteractionsTSV extends CmdExportNeo4J {
             new GraphExporterInteractionsTSVImpl(getNeo4jVersion())
                     .export(
                             getGraphServiceFactory().getGraphService(),
-                            new File(getBaseDir()),
-                            getNeo4jVersion()
+                            new File(getBaseDir())
                     );
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);
