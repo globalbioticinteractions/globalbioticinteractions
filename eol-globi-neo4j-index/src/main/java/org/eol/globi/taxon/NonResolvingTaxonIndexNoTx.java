@@ -11,7 +11,7 @@ import org.eol.globi.service.TaxonUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-import static org.eol.globi.taxon.ResolvingTaxonIndexNoTx.findTaxonOrRelated;
+import static org.eol.globi.taxon.TaxonFinderUtil.findTaxonOrRelated;
 
 public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
 

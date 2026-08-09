@@ -14,18 +14,12 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.UnlikelyTaxonNameException;
 import org.eol.globi.util.NodeUtil;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.ResourceIterable;
-import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -49,53 +43,12 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
-        return findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(),taxonContext);
+        return TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(),taxonContext);
     }
 
     @Override
     public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
-        return findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
-    }
-
-    public static TaxonNode findTaxonOrRelated(String key, String value, GraphDatabaseService graphDbService, Taxon taxonContext) {
-        Node foundNode = null;
-        try (Transaction transaction = graphDbService.beginTx()) {
-            foundNode = findNode(key, value, transaction, NodeLabel.Taxon, taxonContext);
-
-            if (foundNode == null) {
-                foundNode = findNode(key, value, transaction, NodeLabel.Taxon_Verbatim, taxonContext);
-                if (foundNode != null) {
-                    try (ResourceIterable<Relationship> relationships = foundNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ALIGNED_TO))) {
-                        Optional<Relationship> first = relationships.stream().findFirst();
-                        foundNode = first.map(Relationship::getStartNode).orElse(null);
-                    }
-                }
-
-            }
-
-            transaction.commit();
-            return foundNode == null
-                    ? null
-                    : new TaxonNode(foundNode);
-        }
-    }
-
-    private static Node findNode(String key, String value, Transaction transaction, NodeLabel nodeLabel, Taxon taxonContext) {
-        Node foundNode = null;
-        ResourceIterator<Node> foundNames = transaction
-                .findNodes(
-                        nodeLabel,
-                        key,
-                        value
-                );
-        while (foundNames.hasNext()) {
-            Node candidate = foundNames.next();
-            if (!TaxonUtil.likelyHomonym(new TaxonNode(candidate), taxonContext)) {
-                foundNode = candidate;
-                break;
-            }
-        }
-        return foundNode;
+        return TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
     }
 
     @Override
