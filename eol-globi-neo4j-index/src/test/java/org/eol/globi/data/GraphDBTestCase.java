@@ -34,7 +34,9 @@ import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.configuration.GraphDatabaseSettings;
@@ -65,18 +67,19 @@ public class GraphDBTestCase {
 
     protected TaxonIndex taxonIndex;
 
-    Neo4j neo4j = null;
+    static Neo4j neo4j = null;
 
 
-    public void initializeNeo4j() {
+    @BeforeClass
+    public static void initializeNeo4j() {
         neo4j = Neo4jBuilders.newInProcessBuilder()
                 .withDisabledServer()
                 .withConfig(GraphDatabaseSettings.transaction_timeout, Duration.ofSeconds(5))
                 .build();
     }
 
-    @After
-    public void closeNeo4j() {
+    @AfterClass
+    public static void closeNeo4j() {
         if (neo4j != null) {
             neo4j.close();
         }
@@ -137,7 +140,6 @@ public class GraphDBTestCase {
 
     @Before
     public void startGraphDb() throws IOException {
-        initializeNeo4j();
         nodeFactory = createNodeFactory();
         try (Transaction tx = getGraphDb().beginTx()) {
             getTaxonIndex();
@@ -167,6 +169,7 @@ public class GraphDBTestCase {
                 }
             }, getGraphDb());
             resolving.setIndexResolvedTaxaOnly(false);
+            taxonIndex = resolving;
         }
         return taxonIndex;
     }
