@@ -2,16 +2,18 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndex;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -133,18 +135,28 @@ public class NameResolverTest extends GraphDBTestCase {
         taxon1.setPathNames("kingdom | phylum | class | order | family | genus");
         TaxonImpl taxon2 = new TaxonImpl("Ficus", "12345");
         TaxonImpl taxon3 = new TaxonImpl("Ficus", "WD:Q1938846");
-        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon);
-        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon1);
-        Specimen someOtherOrganism3 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon2);
-        Specimen someOtherOrganism4 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), taxon3);
+        Study study = new StudyImpl("bla", null, null);
+        Specimen someOtherOrganism = nodeFactory.createSpecimen(study, taxon);
+        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(study, taxon1);
+        Specimen someOtherOrganism3 = nodeFactory.createSpecimen(study, taxon2);
+        Specimen someOtherOrganism4 = nodeFactory.createSpecimen(study, taxon3);
         someOtherOrganism.ate(someOtherOrganism2);
         someOtherOrganism.ate(someOtherOrganism3);
         someOtherOrganism.ate(someOtherOrganism4);
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
-        NonResolvingTaxonIndex taxonIndexNew = new NonResolvingTaxonIndex(getGraphDb());
-        taxonIndexNew.skipHomonymMatches(true);
-        taxonIndex = taxonIndexNew;
+        ResolvingTaxonIndex taxonIndexNew = new org.eol.globi.taxon.ResolvingTaxonIndex(new PropertyEnricherSingle() {
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                return properties;
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        }, getGraphDb());
+        taxonIndexNew.setIndexResolvedTaxaOnly(false);
 
         final NameResolver nameResolver = new NameResolver(
                 graphServiceFactory,
@@ -154,13 +166,13 @@ public class NameResolverTest extends GraphDBTestCase {
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
-        Taxon resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:50999", taxon);
+        Taxon resolvedTaxon = taxonIndexNew.findTaxonById("INAT_TAXON:50999");
         assertThat(resolvedTaxon, is(notNullValue()));
         assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:50999"));
         assertThat(resolvedTaxon.getName(), is("Ficus"));
         assertThat(resolvedTaxon.getPath(), is("Plantae | Tracheophyta | Magnoliopsida | Rosales | Moraceae | Ficus"));
 
-        resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:208863", taxon);
+        resolvedTaxon = taxonIndexNew.findTaxonById("INAT_TAXON:208863");
         assertThat(resolvedTaxon, is(notNullValue()));
         assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:208863"));
         assertThat(resolvedTaxon.getName(), is("Ficus"));
@@ -172,22 +184,23 @@ public class NameResolverTest extends GraphDBTestCase {
         TaxonImpl taxon4 = new TaxonImpl("Ficus");
         taxon4.setPath("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus");
         taxon4.setPathNames("kingdom | phylum | class | order | family | genus");
-        Taxon taxonMollusk = taxonIndex.getOrCreateTaxon(taxon4);
+        Taxon taxonMollusk = taxonIndexNew.getOrCreateTaxon(taxon4);
         assertThat(taxonMollusk.getPath(), is("Animalia | Mollusca | Gastropoda | Littorinimorpha | Ficidae | Ficus"));
     }
 
     @Test
     public void literatureTaxon() throws NodeFactoryException {
-        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(
-                        new StudyImpl("bla", null, null)),
+        Specimen someOtherOrganism = nodeFactory.createSpecimen(
+                new StudyImpl("bla", null, null),
                 new TaxonImpl("foo", "foo:123"));
 
-        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(
-                        new StudyImpl("bla", null, null)),
+        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(
+                new StudyImpl("bla", null, null),
                 new TaxonImpl("bar", "bar:456"));
 
 
         someOtherOrganism.ate(someOtherOrganism2);
+
 
         PropertyEnricher enricher = new PropertyEnricher() {
             @Override
@@ -211,26 +224,29 @@ public class NameResolverTest extends GraphDBTestCase {
 
             }
         };
+        org.eol.globi.taxon.ResolvingTaxonIndex resolvingIndex = new org.eol.globi.taxon.ResolvingTaxonIndex(enricher, getGraphDb());
+        resolvingIndex.setIndexResolvedTaxaOnly(false);
+        resolvingIndex.skipHomonymMatches(false);
         final NameResolver nameResolver = new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
                 getNodeIdCollector(),
-                createTaxonIndex(enricher)
+                resolvingIndex
         );
 
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
-        Taxon resolvedTaxon0 = taxonIndex.findTaxonById("foo:XXX");
+        Taxon resolvedTaxon0 = resolvingIndex.findTaxonById("foo:XXX");
         assertThat(resolvedTaxon0, is(notNullValue()));
         assertThat(resolvedTaxon0.getExternalId(), is("foo:XXX"));
         assertThat(resolvedTaxon0.getName(), is("Donald duckus"));
 
-        Taxon resolvedTaxon = taxonIndex.findTaxonById("foo:123");
+        Taxon resolvedTaxon = resolvingIndex.findTaxonById("foo:123");
         assertThat(resolvedTaxon, is(notNullValue()));
         assertThat(resolvedTaxon.getExternalId(), is("foo:XXX"));
         assertThat(resolvedTaxon.getName(), is("Donald duckus"));
 
-        Taxon resolvedTaxon2 = taxonIndex.findTaxonByName("foo");
+        Taxon resolvedTaxon2 = resolvingIndex.findTaxonByName("foo");
         assertThat(resolvedTaxon2.getExternalId(), is("foo:XXX"));
         assertThat(resolvedTaxon2.getName(), is("Donald duckus"));
     }
