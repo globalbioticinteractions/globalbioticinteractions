@@ -70,7 +70,7 @@ public class DatasetImporterForSimonsTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_1, LONG_1, -60.0d, null)));
         assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_2, LONG_2, -20.0d, null)));
 
-        StudyNode foundStudy = (StudyNode) nodeFactory.findStudy(new StudyImpl("Simons 1997"));
+        StudyNode foundStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("Simons 1997"));
         assertNotNull(foundStudy);
 
         RelationshipListener handler = rel -> {
