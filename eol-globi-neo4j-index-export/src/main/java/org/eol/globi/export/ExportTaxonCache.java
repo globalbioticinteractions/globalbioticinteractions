@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -24,9 +23,9 @@ public class ExportTaxonCache implements StudyExporter {
     }
 
     protected void doExport(StudyNode study, ExportUtil.Appender appender) throws IOException {
-        String query = "CYPHER 2.3 START taxon = node:taxons('*:*') " +
-                "OPTIONAL MATCH taxon-[:SAME_AS*0..1]->linkedTaxon " +
-                "WHERE exists(linkedTaxon.path) " +
+        String query = "MATCH (taxon:Taxon) " +
+                "OPTIONAL MATCH (taxon)-[:SAME_AS*0..1]->(linkedTaxon) " +
+                "WHERE linkedTaxon.path IS NOT NULL " +
                 "RETURN linkedTaxon.externalId as id" +
                 ", linkedTaxon.name as name" +
                 ", linkedTaxon.rank as rank" +

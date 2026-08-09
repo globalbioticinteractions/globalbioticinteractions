@@ -29,10 +29,10 @@ public class ExporterTaxaDistinct extends ExporterTaxa {
     }
 
     private void exportAllDistinctTaxa(ExportUtil.Appender writer, Transaction tx) throws IOException {
-        Result results = tx.execute("CYPHER 2.3 START taxon = node:taxons('*:*') " +
-                "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +
-                "WHERE exists(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
-                "AND exists(taxon.name) AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+        Result results = tx.execute(
+                "MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen) " +
+                "WHERE taxon.externalId IS NOT NULL AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "AND taxon.name IS NOT NULL AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(taxon)" +
                 ", taxon.name as scientificName" +
                 ", taxon.path as path" +

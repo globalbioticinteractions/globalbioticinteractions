@@ -27,7 +27,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 
@@ -53,7 +53,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         resolveNames();
         String expected = getExpectedData();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 
@@ -73,7 +73,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 
@@ -85,7 +85,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setBasisOfRecord(new TermImpl("test:123", "aBasisOfRecord"));
         resolveNames();

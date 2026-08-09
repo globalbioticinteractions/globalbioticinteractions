@@ -65,7 +65,7 @@ public final class ExportUtil {
         String join(Stream<String> values);
     }
 
-    interface Appender {
+    public interface Appender {
         void append(Stream<String> values) throws IOException;
     }
 

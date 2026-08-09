@@ -46,7 +46,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     @Test
     public void excludeNoMatchNames() throws NodeFactoryException, IOException {
-        StudyNode study = (StudyNode) nodeFactory.createStudy(new StudyImpl("bla", null, null));
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("bla", null, null));
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);

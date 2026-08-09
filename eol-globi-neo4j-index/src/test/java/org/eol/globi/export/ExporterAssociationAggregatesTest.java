@@ -50,7 +50,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         nodeFactory.findStudy(new StudyImpl("myStudy1")).setExternalId("some:id");
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates(getGraphDb());
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy1"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy1"));
         StringWriter row = new StringWriter();
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
@@ -76,7 +76,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates(getGraphDb());
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
-            StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl(studyTitle));
+            StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle));
             exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         }
 

@@ -39,7 +39,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     @Test
     public void exportNoMatchName() throws NodeFactoryException, IOException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "some externalid"));
         resolveNames();
 
@@ -53,7 +53,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         createTestData(123.0);
         resolveNames();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 

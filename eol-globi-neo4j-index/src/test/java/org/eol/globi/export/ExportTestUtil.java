@@ -32,7 +32,7 @@ public class ExportTestUtil {
     }
 
     public static StudyNode createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) factory.createStudy(new StudyImpl("myStudy", null, null));
+        StudyNode myStudy = (StudyNode) factory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen1 = factory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:45634"));
         specimen1.setStomachVolumeInMilliLiter(666.0);
         specimen1.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
