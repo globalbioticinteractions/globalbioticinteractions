@@ -20,6 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetImporterForByrnesTest extends GraphDBTestCase {
 
     @Test
@@ -53,9 +54,9 @@ public class DatasetImporterForByrnesTest extends GraphDBTestCase {
 
         Result result;
         try (Transaction transaction = getGraphDb().beginTx()) {
-            result = transaction.execute("CYPHER 2.3 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
-                    " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
-                    " RETURN collect(distinct(preyTaxon.name))");
+            result = transaction.execute(
+                    " MATCH (taxon:Taxon {name: 'Strongylocentrotus purpuratus'})<-[:CLASSIFIED_AS]-(specimen)-[:ATE]->(prey)-[:CLASSIFIED_AS]->(preyTaxon) " +
+                            " RETURN collect(distinct(preyTaxon.name))");
             transaction.commit();
         }
         assertThat(result.resultAsString(), CoreMatchers.containsString("Bossiella orbigiana"));

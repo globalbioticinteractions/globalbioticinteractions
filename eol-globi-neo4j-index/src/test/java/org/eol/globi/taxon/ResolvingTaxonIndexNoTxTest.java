@@ -44,10 +44,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
-//        assertThat(getGraphDb().index().existsForNodes("taxons"), is(false));
-//        assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon(new TaxonImpl("some name")), "");
-//        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"), "");
     }
 

@@ -1,14 +1,18 @@
 package org.eol.globi.data;
 
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.tool.NameResolver;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
 import org.eol.globi.util.InputStreamFactoryNoop;
@@ -46,6 +50,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -150,7 +155,18 @@ public class GraphDBTestCase {
 
     protected TaxonIndex getTaxonIndex() {
         if (taxonIndex == null) {
-            taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
+            ResolvingTaxonIndex resolving = new ResolvingTaxonIndex(new PropertyEnricherSingle() {
+                @Override
+                public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                    return properties;
+                }
+
+                @Override
+                public void shutdown() {
+
+                }
+            }, getGraphDb());
+            resolving.setIndexResolvedTaxaOnly(false);
         }
         return taxonIndex;
     }
@@ -176,11 +192,11 @@ public class GraphDBTestCase {
     }
 
     protected void resolveNames() {
-//        new NameResolver(
-//                getGraphFactory(),
-//                getNodeIdCollector(),
-//                getTaxonIndex()
-//        ).index();
+        new NameResolver(
+                new GraphServiceFactoryProxy(getGraphDb()),
+                getNodeIdCollector(),
+                getTaxonIndex()
+        ).index();
     }
 
     protected TermLookupService getTermLookupService() {
