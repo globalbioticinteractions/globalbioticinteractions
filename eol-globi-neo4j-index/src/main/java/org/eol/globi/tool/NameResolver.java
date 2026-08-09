@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
@@ -112,7 +113,7 @@ public class NameResolver implements IndexerNeo4j {
                 if (describedAs == null) {
                     LOG.warn("failed to find original taxon description for specimen for [" + study1.getCitation() + "]");
                 } else {
-                    final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
+                    final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode(), NodeLabel.Taxon_Verbatim);
                     try {
                         if (taxonFilter.shouldInclude(describedAsTaxon)) {
                             Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);

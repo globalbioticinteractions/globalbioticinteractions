@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -128,14 +129,13 @@ public class NodeBacked {
     }
 
     public void setOriginalTaxonDescription(Taxon taxon) {
-        Transaction tx1 = tx;
-        setOriginalTaxonNodeDescription(taxon, tx1);
+        setOriginalTaxonNodeDescription(taxon, tx);
     }
 
     public void setOriginalTaxonNodeDescription(Taxon taxon, Transaction tx1) {
-        TaxonNode taxonNode = new TaxonNode(tx1.createNode(), taxon.getName());
+        TaxonNode taxonNode = new TaxonNode(tx1.createNode(NodeLabel.Taxon_Verbatim), taxon.getName());
         TaxonUtil.copy(taxon, taxonNode);
-        createRelationshipTo(RelTypes.ORIGINALLY_DESCRIBED_AS, (NodeBacked) taxonNode);
+        createRelationshipTo(RelTypes.ORIGINALLY_DESCRIBED_AS, taxonNode);
     }
 
     protected String getProperty(String propertyName) {

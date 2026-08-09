@@ -224,8 +224,9 @@ public class NameResolverTest extends GraphDBTestCase {
 
             }
         };
-        org.eol.globi.taxon.ResolvingTaxonIndex resolvingIndex = new org.eol.globi.taxon.ResolvingTaxonIndex(enricher, getGraphDb());
-        resolvingIndex.setIndexResolvedTaxaOnly(false);
+        org.eol.globi.taxon.ResolvingTaxonIndex resolvingIndex
+                = new org.eol.globi.taxon.ResolvingTaxonIndex(enricher, getGraphDb());
+        resolvingIndex.setIndexResolvedTaxaOnly(true);
         resolvingIndex.skipHomonymMatches(false);
         final NameResolver nameResolver = new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
