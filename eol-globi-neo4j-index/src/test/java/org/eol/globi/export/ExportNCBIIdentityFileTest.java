@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportNCBIIdentityFileTest {
 
     @Test
-    public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
+    public void exportOnePredatorTwoPrey() throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new ExportNCBIIdentityFile().streamTo(baos);
         assertThat(baos.toString(), is("<?xml version=\"1.0\"?>\n" +

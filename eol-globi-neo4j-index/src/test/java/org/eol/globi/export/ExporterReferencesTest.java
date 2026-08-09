@@ -34,8 +34,8 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     @Test
-    public void exportReferenceNoDescription() throws IOException, NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
+    public void exportReferenceNoDescription() throws IOException, NodeFactoryException {
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         StringWriter row = new StringWriter();
         new ExporterReferences(getGraphDb()).exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
         String expected = "globi:ref:X\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
@@ -43,8 +43,8 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     @Test
-    public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", new DOI("some", "doi"), "bla \"one\""));
+    public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException {
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", new DOI("some", "doi"), "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences(getGraphDb()).exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), "globi:ref:X\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t\n");
