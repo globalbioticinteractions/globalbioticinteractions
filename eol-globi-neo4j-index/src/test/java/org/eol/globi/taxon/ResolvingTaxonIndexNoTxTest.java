@@ -3,6 +3,7 @@ package org.eol.globi.taxon;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.PropertyEnricherNoop;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -175,17 +176,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public void indexResolvedOnly() throws NodeFactoryException {
-        this.taxonService = createTaxonService(getGraphDb(), new PropertyEnricherSingle() {
-            @Override
-            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
-                return properties;
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        });
+        this.taxonService = createTaxonService(getGraphDb(), new PropertyEnricherNoop());
         Taxon unresolvedTaxon = taxonService.getOrCreateTaxon(new TaxonImpl("not resolved"));
         assertNotNull(unresolvedTaxon);
         assertFalse(TaxonUtil.isResolved(unresolvedTaxon));
@@ -198,18 +189,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public void createTaxonWithExplicitRanks() throws NodeFactoryException {
-        PropertyEnricherSingle propertyEnricherSingle = new PropertyEnricherSingle() {
-            @Override
-            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
-                return properties;
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        this.taxonService = createTaxonService(getGraphDb(), propertyEnricherSingle);
+        this.taxonService = createTaxonService(getGraphDb(), new PropertyEnricherNoop());
         Taxon taxon1 = new TaxonImpl("foo", "foo:123");
         taxon1.setPath("a kingdom name | a phylum name | boo name | a class name | an order name | a family name | a genus name | a species name");
         taxon1.setPathIds("a kingdom id | a phylum id | boo id | a class id | an order id | a family id | a genus id | a species id");
@@ -241,17 +221,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
     }
 
     public ResolvingTaxonIndex getIndex() {
-        return new ResolvingTaxonIndex(new PropertyEnricherSingle() {
-            @Override
-            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
-                return new TreeMap<>(properties);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        }, getGraphDb());
+        return new ResolvingTaxonIndex(new PropertyEnricherNoop(), getGraphDb());
     }
 
     private static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
@@ -332,19 +302,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
     @Test
     public final void doNotMatchHomonyms() throws NodeFactoryException {
-
-        PropertyEnricherSingle enricher = new PropertyEnricherSingle() {
-            @Override
-            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
-                return TaxonUtil.taxonToMap(TaxonUtil.mapToTaxon(properties));
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb(), enricher);
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb(), new PropertyEnricherNoop());
         taxonService.skipHomonymMatches(true);
         this.taxonService = taxonService;
 

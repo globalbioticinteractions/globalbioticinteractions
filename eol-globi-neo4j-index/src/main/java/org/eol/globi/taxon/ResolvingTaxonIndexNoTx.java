@@ -43,7 +43,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
-        return TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(),taxonContext);
+        return TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(), taxonContext);
     }
 
     @Override

@@ -6,8 +6,6 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -33,7 +31,6 @@ import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -52,7 +49,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -157,17 +153,7 @@ public class GraphDBTestCase {
 
     protected TaxonIndex getTaxonIndex() {
         if (taxonIndex == null) {
-            ResolvingTaxonIndex resolving = new ResolvingTaxonIndex(new PropertyEnricherSingle() {
-                @Override
-                public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
-                    return properties;
-                }
-
-                @Override
-                public void shutdown() {
-
-                }
-            }, getGraphDb());
+            ResolvingTaxonIndex resolving = new ResolvingTaxonIndex(new PropertyEnricherNoop(), getGraphDb());
             resolving.setIndexResolvedTaxaOnly(false);
             taxonIndex = resolving;
         }

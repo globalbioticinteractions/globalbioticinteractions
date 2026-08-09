@@ -9,6 +9,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 public class NodeBacked {
 
@@ -21,6 +22,7 @@ public class NodeBacked {
     }
 
     public NodeBacked(Node node, Transaction tx) {
+        Objects.requireNonNull(node);
         this.underlyingNode = node;
         this.tx = tx;
     }

@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.PropertyEnricherNoop;
 import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
@@ -145,17 +146,7 @@ public class NameResolverTest extends GraphDBTestCase {
         someOtherOrganism.ate(someOtherOrganism4);
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
-        ResolvingTaxonIndex taxonIndexNew = new org.eol.globi.taxon.ResolvingTaxonIndex(new PropertyEnricherSingle() {
-            @Override
-            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
-                return properties;
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        }, getGraphDb());
+        ResolvingTaxonIndex taxonIndexNew = new org.eol.globi.taxon.ResolvingTaxonIndex(new PropertyEnricherNoop(), getGraphDb());
         taxonIndexNew.setIndexResolvedTaxaOnly(false);
 
         final NameResolver nameResolver = new NameResolver(
