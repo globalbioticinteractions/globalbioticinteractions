@@ -130,8 +130,6 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         }}, new TreeMap<>());
         resolveNames();
 
-        dumpFirstName();
-
         StudyImpl study2 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60536");
         study2.setExternalId("http://bioinfo.org.uk/html/b60536.htm");
         Study study = nodeFactory.findStudy(study2);
@@ -162,18 +160,6 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
-    }
-
-    private void dumpFirstName() {
-        try (Transaction tx = getGraphDb().beginTx()) {
-            System.out.println(tx.execute("MATCH (taxon:Taxon_Verbatim) RETURN taxon LIMIT 1").resultAsString());
-            tx.commit();
-        }
-
-        try (Transaction tx = getGraphDb().beginTx()) {
-            System.out.println(tx.execute("MATCH (taxon:Taxon_Verbatim)-[r]-(specimen:Specimen) RETURN taxon, r, specimen LIMIT 1").resultAsString());
-            tx.commit();
-        }
     }
 
     private LabeledCSVParser createParser(String csvString) throws IOException {
