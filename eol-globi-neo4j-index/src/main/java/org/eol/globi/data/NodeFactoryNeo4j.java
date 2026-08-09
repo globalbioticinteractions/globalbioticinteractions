@@ -426,7 +426,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Study findStudy(Study study) {
         try (Transaction tx = getGraphDb().beginTx()) {
             StudyNode studyNode = findStudyNode(tx, study);
-            Study copyOfStudy = copyOf(studyNode);
+            Study copyOfStudy = studyNode == null ? null : copyOf(studyNode);
             tx.commit();
             return copyOfStudy;
         }
