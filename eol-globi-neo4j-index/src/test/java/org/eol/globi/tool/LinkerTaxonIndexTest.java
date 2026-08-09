@@ -39,8 +39,6 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        createIndexer().index();
-
         assertV2();
 
 
@@ -101,8 +99,6 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
-        createIndexer().index();
-
         Node next = null;
 //        try (IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndexNeo4j3.INDEX_TAXON_NAMES_AND_IDS)
 //                .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"")) {
@@ -119,8 +115,6 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         Taxon taxonFound = new TaxonImpl(null, "some id");
         taxonIndex.getOrCreateTaxon(taxonFound);
         resolveNames();
-
-        createIndexer().index();
 
         Node next = null;
 
@@ -165,8 +159,6 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
 
         resolveNames();
-
-        createIndexer().index();
     }
 
     protected void assertSingleHit(String query) {
