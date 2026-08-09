@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class TaxonFinderUtil {
     public static TaxonNode findTaxonOrRelated(String key, String value, GraphDatabaseService graphDbService, Taxon taxonContext) {
-        Node foundNode = null;
+        Node foundNode;
         try (Transaction transaction = graphDbService.beginTx()) {
             foundNode = findNode(key, value, transaction, NodeLabel.Taxon, taxonContext);
 
@@ -27,7 +27,7 @@ public class TaxonFinderUtil {
                 if (foundNode != null) {
                     try (ResourceIterable<Relationship> relationships = foundNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ALIGNED_TO))) {
                         Optional<Relationship> first = relationships.stream().findFirst();
-                        foundNode = first.map(Relationship::getStartNode).orElse(foundNode);
+                        foundNode = first.map(Relationship::getStartNode).orElse(null);
                     }
                 }
 

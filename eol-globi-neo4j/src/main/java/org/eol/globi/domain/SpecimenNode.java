@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -11,15 +12,16 @@ import java.util.List;
 public class SpecimenNode extends NodeBacked implements Specimen {
 
     public SpecimenNode(Node node) {
-        super(node);
+        this(node, (Transaction) null);
     }
 
     public SpecimenNode(Node node, Transaction tx) {
         super(node, tx);
+        node.addLabel(NodeLabel.Specimen);
     }
 
     public SpecimenNode(Node node, Double lengthInMm) {
-        this(node);
+        this(node, (Transaction) null);
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, SpecimenNode.class.getSimpleName());
         if (null != lengthInMm) {
             getUnderlyingNode().setProperty(SpecimenConstant.LENGTH_IN_MM, lengthInMm);

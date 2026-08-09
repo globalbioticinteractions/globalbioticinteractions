@@ -43,12 +43,16 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     @Override
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
-        return TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(), taxonContext);
+        return TaxonUtil.isEmptyValue(name)
+                ? null
+                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(), taxonContext);
     }
 
     @Override
     public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
-        return TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
+        return TaxonUtil.isEmptyValue(externalId)
+                ? null
+                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
     }
 
     @Override
@@ -59,14 +63,10 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
             }
         }
 
-        Taxon taxonFound = StringUtils.isBlank(taxon.getExternalId())
-                ? null
-                : findTaxonById(taxon.getExternalId(), taxon);
+        Taxon taxonFound = findTaxonById(taxon.getExternalId(), taxon);
 
         if (taxonFound == null) {
-            taxonFound = StringUtils.isBlank(taxon.getName())
-                    ? null
-                    : findTaxonByName(taxon.getName(), taxon);
+            taxonFound = findTaxonByName(taxon.getName(), taxon);
         }
 
         if (taxonFound == null) {
@@ -75,7 +75,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
                 List<TaxonNode> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
                         .stream()
-                        .filter(TaxonUtil::isResolved)
+                        .filter(t -> !indexResolvedOnly || TaxonUtil.isResolved(t))
                         .map(TaxonUtil::mapToTaxon)
                         .filter(t -> includeAfterHomonymCheck(taxon, t))
                         .filter(t -> !TaxonUtil.hasLiteratureReference(t))
@@ -88,7 +88,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                 } else {
                     TaxonNode primary = matchCandidates.get(0);
                     taxonNodeFor(taxon, NodeLabel.Taxon_Verbatim).createRelationshipTo(RelTypes.ALIGNED_TO, primary);
-                    Streams.concat(matchCandidates.stream().skip(1))
+                    matchCandidates.stream().skip(1)
                             .forEach(n -> {
                                 n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
                             });

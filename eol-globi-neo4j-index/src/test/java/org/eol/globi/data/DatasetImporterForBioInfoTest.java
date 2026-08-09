@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
@@ -56,25 +55,10 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
 
     @Test
     public void importAbout600Records() throws StudyImporterException {
-        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory, getClass())
+        DatasetImporter importer = new StudyImporterTestFactory(getNodeFactory(), getClass())
                 .instantiateImporter(DatasetImporterForBioInfo.class);
         final List<String> msgs = new ArrayList<String>();
-        importer.setLogger(new ImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-        });
+        importer.setLogger(new ImportLoggerCapture(msgs));
         // limit the number of line to be imported to make test runs reasonably fast
         importer.setFilter(recordNumber -> recordNumber < 1000
                 || recordNumber == 4585
@@ -89,7 +73,7 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
 
         StudyImpl study2 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527");
         study2.setExternalId("http://bioinfo.org.uk/html/b60527.htm");
-        StudyNode study = (StudyNode) nodeFactory.findStudy(study2);
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(study2);
 
         AtomicBoolean success = new AtomicBoolean(false);
         NodeUtil.handleCollectedRelationships(
@@ -106,12 +90,15 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
 
         Result result;
         try (Transaction transaction = getGraphDb().beginTx()) {
-            result = transaction.execute("CYPHER 2.3 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
+            result = transaction.execute(
+                    "MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[r]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon) " +
+                            "RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
             List<String> interactions = new ArrayList<String>();
             while (result.hasNext()) {
                 Map<String, Object> next = result.next();
                 interactions.add((String) next.get("interaction"));
             }
+
             assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
             assertThat(interactions, CoreMatchers.hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
             assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
@@ -143,6 +130,8 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         }}, new TreeMap<>());
         resolveNames();
 
+        dumpFirstName();
+
         StudyImpl study2 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60536");
         study2.setExternalId("http://bioinfo.org.uk/html/b60536.htm");
         Study study = nodeFactory.findStudy(study2);
@@ -151,7 +140,7 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         assertNull(nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:bla")));
         StudyImpl study3 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527");
         study3.setExternalId("http://bioinfo.org.uk/html/b60527.htm");
-        StudyNode study1 = (StudyNode) nodeFactory.findStudy(study3);
+        StudyNode study1 = (StudyNode) nodeFactory.getOrCreateStudy(study3);
         assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
         List<Node> specimenList = new ArrayList<Node>();
@@ -173,6 +162,18 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
+    }
+
+    private void dumpFirstName() {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            System.out.println(tx.execute("MATCH (taxon:Taxon_Verbatim) RETURN taxon LIMIT 1").resultAsString());
+            tx.commit();
+        }
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            System.out.println(tx.execute("MATCH (taxon:Taxon_Verbatim)-[r]-(specimen:Specimen) RETURN taxon, r, specimen LIMIT 1").resultAsString());
+            tx.commit();
+        }
     }
 
     private LabeledCSVParser createParser(String csvString) throws IOException {
