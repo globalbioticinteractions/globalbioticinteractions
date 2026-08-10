@@ -1,5 +1,6 @@
 package org.eol.globi.db;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.neo4j.configuration.GraphDatabaseSettings;
 import org.neo4j.dbms.api.DatabaseManagementService;
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
 
@@ -39,17 +41,20 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
 
     @Override
     public void close() {
-        if (graphDb != null) {
-            graphDb = null;
+        if (databaseManagementService != null) {
             databaseManagementService.shutdown();
         }
     }
 
     private static GraphDatabaseService startNeo4j(File graphDbDir) {
-        LOG.info("neo4j starting at [" + graphDbDir.getAbsolutePath() + "]...");
+        String startEventDescription = "neo4j starting";
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+        LOG.info(startEventDescription + " at [" + graphDbDir.getAbsolutePath() + "]...");
+
 
         DatabaseManagementServiceBuilder builder
-                = new DatabaseManagementServiceBuilder( graphDbDir.toPath() )
+                = new DatabaseManagementServiceBuilder(graphDbDir.toPath())
                 .setConfig(GraphDatabaseSettings.keep_logical_logs, "keep_none")
                 .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, 250 * 1000000L)
                 // note that according to https://neo4j.com/developer/kb/checkpointing-and-log-pruning-interactions/#_triggering_of_checkpointing_and_pruning_events
@@ -61,17 +66,20 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
                 // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/995
                 .setConfig(GraphDatabaseSettings.pagecache_memory, Runtime.getRuntime().maxMemory());
 
-        final DatabaseManagementService databaseManagementService = builder.build();
+        databaseManagementService = builder.build();
         final GraphDatabaseService graphDbLocal = databaseManagementService.database(DEFAULT_DATABASE_NAME);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            LOG.info("neo4j stopping...");
-            if (graphDbLocal.isAvailable(0)) {
-                databaseManagementService.shutdown();
-            }
-            LOG.info("done.");
+            StopWatch stopstopwatch = new StopWatch();
+            stopstopwatch.start();
+            String stopEventDescription = "neo4j stopping...";
+            LOG.info(stopEventDescription);
+            databaseManagementService.shutdown();
+            stopstopwatch.stop();
+            LOG.info("{} done in {}s.", stopEventDescription, stopstopwatch.getTime(TimeUnit.SECONDS));
         }));
-        LOG.info("done");
+        stopwatch.stop();
+        LOG.info( "{} done in {}s.", startEventDescription, stopwatch.getTime(TimeUnit.SECONDS));
         return graphDbLocal;
     }
 
