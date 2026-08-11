@@ -90,7 +90,7 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
 
-    private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
+    private static NodeFactoryFactory getNodeFactoryFactory(GraphServiceFactory graphServiceFactory) {
         return new NodeFactoryFactoryTransactingOnDataset(graphServiceFactory);
     }
 
@@ -101,7 +101,7 @@ public abstract class CmdNeo4J implements Cmd {
 
     protected NodeFactoryFactory getNodeFactoryFactory() {
         if (this.nodeFactoryFactory == null) {
-            this.nodeFactoryFactory = getNodeFactoryFactory(neo4jVersion, getGraphServiceFactory());
+            this.nodeFactoryFactory = getNodeFactoryFactory(getGraphServiceFactory());
         }
         return nodeFactoryFactory;
     }
