@@ -6,6 +6,8 @@ import org.eol.globi.tool.CmdInterpretTaxa;
 import org.eol.globi.tool.CmdNeo4J;
 import picocli.CommandLine;
 
+import java.util.stream.Stream;
+
 @CommandLine.Command(
         name = "link",
         description = "link compiled interaction datasets",
@@ -20,9 +22,13 @@ public class CmdLink extends CmdNeo4J {
 
     @Override
     public void run() {
-        configureRunAndDestroy(new CmdInterpretTaxa());
-        configureRunAndDestroy(new CmdIndexTaxa());
-        configureRunAndDestroy(new CmdIndexTaxonStrings());
+        try {
+            Stream
+                    .of(new CmdInterpretTaxa(), new CmdIndexTaxa(), new CmdIndexTaxonStrings())
+                    .forEach(this::configureAndRun);
+        } finally {
+            destroy();
+        }
     }
 
 

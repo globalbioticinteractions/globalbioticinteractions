@@ -37,6 +37,8 @@ public class CmdCompile extends CmdNeo4J {
                     .index();
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);
+        } finally {
+            destroy();
         }
     }
 
