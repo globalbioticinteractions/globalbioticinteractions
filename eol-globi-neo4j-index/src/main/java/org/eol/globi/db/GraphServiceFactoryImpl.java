@@ -74,7 +74,9 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
             stopstopwatch.start();
             String stopEventDescription = "neo4j stopping...";
             LOG.info(stopEventDescription);
-            databaseManagementService.shutdown();
+            if (databaseManagementService != null) {
+                databaseManagementService.shutdown();
+            }
             stopstopwatch.stop();
             LOG.info("{} done in {}s.", stopEventDescription, stopstopwatch.getTime(TimeUnit.SECONDS));
         }));

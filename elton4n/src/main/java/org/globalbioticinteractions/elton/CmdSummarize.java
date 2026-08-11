@@ -16,7 +16,7 @@ public class CmdSummarize extends CmdNeo4J {
 
     @Override
     public void run() {
-        configureAndRun(new CmdGenerateReport());
+        configureRunAndDestroy(new CmdGenerateReport());
     }
 
 
