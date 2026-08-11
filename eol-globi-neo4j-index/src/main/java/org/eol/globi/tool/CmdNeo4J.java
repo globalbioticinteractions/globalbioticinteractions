@@ -19,21 +19,21 @@ public abstract class CmdNeo4J implements Cmd {
 
     @CommandLine.Option(
             names = {"-graphDbDir"},
-            defaultValue = "./graph.db",
+            defaultValue = ".neo4j/graph.db",
             description = "location of neo4j graph.db"
     )
     private String graphDbDir;
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_DATASET_DIR},
-            defaultValue = "./datasets",
+            defaultValue = "datasets",
             description = "location of Elton tracked data content"
     )
     private String datasetDir;
 
     @CommandLine.Option(
             names = {"-provDir"},
-            defaultValue = "./datasets",
+            defaultValue = "datasets",
             description = "location of Elton tracked data provenance"
     )
     private String provenanceDir;
@@ -62,8 +62,8 @@ public abstract class CmdNeo4J implements Cmd {
 
     @CommandLine.Option(
             names = {"-exportDir"},
-            defaultValue = ".",
-            description = "location of neo4j graph.db"
+            defaultValue = "export",
+            description = "directory to save elton4n data export products into"
     )
     private String baseDir;
 
