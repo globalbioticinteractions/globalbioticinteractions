@@ -10,7 +10,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j;
-import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -54,10 +53,6 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
                 , is("Bar:123 | FOO:444"));
     }
 
-    private TaxonFuzzySearchIndexNeo4j getTaxonFuzzySearchIndexNeo4j2() {
-        return new TaxonFuzzySearchIndexNeo4j(getGraphDb());
-    }
-
     protected void assertV2() {
         Node next = getFirstHit();
 
@@ -85,8 +80,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     protected IndexerNeo4j createIndexer() {
         return new LinkerTaxonIndexNeo4j(
-                new GraphServiceFactoryProxy(getGraphDb()),
-                new NodeIdCollectorImpl()
+                new GraphServiceFactoryProxy(getGraphDb())
         );
     }
 

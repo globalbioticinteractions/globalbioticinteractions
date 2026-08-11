@@ -41,7 +41,7 @@ public class LocationNode extends NodeBacked implements Location {
 
     @Override
     public String getFootprintWKT() {
-        return (String) getPropertyValueOrNull(LocationConstant.FOOTPRINT_WKT);
+        return getPropertyValueOrNull(LocationConstant.FOOTPRINT_WKT);
     }
 
     @Override

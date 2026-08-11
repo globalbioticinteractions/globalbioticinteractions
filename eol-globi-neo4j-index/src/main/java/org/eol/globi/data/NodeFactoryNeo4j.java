@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
@@ -102,7 +103,8 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     }
 
-    public void shouldStartNextBatch() {
+    @Override
+    public void startNextBatchUpdate() {
         shouldStartNextBatch.set(true);
     }
 
@@ -170,7 +172,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         Node node = tx.findNode(
                 NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE,
-                getIdInNamespace(study)
+                getIdInNamespace(tx, study)
         );
         return node == null
                 ? null
@@ -223,11 +225,23 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     public SpecimenNode createSpecimenNode(Transaction tx, Study study, Taxon taxon) throws NodeFactoryException {
-        return createSpecimenNode(tx, study, taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
+        return createSpecimenNode(tx, getOrCreateStudyNode(tx, study), taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
     }
 
     @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
+        Consumer<Specimen> initializer = new Consumer<Specimen>() {
+
+            @Override
+            public void accept(Specimen specimen) {
+
+            }
+        };
+        return createSpecimen(study, taxon, initializer, types);
+    }
+
+    @Override
+    public SpecimenNode createSpecimen(Study study, Taxon taxon, Consumer<Specimen> initializer, RelTypes[] types) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
@@ -237,17 +251,18 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
 
         try (Transaction tx = graphDb.beginTx()) {
-            SpecimenNode specimen = createSpecimenNode(tx, study, taxon, types);
+            StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            SpecimenNode specimen = createSpecimenNode(tx, studyNode, taxon, types);
+            initializer.accept(specimen);
             tx.commit();
             return specimen;
         }
     }
 
-    protected SpecimenNode createSpecimenNode(Transaction tx, Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
-        StudyNode orCreateStudy = getOrCreateStudyNode(tx, study);
+    protected SpecimenNode createSpecimenNode(Transaction tx, StudyNode study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
         SpecimenNode specimen = createSpecimenNode(tx);
         for (RelTypes type : types) {
-            orCreateStudy.createRelationshipTo(type, (NodeBacked) specimen);
+            study.createRelationshipTo(type, specimen);
         }
 
         specimen.setOriginalTaxonNodeDescription(taxon, tx);
@@ -337,10 +352,13 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         DatasetNode dataset = getOrCreateDatasetNode(transaction, study.getOriginatingDataset());
         if (dataset != null) {
-            studyNode.createRelationshipTo(RelTypes.IN_DATASET, (NodeBacked) dataset);
+            studyNode.createRelationshipTo(RelTypes.IN_DATASET, dataset);
         }
 
-        studyNode.getUnderlyingNode().setProperty(StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(study));
+        studyNode.getUnderlyingNode().setProperty(
+                StudyConstant.TITLE_IN_NAMESPACE,
+                getIdInNamespace(transaction, study)
+        );
         return studyNode;
     }
 
@@ -409,8 +427,9 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            Study copyOf = copyOf(studyNode);
             tx.commit();
-            return studyNode;
+            return copyOf;
         }
 
 
@@ -433,7 +452,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
 
-    String getIdInNamespace(Study study) {
+    String getIdInNamespace(Transaction tx, Study study) {
         String namespace = namespaceOrNull(study);
         String externalIdOrDOI = getExternalIdOrDOI(study);
         String id = StringUtils.isBlank(externalIdOrDOI)
@@ -450,14 +469,20 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Location getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
         try (Transaction transaction = getGraphDb().beginTx()) {
             LocationNode location1 = getOrCreateLocationNode(transaction, location);
+            Location copyOf = copyOf(location1);
             transaction.commit();
-            return location1;
+            return copyOf;
 
         }
     }
 
-    public static Location getCopyOf(LocationNode location1) {
-        LocationImpl location = new LocationImpl(location1.getLatitude(), location1.getLongitude(), location1.getAltitude(), location1.getFootprintWKT());
+    public static Location copyOf(LocationNode location1) {
+        LocationImpl location = new LocationImpl(
+                location1.getLatitude(),
+                location1.getLongitude(),
+                location1.getAltitude(),
+                location1.getFootprintWKT()
+        );
         location.setLocality(location1.getLocality());
         location.setLocalityId(location1.getLocalityId());
         return location;
@@ -717,12 +742,13 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public LocationNode findLocation(Location location) throws NodeFactoryException {
+    public Location findLocation(Location location) throws NodeFactoryException {
         LocationNode locationNode;
         try (Transaction tx = getGraphDb().beginTx()) {
             locationNode = findLocationNode(tx, location);
+            Location copyOf = copyOf(locationNode);
             tx.commit();
-            return locationNode;
+            return copyOf;
         }
     }
 

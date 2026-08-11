@@ -24,7 +24,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
 
     public GraphServiceFactoryImpl(File graphDbDir) {
         if (graphDb != null) {
-            throw new IllegalStateException("only one graph service factorySkipBOM allowed, but another is already instantiated");
+            throw new IllegalStateException("only one graph service factory allowed, but another is already instantiated");
         }
         this.graphDbDir = graphDbDir;
     }
@@ -43,6 +43,8 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
     public void close() {
         if (databaseManagementService != null) {
             databaseManagementService.shutdown();
+            databaseManagementService = null;
+            graphDb = null;
         }
     }
 
@@ -76,6 +78,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
             LOG.info(stopEventDescription);
             if (databaseManagementService != null) {
                 databaseManagementService.shutdown();
+                databaseManagementService = null;
             }
             stopstopwatch.stop();
             LOG.info("{} done in {}s.", stopEventDescription, stopstopwatch.getTime(TimeUnit.SECONDS));

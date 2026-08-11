@@ -124,8 +124,8 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     public void createRefutingInteraction() throws NodeFactoryException {
         Study study = getNodeFactory().createStudy(getBlaStudy());
         try (Transaction tx = getGraphDb().beginTx()) {
-            SpecimenNode specimen = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
-            SpecimenNode specimen1 = getNodeFactory().createSpecimenNode(tx, study, new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
+            SpecimenNode specimen = getNodeFactory().createSpecimenNode(tx, getNodeFactory().getOrCreateStudyNode(tx, study), new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
+            SpecimenNode specimen1 = getNodeFactory().createSpecimenNode(tx, getNodeFactory().getOrCreateStudyNode(tx, study), new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
             specimen.interactsWith(specimen1, InteractType.ATE);
             assertInteraction(specimen, specimen1, RelTypes.REFUTES, "Donalda duckus");
         }

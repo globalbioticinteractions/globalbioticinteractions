@@ -28,6 +28,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_ID;
@@ -111,9 +112,22 @@ public class InteractionImporter implements InteractionListener {
     private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy(studyOf(interaction, logger));
 
+        Consumer<Specimen> sourceSpecimenInitializer = new Consumer<Specimen>() {
+            @Override
+            public void accept(Specimen source) {
+                setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
+                setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
+                setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
+                setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
+                setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
+                setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
+            }
+        };
+
         Specimen source = createSpecimen(
                 interaction,
                 study,
+                sourceSpecimenInitializer,
                 SOURCE_TAXON_NAME,
                 SOURCE_TAXON_ID,
                 SOURCE_BODY_PART_NAME,
@@ -127,16 +141,23 @@ public class InteractionImporter implements InteractionListener {
                 SOURCE_TAXON_RANK,
                 SOURCE_TAXON_PATH_IDS);
 
-        setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
-        setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
 
+        Consumer<Specimen> targetSpecimenInitializer = new Consumer<Specimen>() {
+            @Override
+            public void accept(Specimen target) {
+                setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
+                setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
+                setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
+                setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
+                setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
+                setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
+
+            }
+        };
         Specimen target = createSpecimen(
                 interaction,
                 study,
+                targetSpecimenInitializer,
                 TARGET_TAXON_NAME,
                 TARGET_TAXON_ID,
                 TARGET_BODY_PART_NAME,
@@ -149,13 +170,6 @@ public class InteractionImporter implements InteractionListener {
                 TARGET_SEX_ID,
                 TARGET_TAXON_RANK,
                 TARGET_TAXON_PATH_IDS);
-
-        setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
-        setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
 
 
         String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
@@ -178,8 +192,9 @@ public class InteractionImporter implements InteractionListener {
         }
     }
 
-    private Specimen createSpecimen(Map<String, String> link,
+    private Specimen createSpecimen(Map<String, String> interaction,
                                     Study study,
+                                    Consumer<Specimen> initializer,
                                     String taxonNameLabel,
                                     String taxonIdLabel,
                                     String bodyPartName,
@@ -192,42 +207,52 @@ public class InteractionImporter implements InteractionListener {
                                     String sexId,
                                     String taxonRankLabel,
                                     String taxonPathIdsLabel) throws StudyImporterException {
-        String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
+        String argumentTypeId = interaction.get(ARGUMENT_TYPE_ID);
         RelTypes[] argumentType = refutes(argumentTypeId)
                 ? new RelTypes[]{RelTypes.REFUTES}
                 : new RelTypes[]{RelTypes.COLLECTED, RelTypes.SUPPORTS};
 
-        String sourceTaxonName = link.get(taxonNameLabel);
-        String sourceTaxonId = link.get(taxonIdLabel);
+        String sourceTaxonName = interaction.get(taxonNameLabel);
+        String sourceTaxonId = interaction.get(taxonIdLabel);
         TaxonImpl taxon = new TaxonImpl(sourceTaxonName, sourceTaxonId);
 
-        String taxonRank = link.get(taxonRankLabel);
+        String taxonRank = interaction.get(taxonRankLabel);
         if (StringUtils.isNotBlank(taxonRank)) {
             taxon.setRank(taxonRank);
         }
 
-        String taxonPath = link.get(taxonPathLabel);
+        String taxonPath = interaction.get(taxonPathLabel);
         if (StringUtils.isNotBlank(taxonPath)) {
             taxon.setPath(taxonPath);
         }
 
-        String taxonPathIds = link.get(taxonPathIdsLabel);
+        String taxonPathIds = interaction.get(taxonPathIdsLabel);
         if (StringUtils.isNotBlank(taxonPathIds)) {
             taxon.setPathIds(taxonPathIds);
         }
 
-        String taxonPathNames = link.get(taxonPathNamesLabel);
+        String taxonPathNames = interaction.get(taxonPathNamesLabel);
         if (StringUtils.isNotBlank(taxonPathNames)) {
             taxon.setPathNames(taxonPathNames);
         }
 
-        Specimen specimen = nodeFactory.createSpecimen(study, taxon, argumentType);
-        setBasisOfRecordIfAvailable(link, specimen);
-        setDateTimeIfAvailable(link, specimen);
-        setBodyPartIfAvailable(link, specimen, bodyPartName, bodyPartId);
-        setLifeStageIfAvailable(link, specimen, lifeStageName, lifeStageId);
-        setSexIfAvailable(link, specimen, sexLabel, sexId);
-        return specimen;
+        Consumer<Specimen> initializerProxy = new Consumer<Specimen>() {
+
+            @Override
+            public void accept(Specimen specimen) {
+                initializer.accept(specimen);
+                setBasisOfRecordIfAvailable(interaction, specimen);
+                try {
+                    setDateTimeIfAvailable(interaction, specimen);
+                } catch (StudyImporterException e) {
+                    throw new RuntimeException(e);
+                }
+                setBodyPartIfAvailable(interaction, specimen, bodyPartName, bodyPartId);
+                setLifeStageIfAvailable(interaction, specimen, lifeStageName, lifeStageId);
+                setSexIfAvailable(interaction, specimen, sexLabel, sexId);
+            }
+        };
+        return nodeFactory.createSpecimen(study, taxon, initializerProxy, argumentType);
     }
 
     private boolean refutes(String argumentTypeId) {

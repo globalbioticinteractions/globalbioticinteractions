@@ -40,14 +40,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 
     @Test
-    public void doSingleImportNeo4j3() throws StudyImporterException {
+    public void doSingleImportWithSchema() throws StudyImporterException {
         NodeFactoryNeo4j factory = getNodeFactory();
 
         try (Transaction tx = factory.getGraphDb().beginTx()) {
             NodeFactoryNeo4j.initSchema(tx);
             tx.commit();
         }
-        factory.shouldStartNextBatch();
+        factory.startNextBatchUpdate();
         try (Transaction tx = factory.getGraphDb().beginTx()) {
             tx.commit();
         }
@@ -143,9 +143,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private static void importData(Class<? extends DatasetImporter> importer,
                                    NodeFactory factory) throws StudyImporterException {
         DatasetImporter datasetImporter = createStudyImporter(importer, factory);
-        LOG.info("[" + importer + "] importing ...");
+        LOG.info("[{}] importing ...", importer.getName());
         datasetImporter.importStudy();
-        LOG.info("[" + importer + "] imported.");
+        LOG.info("[{}}] imported.", importer.getName());
     }
 
     private static DatasetImporter createStudyImporter(

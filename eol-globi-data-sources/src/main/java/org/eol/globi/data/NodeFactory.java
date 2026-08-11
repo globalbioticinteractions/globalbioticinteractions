@@ -14,9 +14,14 @@ import org.globalbioticinteractions.dataset.Dataset;
 
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface NodeFactory extends AutoCloseable {
+
+
     Location findLocation(Location location) throws NodeFactoryException;
+
+    void startNextBatchUpdate();
 
     Season createSeason(String seasonNameLower) throws NodeFactoryException;
 
@@ -25,6 +30,8 @@ public interface NodeFactory extends AutoCloseable {
     Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
 
     Specimen createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException;
+
+    Specimen createSpecimen(Study study, Taxon taxon, Consumer<Specimen> initializer, RelTypes[] types) throws NodeFactoryException;
 
     Study createStudy(Study study) throws NodeFactoryException;
 
@@ -55,4 +62,5 @@ public interface NodeFactory extends AutoCloseable {
     Dataset getOrCreateDataset(Dataset dataset) throws NodeFactoryException;
 
     Interaction createInteraction(Study study) throws NodeFactoryException;
+
 }

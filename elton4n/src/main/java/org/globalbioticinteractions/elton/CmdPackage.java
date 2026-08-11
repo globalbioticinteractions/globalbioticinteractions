@@ -21,7 +21,7 @@ public class CmdPackage extends CmdExportNeo4J {
                     .of(new CmdExportInteractionsTSV(), new CmdExportNeo4j2())
                     .forEach(this::configAndRun);
         } finally {
-            destroy();
+            //destroy();
         }
     }
 

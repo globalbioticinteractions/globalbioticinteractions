@@ -134,8 +134,8 @@ public class NodeBacked {
         setOriginalTaxonNodeDescription(taxon, tx);
     }
 
-    public void setOriginalTaxonNodeDescription(Taxon taxon, Transaction tx1) {
-        TaxonNode taxonNode = new TaxonNode(tx1.createNode(NodeLabel.Taxon_Verbatim), taxon.getName());
+    public void setOriginalTaxonNodeDescription(Taxon taxon, Transaction tx) {
+        TaxonNode taxonNode = new TaxonNode(tx.createNode(NodeLabel.Taxon_Verbatim), taxon.getName());
         TaxonUtil.copy(taxon, taxonNode);
         createRelationshipTo(RelTypes.ORIGINALLY_DESCRIBED_AS, taxonNode);
     }

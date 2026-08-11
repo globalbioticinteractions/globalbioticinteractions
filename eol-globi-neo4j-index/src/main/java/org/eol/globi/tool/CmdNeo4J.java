@@ -124,7 +124,7 @@ public abstract class CmdNeo4J implements Cmd {
         try {
             configureAndRun(cmd);
         } finally {
-            cmd.destroy();
+            //cmd.destroy();
         }
     }
 

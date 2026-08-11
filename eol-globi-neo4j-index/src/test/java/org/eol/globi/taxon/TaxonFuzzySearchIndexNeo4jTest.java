@@ -11,7 +11,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
 import org.eol.globi.util.NodeUtil;
-import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
@@ -25,12 +24,12 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
     private TaxonFuzzySearchIndex index;
 
     public void initIndex() {
-        getNodeFactory().shouldStartNextBatch();
+        getNodeFactory().startNextBatchUpdate();
         try (Transaction tx = getGraphDb().beginTx()) {
             tx.commit();
         }
         index = getFuzzySearch();
-        getNodeFactory().shouldStartNextBatch();
+        getNodeFactory().startNextBatchUpdate();
     }
 
 
@@ -51,7 +50,7 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
         NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
         NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
-        getNodeFactory().shouldStartNextBatch();
+        getNodeFactory().startNextBatchUpdate();
         try (Transaction tx = getGraphDb().beginTx()) {
             tx.commit();
         }
@@ -72,8 +71,7 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
 
     private LinkerTaxonIndexNeo4j createIndexer() {
         return new LinkerTaxonIndexNeo4j(
-                new GraphServiceFactoryProxy(getGraphDb()),
-                getNodeIdCollector()
+                new GraphServiceFactoryProxy(getGraphDb())
         );
     }
 
@@ -115,6 +113,7 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
     }
 
     private void assertQueryHits(String query, long expectedNumberOfHits) throws StudyImporterException {
+        initIndex();
         NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();

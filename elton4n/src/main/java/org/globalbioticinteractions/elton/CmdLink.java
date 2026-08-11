@@ -24,13 +24,15 @@ public class CmdLink extends CmdNeo4J {
     public void run() {
         try {
             Stream
-                    .of(new CmdInterpretTaxa(), new CmdIndexTaxa(), new CmdIndexTaxonStrings())
+                    .of(new CmdInterpretTaxa()
+                            , new CmdIndexTaxa()
+                            , new CmdIndexTaxonStrings()
+                    )
                     .forEach(this::configureAndRun);
         } finally {
-            destroy();
+            //destroy();
         }
     }
-
 
 
 }

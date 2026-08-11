@@ -6,6 +6,7 @@ import org.hamcrest.core.Is;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +26,7 @@ public class Elton4NTestUtil {
 
 
 
-    public static void assertCompileLinkExport(String neo4jVersion, File folder, String expectedOutput) throws URISyntaxException, IOException {
+    public static void assertCompileLinkExport(File folder, String resourceWithExpectedOutput) throws URISyntaxException, IOException {
         String nameIndexCache = new File(folder, "nameIndexCache").getAbsolutePath();
         String graphDb = new File(folder, "graph.db").getAbsolutePath();
         String export = new File(folder, "export").getAbsolutePath();
@@ -37,21 +38,18 @@ public class Elton4NTestUtil {
                         "-graphDbDir", graphDb,
                         "-exportDir", export,
                         "-nameIndexCache", nameIndexCache,
-                        "-neo4jVersion", neo4jVersion,
                         "link",
                         "-datasetDir", getTestDatasetDir(),
                         "-provDir", getTestDatasetDir(),
                         "-graphDbDir", graphDb,
                         "-exportDir", export,
                         "-nameIndexCache", nameIndexCache,
-                        "-neo4jVersion", neo4jVersion,
                         "package",
                         "-datasetDir", getTestDatasetDir(),
                         "-provDir", getTestDatasetDir(),
                         "-graphDbDir", graphDb,
                         "-exportDir", export,
-                        "-nameIndexCache", nameIndexCache,
-                        "-neo4jVersion", neo4jVersion
+                        "-nameIndexCache", nameIndexCache
                 }),
                 Is.is(0)
         );
@@ -60,7 +58,9 @@ public class Elton4NTestUtil {
         File interactions = new File(csvDir, "interactions.tsv.gz");
         FileInputStream is = new FileInputStream(interactions);
         String actualContent = IOUtils.toString(new GZIPInputStream(is), StandardCharsets.UTF_8);
-        assertThat(actualContent, Is.is(IOUtils.toString(Elton4NTestUtil.class.getResourceAsStream(expectedOutput), StandardCharsets.UTF_8)));
+        InputStream resourceAsStream = Elton4NTestUtil.class.getResourceAsStream(resourceWithExpectedOutput);
+        assertNotNull(resourceAsStream);
+        assertThat(actualContent, Is.is(IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8)));
     }
 
 }
