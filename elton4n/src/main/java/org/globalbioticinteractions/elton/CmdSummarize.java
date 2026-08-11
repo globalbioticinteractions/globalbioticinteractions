@@ -16,11 +16,8 @@ public class CmdSummarize extends CmdNeo4J {
 
     @Override
     public void run() {
-        if ("2".equals(getNeo4jVersion())) {
-            configureAndRun(new CmdGenerateReport());
-        }
+        configureAndRun(new CmdGenerateReport());
     }
-
 
 
 }

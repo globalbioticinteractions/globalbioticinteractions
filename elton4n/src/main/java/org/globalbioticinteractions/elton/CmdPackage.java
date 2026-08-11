@@ -13,12 +13,8 @@ public class CmdPackage extends CmdExportNeo4J {
 
     @Override
     public void run() {
-        if ("2".equals(getNeo4jVersion())) {
-            configAndRun(new CmdExportInteractionsTSV());
-            configAndRun(new CmdExportNeo4j2());
-        } else {
-            configAndRun(new CmdExportInteractionsTSV());
-        }
+        configAndRun(new CmdExportInteractionsTSV());
+        configAndRun(new CmdExportNeo4j2());
     }
 
     private void configAndRun(CmdExportNeo4J cmdExportInteractionsTSV) {

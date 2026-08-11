@@ -13,7 +13,6 @@ import java.io.File;
 )
 public abstract class CmdNeo4J implements Cmd {
 
-
     private NodeFactoryFactory nodeFactoryFactory = null;
 
     private static GraphServiceFactory graphServiceFactory = null;
@@ -38,19 +37,6 @@ public abstract class CmdNeo4J implements Cmd {
             description = "location of Elton tracked data provenance"
     )
     private String provenanceDir;
-
-
-    public void setNeo4jVersion(String neo4jVersion) {
-        this.neo4jVersion = neo4jVersion;
-    }
-
-    @CommandLine.Option(
-            names = {"-neo4jVersion"},
-            description = "version neo4j index to use (NOTE: only v2 indexes are fully implemented currently, v2 indexes work with neo4j v3.5.x)",
-            defaultValue = "2",
-            hidden = true
-    )
-    private String neo4jVersion;
 
     @CommandLine.Option(
             names = {"-taxonCache"},
@@ -139,7 +125,6 @@ public abstract class CmdNeo4J implements Cmd {
             cmd.setGraphServiceFactory(getGraphServiceFactory());
             cmd.setNodeFactoryFactory(getNodeFactoryFactory());
             cmd.setCacheDir(getCacheDir());
-            cmd.setNeo4jVersion(getNeo4jVersion());
             cmd.run();
         } finally {
             cmd.destroy();
@@ -162,7 +147,6 @@ public abstract class CmdNeo4J implements Cmd {
         this.taxonMapPath = taxonMapPath;
     }
 
-
     public String getDatasetDir() {
         return datasetDir;
     }
@@ -177,10 +161,6 @@ public abstract class CmdNeo4J implements Cmd {
 
     public void setCacheDir(String cacheDir) {
         this.cacheDir = cacheDir;
-    }
-
-    public String getNeo4jVersion() {
-        return neo4jVersion;
     }
 
 }
