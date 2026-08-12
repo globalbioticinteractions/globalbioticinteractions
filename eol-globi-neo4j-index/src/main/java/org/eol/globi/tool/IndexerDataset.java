@@ -51,6 +51,7 @@ public class IndexerDataset implements IndexerNeo4j {
             indexDatasets(
                     this.registry,
                     nodeFactory);
+
         } finally {
             if (nodeFactory != null) {
                 try {

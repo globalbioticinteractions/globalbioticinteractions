@@ -34,20 +34,25 @@ class GraphDatabaseServiceProxy implements GraphDatabaseService {
     @Override
     public Transaction beginTx() {
         if (shouldStartNextBatch.get() || tx.get() == null) {
-            Transaction previousTx = tx.getAndSet(new TransactionProxy(graphDb.beginTx(), shouldStartNextBatch));
-            if (previousTx != null) {
-                previousTx.commit();
-                previousTx.close();
-                shouldStartNextBatch.set(false);
-            }
+            finishBatchAndStartNewOne(new TransactionProxy(graphDb.beginTx(), shouldStartNextBatch));
         }
         return tx.get();
+    }
+
+    private void finishBatchAndStartNewOne(TransactionProxy newValue) {
+        Transaction previousTx = tx.getAndSet(newValue);
+        if (previousTx != null) {
+            previousTx.commit();
+            previousTx.close();
+            shouldStartNextBatch.set(false);
+        }
     }
 
     @Override
     public Transaction beginTx(long timeout, TimeUnit unit) {
         if (shouldStartNextBatch.get() || tx.get() == null) {
-            tx.set(new TransactionProxy(graphDb.beginTx(timeout, unit), shouldStartNextBatch));
+            TransactionProxy newValue = new TransactionProxy(graphDb.beginTx(timeout, unit), shouldStartNextBatch);
+            finishBatchAndStartNewOne(newValue);
         }
         return tx.get();
     }

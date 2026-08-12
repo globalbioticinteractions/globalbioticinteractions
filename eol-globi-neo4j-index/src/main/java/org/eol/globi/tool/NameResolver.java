@@ -113,7 +113,7 @@ public class NameResolver implements IndexerNeo4j {
                 if (describedAs == null) {
                     LOG.warn("failed to find original taxon description for specimen for [" + study1.getCitation() + "]");
                 } else {
-                    final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode(), NodeLabel.Taxon_Verbatim);
+                    final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
                     try {
                         if (taxonFilter.shouldInclude(describedAsTaxon)) {
                             Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);

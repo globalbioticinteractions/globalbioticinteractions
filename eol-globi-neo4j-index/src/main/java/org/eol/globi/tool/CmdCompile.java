@@ -33,8 +33,7 @@ public class CmdCompile extends CmdNeo4J {
                     getNodeFactoryFactory(),
                     getGraphServiceFactory(),
                     new File(getDatasetDir())
-            )
-                    .index();
+            ).index();
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);
         } finally {

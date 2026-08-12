@@ -108,7 +108,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
 
     private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {
         try (Transaction transaction = getGraphDbService().beginTx()) {
-            TaxonNode t = new TaxonNode(transaction.createNode(), nodeLabel);
+            TaxonNode t = new TaxonNode(transaction.createNode(nodeLabel));
             TaxonUtil.copy(r, t);
             transaction.commit();
             return t;

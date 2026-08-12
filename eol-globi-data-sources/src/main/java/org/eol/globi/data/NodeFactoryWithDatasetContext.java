@@ -36,7 +36,7 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
 
     @Override
     public void startNextBatchUpdate() {
-
+        factory.startNextBatchUpdate();
     }
 
     @Override

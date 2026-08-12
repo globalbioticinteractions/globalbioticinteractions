@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class TransactionProxy implements Transaction {
-    private final Logger LOG = LoggerFactory.getLogger(TransactionProxy.class);
     private final Transaction tx;
     private final AtomicBoolean shouldStartNextBatch;
 
@@ -208,7 +207,6 @@ class TransactionProxy implements Transaction {
     @Override
     public void commit() {
         if (shouldStartNextBatch.get()) {
-            LOG.info("commit");
             tx.commit();
         }
     }

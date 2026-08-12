@@ -17,7 +17,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     public SpecimenNode(Node node, Transaction tx) {
         super(node, tx);
-        node.addLabel(NodeLabel.Specimen);
     }
 
     public SpecimenNode(Node node, Double lengthInMm) {

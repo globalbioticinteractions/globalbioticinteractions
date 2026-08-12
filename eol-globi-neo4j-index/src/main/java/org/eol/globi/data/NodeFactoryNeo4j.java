@@ -311,7 +311,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
 
     private SpecimenNode createSpecimenNode(Transaction transaction) {
-        return new SpecimenNode(transaction.createNode());
+        return new SpecimenNode(transaction.createNode(NodeLabel.Specimen));
     }
 
     @Override
@@ -336,7 +336,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     protected StudyNode createStudyNode(Transaction transaction, Study study) throws NodeFactoryException {
-        Node node = transaction.createNode();
+        Node node = transaction.createNode(NodeLabel.Reference);
         StudyNode studyNode = new StudyNode(node, study.getTitle());
         studyNode.setCitation(study.getCitation());
         studyNode.setDOI(study.getDOI());
@@ -813,6 +813,14 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     public Node createEnvironmentNode(Transaction tx) {
         return tx.createNode(NodeLabel.Environment);
+    }
+
+    @Override
+    public void close() {
+        startNextBatchUpdate();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
     }
 
 
