@@ -169,4 +169,7 @@ public abstract class CmdNeo4J implements Cmd {
         this.cacheDir = cacheDir;
     }
 
+    public void setGraphDbDir(String graphDbDir) {
+        this.graphDbDir = graphDbDir;
+    }
 }
