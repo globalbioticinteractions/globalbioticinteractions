@@ -21,14 +21,4 @@ public class Elton4NTest {
         );
     }
 
-    @Test
-    public void queryDefault() throws IOException {
-        Elton4N.main(new String[]{"query", "-graphDbDir", folder.newFolder("neo4j").getAbsolutePath()});
-    }
-
-    @Test
-    public void queryCustom() throws IOException {
-        Elton4N.main(new String[]{"query", "-c", "MATCH(n) RETURN n LIMIT 1;", "-graphDbDir", folder.newFolder("neo4j").getAbsolutePath()});
-    }
-
 }

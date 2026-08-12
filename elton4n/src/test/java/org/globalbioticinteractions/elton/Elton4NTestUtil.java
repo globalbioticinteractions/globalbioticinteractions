@@ -44,6 +44,8 @@ public class Elton4NTestUtil {
                         "-graphDbDir", graphDb,
                         "-exportDir", export,
                         "-nameIndexCache", nameIndexCache,
+                        "-taxonCache", new File(Elton4NTestUtil.class.getResource("taxonCache.tsv").toURI()).getAbsolutePath(),
+                        "-taxonMap", new File(Elton4NTestUtil.class.getResource("taxonMap.tsv").toURI()).getAbsolutePath(),
                         "package",
                         "-datasetDir", getTestDatasetDir(),
                         "-provDir", getTestDatasetDir(),
