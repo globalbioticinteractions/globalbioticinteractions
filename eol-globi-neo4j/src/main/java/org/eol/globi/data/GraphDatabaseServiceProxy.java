@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-class GraphDatabaseServiceProxy implements GraphDatabaseService {
+public class GraphDatabaseServiceProxy implements GraphDatabaseService {
     private final GraphDatabaseService graphDb;
     private final AtomicBoolean shouldStartNextBatch;
     private final AtomicReference<Transaction> tx = new AtomicReference<>(null);
