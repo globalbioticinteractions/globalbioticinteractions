@@ -290,6 +290,8 @@ public class InteractionImporterTest extends GraphDBTestCase {
                 assertThat(prey.getProperty(COLLECTION_ID), is("targetCollectionId123"));
                 assertThat(prey.getProperty(INSTITUTION_CODE), is("targetInstitutionCode123"));
                 foundPair.set(true);
+                System.out.println("found pair");
+
 
                 assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is(notNullValue()));
 
@@ -555,8 +557,9 @@ public class InteractionImporterTest extends GraphDBTestCase {
 
     public TaxonNode getOrigTaxon(SpecimenNode predator) {
         return new TaxonNode(predator.getUnderlyingNode()
-                .getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS))
-                .iterator().next().getEndNode());
+                .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                .getEndNode()
+        );
     }
 
 }
