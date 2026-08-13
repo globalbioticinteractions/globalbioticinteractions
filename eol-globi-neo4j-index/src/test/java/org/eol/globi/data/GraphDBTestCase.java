@@ -31,6 +31,7 @@ import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -79,6 +80,11 @@ public class GraphDBTestCase {
         if (neo4j != null) {
             neo4j.close();
         }
+    }
+
+    @After
+    public void deleteAllNodesAndRelations() {
+        nodeFactory.getGraphDb().executeTransactionally("MATCH (n) DETACH DELETE n");
     }
 
 
