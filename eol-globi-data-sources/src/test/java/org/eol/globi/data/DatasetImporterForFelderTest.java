@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterFelderTest {
+public class DatasetImporterForFelderTest {
 
     public static final String[] FIELDS = new String[]{"Keyname",
             "Author",
