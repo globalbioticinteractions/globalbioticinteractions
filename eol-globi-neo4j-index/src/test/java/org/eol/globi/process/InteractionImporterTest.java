@@ -290,8 +290,6 @@ public class InteractionImporterTest extends GraphDBTestCase {
                 assertThat(prey.getProperty(COLLECTION_ID), is("targetCollectionId123"));
                 assertThat(prey.getProperty(INSTITUTION_CODE), is("targetInstitutionCode123"));
                 foundPair.set(true);
-                System.out.println("found pair");
-
 
                 assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is(notNullValue()));
 

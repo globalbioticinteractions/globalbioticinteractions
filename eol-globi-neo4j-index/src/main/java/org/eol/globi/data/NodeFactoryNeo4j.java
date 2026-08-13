@@ -460,10 +460,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public Location getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
         try (Transaction transaction = getGraphDb().beginTx()) {
-            LocationNode location1 = getOrCreateLocationNode(transaction, location);
-            Location copyOf = copyOf(location1);
-            transaction.commit();
-            return copyOf;
+            return getOrCreateLocationNode(transaction, location);
 
         }
     }
@@ -712,21 +709,30 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         Node matchingLocation = null;
         if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
-            Double latitude = location.getLatitude();
-            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+            ResourceIterator<Node> nodes = tx.findNodes(
+                    NodeLabel.Location,
+                    LocationConstant.LATITUDE, location.getLatitude(),
+                    LocationConstant.LONGITUDE, location.getLongitude()
+            );
             matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
         }
         if (matchingLocation == null) {
             String locality = location.getLocality();
             if (StringUtils.isNotBlank(locality)) {
-                ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
+                ResourceIterator<Node> nodes = tx.findNodes(
+                        NodeLabel.Location,
+                        LocationConstant.LOCALITY, locality
+                );
                 matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
             }
         }
         if (matchingLocation == null) {
             String localityId = location.getLocalityId();
             if (StringUtils.isNotBlank(location.getLocalityId())) {
-                ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
+                ResourceIterator<Node> nodes = tx.findNodes(
+                        NodeLabel.Location,
+                        LocationConstant.LOCALITY_ID, localityId
+                );
                 matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
             }
         }
