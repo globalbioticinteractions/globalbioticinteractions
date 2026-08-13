@@ -8,7 +8,6 @@ import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.util.NodeIdCollector;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Result;
@@ -34,14 +33,13 @@ public class NameResolver implements IndexerNeo4j {
 
     private Long batchSize = 10000L;
 
-    public NameResolver(GraphServiceFactory factory, NodeIdCollector nodeIdCollector, TaxonIndex index) {
-        this(factory, index, nodeIdCollector, new KnownBadNameFilter());
+    public NameResolver(GraphServiceFactory factory, TaxonIndex index) {
+        this(factory, index, new KnownBadNameFilter());
     }
 
     public NameResolver(
             GraphServiceFactory factory,
             TaxonIndex index,
-            NodeIdCollector nodeIdCollector,
             TaxonFilter taxonFilter) {
         this.taxonIndex = index;
         this.taxonFilter = taxonFilter;

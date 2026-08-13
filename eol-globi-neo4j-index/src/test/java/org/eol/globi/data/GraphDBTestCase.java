@@ -189,7 +189,6 @@ public class GraphDBTestCase {
     protected void resolveNames() {
         new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
-                getNodeIdCollector(),
                 getTaxonIndex()
         ).index();
     }

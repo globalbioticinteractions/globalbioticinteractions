@@ -48,7 +48,7 @@ public class IndexerTaxa implements IndexerNeo4j {
                 }
             };
 
-            new NameResolver(factory, index, nodeIdCollector, taxonCacheFilter)
+            new NameResolver(factory, index, taxonCacheFilter)
                     .index();
 
             LOG.info("adding same and similar terms for resolved taxa...");

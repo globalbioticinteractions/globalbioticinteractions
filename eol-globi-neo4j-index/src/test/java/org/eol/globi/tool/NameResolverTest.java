@@ -84,7 +84,7 @@ public class NameResolverTest extends GraphDBTestCase {
             }
         };
 
-        final NameResolver nameResolver = new NameResolver(factory, getNodeIdCollector(), getTaxonIndex());
+        final NameResolver nameResolver = new NameResolver(factory, getTaxonIndex());
         nameResolver.setBatchSize(1L);
 
         nameResolver.index();
@@ -113,7 +113,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
 
-        final NameResolver nameResolver = new NameResolver(graphServiceFactory, getNodeIdCollector(), getTaxonIndex());
+        final NameResolver nameResolver = new NameResolver(graphServiceFactory, getTaxonIndex());
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
@@ -151,7 +151,6 @@ public class NameResolverTest extends GraphDBTestCase {
 
         final NameResolver nameResolver = new NameResolver(
                 graphServiceFactory,
-                getNodeIdCollector(),
                 taxonIndexNew
         );
         nameResolver.setBatchSize(1L);
@@ -221,7 +220,6 @@ public class NameResolverTest extends GraphDBTestCase {
         resolvingIndex.skipHomonymMatches(false);
         final NameResolver nameResolver = new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
-                getNodeIdCollector(),
                 resolvingIndex
         );
 

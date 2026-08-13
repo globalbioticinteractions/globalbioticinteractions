@@ -40,7 +40,6 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
         new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
-                getNodeIdCollector(),
                 getTaxonIndex()
         ).index();
 
@@ -78,7 +77,6 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         }
 
         new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
-                getNodeIdCollector(),
                 getTaxonIndex())
                 .index();
 
