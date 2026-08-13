@@ -1,6 +1,5 @@
 package org.eol.globi.taxon;
 
-import jdk.internal.org.jline.utils.Log;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
@@ -95,7 +94,6 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                 }
             } catch (PropertyEnricherException e) {
                 // ignore
-                Log.warn(e);
             }
 
         }
