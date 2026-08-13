@@ -1,7 +1,7 @@
 package org.eol.globi.taxon;
 
+import jdk.internal.org.jline.utils.Log;
 import org.apache.commons.lang.StringUtils;
-import org.apache.jena.ext.com.google.common.collect.Streams;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ResolvingTaxonIndex;
@@ -87,7 +87,6 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                     taxonFound = indexResolvedOnly ? null : noMatch;
                 } else {
                     TaxonNode primary = matchCandidates.get(0);
-                    taxonNodeFor(taxon, NodeLabel.Taxon_Verbatim).createRelationshipTo(RelTypes.ALIGNED_TO, primary);
                     matchCandidates.stream().skip(1)
                             .forEach(n -> {
                                 n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
@@ -96,6 +95,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
                 }
             } catch (PropertyEnricherException e) {
                 // ignore
+                Log.warn(e);
             }
 
         }
@@ -116,7 +116,7 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
     }
 
     private TaxonNode createNoMatch(Taxon taxon) {
-        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon), NodeLabel.Taxon_No_Match);
+        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon), NodeLabel.Taxon_Resolved);
     }
 
 
