@@ -162,9 +162,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     private LocationNode createLocationNode(Transaction transaction, final Location location) throws NodeFactoryException {
         Node node = createLocationNode(transaction);
-        LocationNode locationNode = new LocationNode(node, fromLocation(location));
-        indexLocation(location, node);
-        return locationNode;
+        return new LocationNode(node, fromLocation(location));
 
     }
 
@@ -188,12 +186,6 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
                 ? createStudyNode(tx, study)
                 : studyNode;
     }
-
-
-    protected void indexLocation(Location location, Node node) throws NodeFactoryException {
-        // should already be taken care of by constraints: do nothing
-    }
-
 
     protected Node createLocationNode(Transaction transaction1) {
         return transaction1.createNode(NodeLabel.Location);
