@@ -2,14 +2,17 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.tool.TaxonIndexFactory;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,10 +20,10 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class ExportNCBIResourceFileTest extends GraphDBTestCase {
 
@@ -131,19 +134,29 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
 
     @Before
     public void init() throws NodeFactoryException {
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
         nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens", TaxonomyProvider.NCBI.getIdPrefix() + "9606");
         taxon.setPath("some path");
-        taxonIndex.getOrCreateTaxon(taxon);
 
-        taxon = new TaxonImpl("Homo sapiens", "foo:123");
-        taxon.setPath("some path");
-        taxonIndex.getOrCreateTaxon(taxon);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = new TaxonIndexFactory() {
 
-        taxon = new TaxonImpl("Enhydra lutris", "NCBI:34882");
-        taxon.setPath("some path");
-        taxonIndex.getOrCreateTaxon(taxon);
+                @Override
+                public ResolvingTaxonIndex create(Transaction tx) {
+                    return ExportTestUtil.taxonIndexWithEnricher(null, tx);
+                }
+            }.create(tx);
+            taxonIndex.getOrCreateTaxon(taxon);
+
+            taxon = new TaxonImpl("Homo sapiens", "foo:123");
+            taxon.setPath("some path");
+            taxonIndex.getOrCreateTaxon(taxon);
+
+            taxon = new TaxonImpl("Enhydra lutris", "NCBI:34882");
+            taxon.setPath("some path");
+            taxonIndex.getOrCreateTaxon(taxon);
+            tx.commit();
+        }
     }
 
 }

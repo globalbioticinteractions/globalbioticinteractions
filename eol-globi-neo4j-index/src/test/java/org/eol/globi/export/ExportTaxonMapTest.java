@@ -2,7 +2,9 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
@@ -13,6 +15,7 @@ import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,6 +24,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ExportTaxonMapTest extends GraphDBTestCase {
 
     @Test
@@ -45,29 +49,33 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
 
             }
         };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
-        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
-        Taxon taxon = new TaxonImpl("Homo sapiens");
-        taxon.setExternalId("homoSapiensId");
-        taxon.setPath("one two three");
-        taxon.setExternalUrl("http://some/thing");
-        taxon.setThumbnailUrl("http://thing/some");
-        nodeFactory.createSpecimen(study, taxon);
-        Taxon human = taxonIndex.getOrCreateTaxon(taxon);
-        TaxonImpl dog = new TaxonImpl("Canis lupus");
-        dog.setExternalId("canisLupusId");
-        dog.setPath("four\tfive six");
+        Study study = null;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            study = nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
+            Taxon taxon = new TaxonImpl("Homo sapiens");
+            taxon.setExternalId("homoSapiensId");
+            taxon.setPath("one two three");
+            taxon.setExternalUrl("http://some/thing");
+            taxon.setThumbnailUrl("http://thing/some");
+            nodeFactory.createSpecimen(study, taxon);
+            Taxon human = taxonIndex.getOrCreateTaxon(taxon);
+            TaxonImpl dog = new TaxonImpl("Canis lupus");
+            dog.setExternalId("canisLupusId");
+            dog.setPath("four\tfive six");
 
-        nodeFactory.createSpecimen(study, dog);
-        final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
-        altTaxonWithPath.setPath("some path here");
-        NodeUtil.connectTaxa(altTaxonWithPath, (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode)human, getGraphDb(), RelTypes.SIMILAR_TO);
+            nodeFactory.createSpecimen(study, dog);
+            final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
+            altTaxonWithPath.setPath("some path here");
+            NodeUtil.connectTaxa(altTaxonWithPath, (TaxonNode) human, getGraphDb(), RelTypes.SAME_AS);
+            NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode) human, getGraphDb(), RelTypes.SAME_AS);
+            NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode) human, getGraphDb(), RelTypes.SIMILAR_TO);
+            tx.commit();
+        }
         resolveNames();
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonMap(getGraphDb()).exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
+        new ExportTaxonMap(getGraphDb()).exportStudy(null, ExportUtil.AppenderWriter.of(writer), true);
         String actual = writer.toString();
         assertThat(actual, startsWith("providedTaxonId\tprovidedTaxonName\tprovidedTaxonPath\tresolvedTaxonId\tresolvedTaxonName\tresolvedTaxonPath"));
         assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\tone two three\thomoSapiensId\tHomo sapiens\t"));

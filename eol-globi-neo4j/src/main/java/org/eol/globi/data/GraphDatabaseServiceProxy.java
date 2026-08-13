@@ -82,4 +82,7 @@ public class GraphDatabaseServiceProxy implements GraphDatabaseService {
         return graphDb.databaseName();
     }
 
+    public void setTx(Transaction tx) {
+        this.tx.set(tx);
+    }
 }

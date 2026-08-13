@@ -2,7 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NonResolvingTaxonIndex;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
@@ -43,13 +43,18 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
     public void fuzzyMatch() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
-        Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
-        TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
-        taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
-        taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
+            TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
+            taxon1.setPathIds("BARZ:111 | FOOZ:777");
+            TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
+            taxon1.setPathIds("BARZ:111 | FOOZ:777");
+            NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            tx.commit();
+        }
         getNodeFactory().startNextBatchUpdate();
         try (Transaction tx = getGraphDb().beginTx()) {
             tx.commit();
@@ -114,8 +119,12 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
 
     private void assertQueryHits(String query, long expectedNumberOfHits) throws StudyImporterException {
         initIndex();
-        NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
-        taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
+        ResolvingTaxonIndex taxonService;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            taxonService = taxonIndexFactory.create(tx);
+            taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
+        }
+
         resolveNames();
         resolveNames();
         createIndexer().index();

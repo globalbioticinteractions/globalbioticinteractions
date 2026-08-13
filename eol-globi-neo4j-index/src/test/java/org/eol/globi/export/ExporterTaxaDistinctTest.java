@@ -2,12 +2,14 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -23,9 +25,14 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         ExportTestUtil.createTestData(null, nodeFactory);
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", "EOL:123"));
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis", "EOL:126"));
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", "EOL:123"));
+            taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis", "EOL:126"));
+            taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
+            tx.commit();
+        }
+
         resolveNames();
 
         StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
@@ -50,9 +57,10 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);
-        getTaxonIndex().findTaxonByName("bla");
-
-        assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            getTaxonIndexFactory().create(tx).findTaxonByName("bla");
+            assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
+        }
     }
 
     private void assertThatNoTaxaAreExportedOnMissingHeader(StudyNode myStudy1, StringWriter row) throws IOException {

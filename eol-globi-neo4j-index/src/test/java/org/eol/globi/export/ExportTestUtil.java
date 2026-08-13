@@ -2,8 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndex;
-import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -12,8 +11,9 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.taxon.ResolvingTaxonIndexImpl;
 import org.eol.globi.util.DateUtil;
-import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -65,8 +65,8 @@ public class ExportTestUtil {
         return DateUtil.parseDateUTC("1992-03-30T08:00:00Z").toDate();
     }
 
-    public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
-        return new NonResolvingTaxonIndex(graphDb);
+    public static ResolvingTaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, Transaction tx) {
+        return new ResolvingTaxonIndexImpl(taxonEnricher, tx);
     }
 
     public static void assertFileInMeta(ExporterBase exporter) throws IOException {

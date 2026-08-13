@@ -522,7 +522,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void specimenWithLifeStageInName() throws NodeFactoryException {
-        initTaxonService();
         try (Transaction tx = getGraphDb().beginTx()) {
             Specimen specimen = getNodeFactory().createSpecimenNode(tx, getNodeFactory().createStudy(getBlaStudy()), new TaxonImpl("mickey eggs scales", null));
             assertThat(specimen.getLifeStage().getName(), is("egg"));
@@ -534,7 +533,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void specimenWithLifeStageInName2() throws NodeFactoryException {
-        initTaxonService();
         Specimen specimen;
         try (Transaction tx = getGraphDb().beginTx()) {
             specimen = getNodeFactory().createSpecimenNode(tx, getNodeFactory().createStudy(getBlaStudy()), new TaxonImpl("CALANUS SPP (NAUPLII)", null));
@@ -545,7 +543,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void specimenWithBasisOfRecord() throws NodeFactoryException {
-        initTaxonService();
         Study study = getNodeFactory().createStudy(getBlaStudy());
 
         try (Transaction tx = getGraphDb().beginTx()) {
@@ -565,7 +562,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void interactionWithParticipants() throws NodeFactoryException {
-        initTaxonService();
         Study study = getNodeFactory().createStudy(getBlaStudy());
         try (Transaction transaction = getGraphDb().beginTx()) {
             Interaction interaction = getNodeFactory().createInteractionNode(transaction, study);
@@ -581,7 +577,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void interactionWitEventTime() throws NodeFactoryException {
-        initTaxonService();
         Study study = getNodeFactory().createStudy(getBlaStudy());
 
         try (Transaction tx = getGraphDb().beginTx()) {
@@ -603,11 +598,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     }
 
-    private void initTaxonService() {
-        this.taxonIndex = new NonResolvingTaxonIndex(
-                getGraphDb()
-        );
-    }
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {

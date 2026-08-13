@@ -1,15 +1,17 @@
 package org.eol.globi.tool;
 
+import org.eol.globi.data.GraphDatabaseServiceProxy;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.taxon.ResolvingTaxonIndexNoTx;
+import org.eol.globi.taxon.ResolvingTaxonIndexImpl;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.neo4j.graphdb.Transaction;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandLine.Command(
         name = "interpret",
@@ -38,8 +40,17 @@ public class CmdInterpretTaxa extends CmdNeo4J {
             new IndexerTaxa(
                     taxonCacheService,
                     getGraphServiceFactory(),
-                    new ResolvingTaxonIndexNoTx(taxonCacheService, getGraphServiceFactory().getGraphService()),
-                    new NodeIdCollectorImpl()
+                    new TaxonIndexFactory() {
+                        @Override
+                        public ResolvingTaxonIndexImpl create(Transaction tx) {
+                            GraphDatabaseServiceProxy graphDatabaseServiceProxy
+                                    = new GraphDatabaseServiceProxy(getGraphServiceFactory().getGraphService(),
+                                    new AtomicBoolean(false)
+                            );
+                            graphDatabaseServiceProxy.setTx(tx);
+                            return new ResolvingTaxonIndexImpl(taxonCacheService, tx);
+                        }
+                    }
             ).index();
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);

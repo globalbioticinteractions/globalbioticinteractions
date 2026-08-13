@@ -5,7 +5,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.taxon.TaxonCacheService;
-import org.eol.globi.util.NodeIdCollector;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +17,22 @@ public class IndexerTaxa implements IndexerNeo4j {
 
     private final TaxonCacheService taxonCacheService;
     private final GraphServiceFactory factory;
-    private final ResolvingTaxonIndex index;
-    private final NodeIdCollector nodeIdCollector;
+    private TaxonIndexFactory taxonIndexFactory;
 
     public IndexerTaxa(TaxonCacheService taxonCacheService,
                        GraphServiceFactory factory,
-                       ResolvingTaxonIndex index,
-                       NodeIdCollector nodeIdCollector) {
+                       TaxonIndexFactory taxonIndexFactory) {
         this.taxonCacheService = taxonCacheService;
         this.factory = factory;
-        this.index = index;
-        this.nodeIdCollector = nodeIdCollector;
+        this.taxonIndexFactory = new TaxonIndexFactory() {
+            @Override
+            public ResolvingTaxonIndex create(Transaction tx) {
+                ResolvingTaxonIndex resolvingTaxonIndex = taxonIndexFactory.create(tx);
+                resolvingTaxonIndex.setIndexResolvedTaxaOnly(true);
+                return resolvingTaxonIndex;
+            }
+        };
+
     }
 
 
@@ -35,8 +40,6 @@ public class IndexerTaxa implements IndexerNeo4j {
     public void index() throws StudyImporterException {
         LOG.info("resolving names with taxon cache ...");
         try {
-            index.setIndexResolvedTaxaOnly(true);
-
             TaxonFilter taxonCacheFilter = new TaxonFilter() {
 
                 private KnownBadNameFilter knownBadNameFilter = new KnownBadNameFilter();
@@ -48,7 +51,7 @@ public class IndexerTaxa implements IndexerNeo4j {
                 }
             };
 
-            new NameResolver(factory, index, taxonCacheFilter)
+            new NameResolver(factory, taxonCacheFilter, taxonIndexFactory)
                     .index();
 
             LOG.info("adding same and similar terms for resolved taxa...");

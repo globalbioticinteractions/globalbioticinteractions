@@ -12,7 +12,6 @@ import org.eol.globi.data.StudyImporterTestFactory;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.GraphExporterImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNoTx;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
@@ -32,7 +31,6 @@ import java.net.URL;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class NodeFactoryTest extends GraphDBTestCase {
@@ -121,7 +119,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             indexerDataset.index();
-            new NonResolvingTaxonIndexNoTx(getGraphDb()).findTaxonByName("bla");
             tx.commit();
         }
 

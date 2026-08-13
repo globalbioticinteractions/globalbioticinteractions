@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
@@ -61,9 +62,12 @@ public class DatasetImporterForSimonsTest extends GraphDBTestCase {
 
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Rhynchoconger flavus"));
-        assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));
-        assertNotNull(taxonIndex.findTaxonByName("Ampelisca sp. (abdita complex)"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Rhynchoconger flavus"));
+            assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));
+            assertNotNull(taxonIndex.findTaxonByName("Ampelisca sp. (abdita complex)"));
+        }
 
         assertNotNull(nodeFactory.findStudy(new StudyImpl("Simons 1997")));
 

@@ -2,7 +2,6 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -14,7 +13,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.ExternalIdUtil;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,19 +21,14 @@ import java.text.ParseException;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     private Taxon setPathAndId(TaxonImpl taxon) {
         taxon.setExternalId(taxon.getName() + "id");
         taxon.setPath(taxon.getName() + "path");
         return taxon;
-    }
-
-    @Before
-    public void setEnricher() {
-        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
     }
 
     @Test

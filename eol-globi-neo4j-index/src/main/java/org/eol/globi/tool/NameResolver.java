@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang.time.StopWatch;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.SpecimenNode;
@@ -22,9 +23,9 @@ public class NameResolver implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(NameResolver.class);
     public static final String NO_NAMESPACE = "no/namespace";
 
-    private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;
     private final GraphServiceFactory factory;
+    private TaxonIndexFactory taxonIndexFactory;
 
 
     public void setBatchSize(Long batchSize) {
@@ -33,17 +34,17 @@ public class NameResolver implements IndexerNeo4j {
 
     private Long batchSize = 10000L;
 
-    public NameResolver(GraphServiceFactory factory, TaxonIndex index) {
-        this(factory, index, new KnownBadNameFilter());
+    public NameResolver(GraphServiceFactory factory, TaxonIndexFactory indexFactory) {
+        this(factory, new KnownBadNameFilter(), indexFactory);
     }
 
-    public NameResolver(
-            GraphServiceFactory factory,
-            TaxonIndex index,
-            TaxonFilter taxonFilter) {
-        this.taxonIndex = index;
+    public NameResolver(GraphServiceFactory factory,
+            TaxonFilter taxonFilter,
+            TaxonIndexFactory taxonIndexFactor) {
         this.taxonFilter = taxonFilter;
         this.factory = factory;
+        this.taxonIndexFactory = taxonIndexFactor;
+
     }
 
     public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
@@ -106,7 +107,7 @@ public class NameResolver implements IndexerNeo4j {
                     final TaxonNode describedAsTaxon = new TaxonNode(describedAsTaxonNode);
                     try {
                         if (taxonFilter.shouldInclude(describedAsTaxon)) {
-                            Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
+                            Taxon resolvedTaxon = taxonIndexFactory.create(tx).getOrCreateTaxon(describedAsTaxon);
                             if (resolvedTaxon != null) {
                                 Node specimenNodeId = tx.getNodeByElementId(next.get("specimenNodeId").toString());
                                 new SpecimenNode(specimenNodeId).classifyAs(resolvedTaxon);
@@ -136,4 +137,5 @@ public class NameResolver implements IndexerNeo4j {
         LOG.info("name resolving complete.");
 
     }
+
 }

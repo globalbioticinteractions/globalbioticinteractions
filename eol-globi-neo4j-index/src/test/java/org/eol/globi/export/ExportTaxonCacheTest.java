@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
@@ -9,6 +10,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -20,23 +22,26 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
-        nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
-        Taxon taxon = new TaxonImpl("Homo sapiens");
-        taxon.setExternalId("homoSapiensId");
-        taxon.setPath("one\ttwo three");
-        taxon.setExternalUrl("http://some/thing");
-        taxon.setCommonNames("man @en | \"mens @nl");
-        taxon.setThumbnailUrl("http://thing/some");
-        Taxon human = taxonIndex.getOrCreateTaxon(taxon);
-        TaxonImpl taxon1 = new TaxonImpl("Canis lupus", "canisLupusId");
-        taxon1.setPath("four five six");
-        taxonIndex.getOrCreateTaxon(taxon1);
-        NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
-        final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
-        altTaxonWithPath.setPath("some path here");
-        NodeUtil.connectTaxa(altTaxonWithPath, (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode)human, getGraphDb(), RelTypes.SIMILAR_TO);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
+            Taxon taxon = new TaxonImpl("Homo sapiens");
+            taxon.setExternalId("homoSapiensId");
+            taxon.setPath("one\ttwo three");
+            taxon.setExternalUrl("http://some/thing");
+            taxon.setCommonNames("man @en | \"mens @nl");
+            taxon.setThumbnailUrl("http://thing/some");
+            Taxon human = taxonIndex.getOrCreateTaxon(taxon);
+            TaxonImpl taxon1 = new TaxonImpl("Canis lupus", "canisLupusId");
+            taxon1.setPath("four five six");
+            taxonIndex.getOrCreateTaxon(taxon1);
+            NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode) human, getGraphDb(), RelTypes.SAME_AS);
+            final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
+            altTaxonWithPath.setPath("some path here");
+            NodeUtil.connectTaxa(altTaxonWithPath, (TaxonNode) human, getGraphDb(), RelTypes.SAME_AS);
+            NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode) human, getGraphDb(), RelTypes.SIMILAR_TO);
+            tx.commit();
+        }
 
         StringWriter writer = new StringWriter();
         new ExportTaxonCache(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(writer), true);

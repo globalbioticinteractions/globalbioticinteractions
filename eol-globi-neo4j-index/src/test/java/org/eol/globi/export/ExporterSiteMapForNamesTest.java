@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NonResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -26,7 +25,6 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
 
     @Test
     public void writeSiteMapWithNames() throws StudyImporterException, IOException {
-        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation 123"));
         TaxonImpl homoSapiens = new TaxonImpl("Homo sapiens", "homoSapiensId");
         homoSapiens.setPath("one two three");
@@ -34,6 +32,7 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
         TaxonImpl dogTaxon = new TaxonImpl("Canis familiaris", null);
         final Specimen dog = nodeFactory.createSpecimen(study, dogTaxon);
         human.ate(dog);
+
         resolveNames();
 
         final File baseDirNames = createBaseDir("target/sitemap/names");

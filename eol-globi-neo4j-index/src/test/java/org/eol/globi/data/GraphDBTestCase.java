@@ -9,10 +9,11 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.ResolvingTaxonIndexImpl;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
+import org.eol.globi.tool.TaxonIndexFactory;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeIdCollectorImpl;
@@ -62,7 +63,7 @@ public class GraphDBTestCase {
 
     protected NodeFactoryNeo4j nodeFactory;
 
-    protected TaxonIndex taxonIndex;
+    protected TaxonIndexFactory taxonIndexFactory;
 
     static Neo4j neo4j = null;
 
@@ -144,7 +145,7 @@ public class GraphDBTestCase {
     public void startGraphDb() throws IOException {
         nodeFactory = createNodeFactory();
         try (Transaction tx = getGraphDb().beginTx()) {
-            getTaxonIndex();
+            getTaxonIndexFactory();
             tx.commit();
         }
     }
@@ -157,13 +158,19 @@ public class GraphDBTestCase {
     }
 
 
-    protected TaxonIndex getTaxonIndex() {
-        if (taxonIndex == null) {
-            ResolvingTaxonIndex resolving = new ResolvingTaxonIndex(new PropertyEnricherNoop(), getGraphDb());
-            resolving.setIndexResolvedTaxaOnly(false);
-            taxonIndex = resolving;
+    protected TaxonIndexFactory getTaxonIndexFactory() {
+        if (taxonIndexFactory == null) {
+            taxonIndexFactory = new TaxonIndexFactory() {
+
+                @Override
+                public ResolvingTaxonIndex create(Transaction tx) {
+                    ResolvingTaxonIndexImpl resolving = new ResolvingTaxonIndexImpl(new PropertyEnricherNoop(), tx);
+                    resolving.setIndexResolvedTaxaOnly(false);
+                    return resolving;
+                }
+            };
         }
-        return taxonIndex;
+        return taxonIndexFactory;
     }
 
 
@@ -189,7 +196,7 @@ public class GraphDBTestCase {
     protected void resolveNames() {
         new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
-                getTaxonIndex()
+                getTaxonIndexFactory()
         ).index();
     }
 
@@ -226,10 +233,6 @@ public class GraphDBTestCase {
             }
         }
         return cacheDir;
-    }
-
-    protected TaxonIndex createTaxonIndex(PropertyEnricher enricher) {
-        return new ResolvingTaxonIndex(enricher, getGraphDb());
     }
 
     public GraphDatabaseService getGraphDb() {

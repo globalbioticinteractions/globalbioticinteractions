@@ -13,7 +13,6 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.UnlikelyTaxonNameException;
 import org.eol.globi.util.NodeUtil;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
@@ -22,17 +21,19 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
+public class ResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
 
     private final PropertyEnricher enricher;
+    private final Transaction tx;
+
     private boolean skipHomonymMatches;
     private boolean indexResolvedOnly;
 
     public static final Pattern POSSIBLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
 
-    public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
-        super(graphDbService);
+    public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, Transaction tx) {
         this.enricher = enricher;
+        this.tx = tx;
     }
 
     @Override
@@ -44,14 +45,24 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
         return TaxonUtil.isEmptyValue(name)
                 ? null
-                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, getGraphDbService(), taxonContext);
+                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, taxonContext, getTransaction());
+    }
+
+    @Override
+    public Taxon findTaxonById(String externalId) {
+        return null;
     }
 
     @Override
     public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
+        Transaction tx = getTransaction();
         return TaxonUtil.isEmptyValue(externalId)
                 ? null
-                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getGraphDbService(), taxonContext);
+                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, taxonContext, tx);
+    }
+
+    private Transaction getTransaction() {
+        return tx;
     }
 
     @Override
@@ -105,12 +116,9 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
     }
 
     private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {
-        try (Transaction transaction = getGraphDbService().beginTx()) {
-            TaxonNode t = new TaxonNode(transaction.createNode(nodeLabel));
-            TaxonUtil.copy(r, t);
-            transaction.commit();
-            return t;
-        }
+        TaxonNode t = new TaxonNode(getTransaction().createNode(nodeLabel));
+        TaxonUtil.copy(r, t);
+        return t;
     }
 
     private TaxonNode createNoMatch(Taxon taxon) {
@@ -131,4 +139,6 @@ public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx implemen
     public void skipHomonymMatches(boolean skipHomonymMatches) {
         this.skipHomonymMatches = skipHomonymMatches;
     }
+
+
 }

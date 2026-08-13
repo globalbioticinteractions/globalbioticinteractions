@@ -41,25 +41,26 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
     @Test
     public void indexInteractions() throws StudyImporterException {
-        TaxonIndex taxonIndex = getTaxonIndex();
-        // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
-        StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
-        DatasetWithResourceMapping dataset = new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"),
-                getResourceService());
-        NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
-        Study interaction = factory.getOrCreateStudy(study);
-        TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
-        Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
-        donald.classifyAs(taxonIndex.getOrCreateTaxon(donaldTaxon));
-        TaxonImpl mickeyTaxon = new TaxonImpl("mickey mouse", "NCBI:4444");
-        Taxon mickeyTaxonNCBI = taxonIndex.getOrCreateTaxon(new TaxonImpl("mickey mouse", "EOL:567"));
-        NodeUtil.connectTaxa(mickeyTaxon, (TaxonNode) mickeyTaxonNCBI, getGraphDb(), RelTypes.SAME_AS);
-        Specimen mickey = factory.createSpecimen(interaction, mickeyTaxon);
-        mickey.classifyAs(taxonIndex.getOrCreateTaxon(mickeyTaxon));
-
-        donald.ate(mickey);
-
-        getInteractionIndexer().index();
+        Study interaction =null;
+        try (Transaction tx1 = getGraphDb().beginTx()) {
+            TaxonIndex taxonIndex = getTaxonIndexFactory().create(tx1);
+            // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
+            StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
+            DatasetWithResourceMapping dataset = new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"),
+                    getResourceService());
+            NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
+            interaction = factory.getOrCreateStudy(study);
+            TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
+            Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
+            donald.classifyAs(taxonIndex.getOrCreateTaxon(donaldTaxon));
+            TaxonImpl mickeyTaxon = new TaxonImpl("mickey mouse", "NCBI:4444");
+            Taxon mickeyTaxonNCBI = taxonIndex.getOrCreateTaxon(new TaxonImpl("mickey mouse", "EOL:567"));
+            NodeUtil.connectTaxa(mickeyTaxon, (TaxonNode) mickeyTaxonNCBI, getGraphDb(), RelTypes.SAME_AS);
+            Specimen mickey = factory.createSpecimen(interaction, mickeyTaxon);
+            mickey.classifyAs(taxonIndex.getOrCreateTaxon(mickeyTaxon));
+            donald.ate(mickey);
+            tx1.commit();
+        }
 
         NodeFactoryNeo4j nodeFactoryNeo4j = getNodeFactory();
         StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
