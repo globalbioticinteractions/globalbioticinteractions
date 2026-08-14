@@ -2,18 +2,18 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j;
+import org.eol.globi.taxon.FuzzyTaxonNameIndexNeo4j;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j.TAXON_NAME_SUGGESTIONS;
+import static org.eol.globi.taxon.FuzzyTaxonNameIndexNeo4j.TAXON_NAME_SUGGESTIONS;
 
 public class LinkerTaxonIndexNeo4j implements IndexerNeo4j {
 
     private final GraphServiceFactory factory;
-    private TaxonFuzzySearchIndexNeo4j fuzzySearchIndex = null;
+    private FuzzyTaxonNameIndexNeo4j fuzzySearchIndex = null;
 
     public LinkerTaxonIndexNeo4j(GraphServiceFactory factory) {
         this.factory = factory;
@@ -35,7 +35,7 @@ public class LinkerTaxonIndexNeo4j implements IndexerNeo4j {
 
     private void lazyInit() {
         if (fuzzySearchIndex == null) {
-            fuzzySearchIndex = new TaxonFuzzySearchIndexNeo4j(factory.getGraphService());
+            fuzzySearchIndex = new FuzzyTaxonNameIndexNeo4j(factory.getGraphService());
         }
     }
 }

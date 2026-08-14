@@ -14,11 +14,11 @@ import org.neo4j.graphdb.schema.IndexType;
 
 import java.util.NoSuchElementException;
 
-public class TaxonFuzzySearchIndexNeo4j implements TaxonFuzzySearchIndex {
+public class FuzzyTaxonNameIndexNeo4j implements TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
     private final GraphDatabaseService graphDbService;
 
-    public TaxonFuzzySearchIndexNeo4j(GraphDatabaseService graphDbService) {
+    public FuzzyTaxonNameIndexNeo4j(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
             Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon_Verbatim);

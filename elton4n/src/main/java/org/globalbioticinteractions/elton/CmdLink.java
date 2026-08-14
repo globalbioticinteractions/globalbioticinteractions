@@ -1,6 +1,6 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdIndexTaxonStrings;
+import org.eol.globi.tool.CmdFullTextTaxonIndex;
 import org.eol.globi.tool.CmdInterpretTaxa;
 import org.eol.globi.tool.CmdNeo4J;
 import picocli.CommandLine;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
         description = "link compiled interaction datasets",
         subcommands = {
                 CmdInterpretTaxa.class,
-                CmdIndexTaxonStrings.class,
+                CmdFullTextTaxonIndex.class,
         }
 )
 public class CmdLink extends CmdNeo4J {
@@ -21,7 +21,12 @@ public class CmdLink extends CmdNeo4J {
     @Override
     public void run() {
         try {
-            Stream.of(new CmdCreateTaxonIndexes(), new CmdInterpretTaxa(), new CmdIndexTaxonStrings())
+            Stream.of(
+                            new CmdFullTextTaxonIndex(),
+                            new CmdCreateTaxonIndexes(),
+                            new CmdCreateLocationIndexes(),
+                            new CmdInterpretTaxa()
+                    )
                     .forEach(this::configureAndRun);
         } finally {
             //destroy();

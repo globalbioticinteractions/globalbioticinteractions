@@ -39,8 +39,8 @@ public class NameResolver implements IndexerNeo4j {
     }
 
     public NameResolver(GraphServiceFactory factory,
-            TaxonFilter taxonFilter,
-            TaxonIndexFactory taxonIndexFactor) {
+                        TaxonFilter taxonFilter,
+                        TaxonIndexFactory taxonIndexFactor) {
         this.taxonFilter = taxonFilter;
         this.factory = factory;
         this.taxonIndexFactory = taxonIndexFactor;
@@ -84,7 +84,9 @@ public class NameResolver implements IndexerNeo4j {
                 watchForBatch.start();
             }
             watchForEntireRun.stop();
-            LOG.info("resolved [" + nameCount + "] names in " + getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
+            LOG.info("resolved [{}] names in [{}]",
+                    nameCount,
+                    getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
         }
 
     }
@@ -127,7 +129,10 @@ public class NameResolver implements IndexerNeo4j {
     }
 
     public static String getProgressMsg(Long count, long duration) {
-        return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
+        return String.format("in [%.2f] s at [%.2f] taxon/s ",
+                duration / 1000.0,
+                (float) count * 1000.0 / duration
+        );
     }
 
     @Override

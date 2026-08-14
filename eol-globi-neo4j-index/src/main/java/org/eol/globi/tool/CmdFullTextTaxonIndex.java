@@ -11,7 +11,7 @@ import java.util.List;
         name = "indexTaxonStrings",
         description = "Interprets taxonomic strings using provided translation tables (taxonCache/Map)."
 )
-public class CmdIndexTaxonStrings extends CmdNeo4J {
+public class CmdFullTextTaxonIndex extends CmdNeo4J {
 
     @Override
     public void run() {

@@ -19,7 +19,7 @@ import org.neo4j.graphdb.Transaction;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
+public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
 
     private TaxonFuzzySearchIndex index;
 
@@ -138,7 +138,7 @@ public class TaxonFuzzySearchIndexNeo4jTest extends GraphDBTestCase {
     }
 
     private TaxonFuzzySearchIndex getFuzzySearch() {
-        return new TaxonFuzzySearchIndexNeo4j(getGraphDb());
+        return new FuzzyTaxonNameIndexNeo4j(getGraphDb());
     }
 
     public static Taxon setTaxonProps(Taxon taxon) {
