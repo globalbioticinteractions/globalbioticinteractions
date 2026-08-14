@@ -11,7 +11,7 @@ import java.io.File;
         aliases = {"package-interactions-tsv"},
         description = "Exports indexed interactions into tsv."
 )
-public class CmdExportInteractionsTSV extends CmdExportNeo4J {
+public class CmdExportInteractionsTSV extends CmdNeo4J {
 
     @Override
     public void run() {
