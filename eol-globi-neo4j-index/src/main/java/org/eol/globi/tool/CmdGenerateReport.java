@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Transaction;
@@ -181,7 +182,7 @@ public class CmdGenerateReport extends CmdNeo4J {
 
             final Node node;
             try (Transaction transaction = getGraphDb().beginTx()) {
-                node = transaction.createNode();
+                node = createReportNode(transaction);
                 String sourceIdPrefix = "globi:" + namespaceGroup;
                 node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
@@ -238,7 +239,7 @@ public class CmdGenerateReport extends CmdNeo4J {
         });
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            final Node node = tx.createNode();
+            final Node node = createReportNode(tx);
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
@@ -249,6 +250,10 @@ public class CmdGenerateReport extends CmdNeo4J {
             //getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             tx.commit();
         }
+    }
+
+    private static Node createReportNode(Transaction tx) {
+        return tx.createNode(NodeLabel.Report);
     }
 
     private Set<Long> makeOrRemake(DB reportCache, String setName) {
