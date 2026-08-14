@@ -21,7 +21,7 @@ public class CmdLink extends CmdNeo4J {
     @Override
     public void run() {
         try {
-            Stream.of(new CmdInterpretTaxa(), new CmdIndexTaxonStrings())
+            Stream.of(new CmdCreateTaxonIndexes(), new CmdInterpretTaxa(), new CmdIndexTaxonStrings())
                     .forEach(this::configureAndRun);
         } finally {
             //destroy();
