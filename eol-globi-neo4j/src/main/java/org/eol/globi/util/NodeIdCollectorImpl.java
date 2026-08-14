@@ -36,6 +36,7 @@ public class NodeIdCollectorImpl implements NodeIdCollector {
             nodes.stream()
                     .map(Node::getId)
                     .forEach(ids::add);
+            transaction.commit();
         }
     }
 }

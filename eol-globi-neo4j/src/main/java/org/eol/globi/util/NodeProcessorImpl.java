@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,11 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
             public void onFinish() {
 
             }
+
+            @Override
+            public Transaction getTx() {
+                return null;
+            }
         };
     }
 
@@ -90,7 +96,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
             LOG.info("processing " + ids.size() + " [" + indexName + "] nodes...");
 
             for (Long nodeId : ids) {
-                nodeListener.on(graphService.beginTx().getNodeById(nodeId));
+                nodeListener.on(batchListener.getTx().getNodeById(nodeId));
                 nodeCount.incrementAndGet();
                 if (nodeCount.get() % batchSize == 0) {
                     batchListener.onStart();

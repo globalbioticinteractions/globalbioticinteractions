@@ -18,7 +18,8 @@ public class CmdPackage extends CmdExportNeo4J {
     public void run() {
         try {
             Stream
-                    .of(new CmdExportInteractionsTSV(), new CmdExportNeo4j2())
+                    .of(new CmdExportInteractionsTSV(),
+                            new CmdExportNeo4j2())
                     .forEach(this::configAndRun);
         } finally {
             //destroy();
