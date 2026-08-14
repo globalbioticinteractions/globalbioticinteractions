@@ -15,7 +15,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.ResolvingTaxonIndexImpl;
+import org.eol.globi.taxon.ResolvingTaxonIndexNoTx;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -163,7 +163,7 @@ public class NameResolverTest extends GraphDBTestCase {
                 new TaxonIndexFactory() {
                     @Override
                     public ResolvingTaxonIndex create(Transaction tx) {
-                        ResolvingTaxonIndex taxonIndexNew = new ResolvingTaxonIndexImpl(new PropertyEnricherNoop(), tx);
+                        ResolvingTaxonIndex taxonIndexNew = new ResolvingTaxonIndexNoTx(new PropertyEnricherNoop(), tx);
                         taxonIndexNew.setIndexResolvedTaxaOnly(false);
                         return taxonIndexNew;
                     }
@@ -245,8 +245,8 @@ public class NameResolverTest extends GraphDBTestCase {
         TaxonIndexFactory indexFactory = new TaxonIndexFactory() {
             @Override
             public ResolvingTaxonIndex create(Transaction tx) {
-                ResolvingTaxonIndexImpl resolvingIndex
-                        = new ResolvingTaxonIndexImpl(enricher, tx);
+                ResolvingTaxonIndexNoTx resolvingIndex
+                        = new ResolvingTaxonIndexNoTx(enricher, tx);
                 resolvingIndex.setIndexResolvedTaxaOnly(true);
                 resolvingIndex.skipHomonymMatches(false);
                 return resolvingIndex;
