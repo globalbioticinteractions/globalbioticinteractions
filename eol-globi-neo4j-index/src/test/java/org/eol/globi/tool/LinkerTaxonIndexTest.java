@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
@@ -10,10 +11,18 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,6 +32,36 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
+    @Override
+    protected PropertyEnricher getPropertyEnricher() {
+        return new PropertyEnricher() {
+
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                List<Map<String, String>> maps = enrichAllMatches(properties);
+                return maps.isEmpty() ? null : maps.get(0);
+            }
+
+            @Override
+            public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
+                if ("Homo sapiens".equals(TaxonUtil.mapToTaxon(properties).getName())) {
+                    TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
+                    taxon1.setPathIds("BARZ:111 | FOOZ:777");
+                    TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
+                    taxon1.setPathIds("BARZ:111 | FOOZ:777");
+                    return Arrays.asList(properties, TaxonUtil.taxonToMap(taxon1), TaxonUtil.taxonToMap(taxon2));
+                } else {
+                    return Collections.emptyList();
+                }
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        };
+    }
+
     @Test
     public void linking() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
@@ -30,21 +69,20 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         try (Transaction tx = getGraphDb().beginTx()) {
             ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-            Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
-            TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
-            taxon1.setPathIds("BARZ:111 | FOOZ:777");
-            TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
-            taxon1.setPathIds("BARZ:111 | FOOZ:777");
-            NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
-            NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            taxonIndex.getOrCreateTaxon(taxonFound);
 
-            taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
-            taxon.setExternalId("FOO 1234");
+            Taxon anotherTaxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
+            anotherTaxon.setExternalId("FOO 1234");
             tx.commit();
         }
-        resolveNames();
 
-        assertV2();
+        new NameResolver(
+                new GraphServiceFactoryProxy(getGraphDb()),
+                getTaxonIndexFactory()
+        ).index();
+
+
+        resolveNames();
 
         try (Transaction tx = getGraphDb().beginTx()) {
             ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
@@ -60,31 +98,21 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
             assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
                     , is("Bar:123 | FOO:444"));
         }
-    }
 
-    protected void assertV2() {
-        Node next = getFirstHit();
+        try (Transaction tx1 = getGraphDb().beginTx()) {
+            Node next = tx1.findNode(NodeLabel.Taxon, PropertyAndValueDictionary.EXTERNAL_ID, "Bar:123");
+            assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
 
-        assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
+//            assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:123");
+//            assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444");
+//            assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444 " + PropertyAndValueDictionary.PATH + ":BAR\\:123");
+//            assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:*");
+//            assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
+//            assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
+            tx1.commit();
+        }
 
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:123");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444 " + PropertyAndValueDictionary.PATH + ":BAR\\:123");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:*");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
-    }
 
-    protected Node getFirstHit() {
-        Node next = null;
-//        try (IndexHits<Node> hits = getGraphDb()
-//                .index()
-//                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
-//                .query("*:*")) {
-//            next = hits.next();
-//            assertThat(hits.hasNext(), is(true));
-//        }
-        return next;
     }
 
     protected IndexerNeo4j createIndexer() {

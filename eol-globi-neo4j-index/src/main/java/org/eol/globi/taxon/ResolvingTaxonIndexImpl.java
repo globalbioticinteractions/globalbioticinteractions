@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.lang.StringUtils;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ResolvingTaxonIndex;
@@ -13,9 +14,13 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.UnlikelyTaxonNameException;
 import org.eol.globi.util.NodeUtil;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -101,6 +106,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
                             .forEach(n -> {
                                 n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
                             });
+                    onTaxonNode(primary);
                     taxonFound = primary;
                 }
             } catch (PropertyEnricherException e) {
@@ -109,6 +115,50 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
         }
         return taxonFound;
+    }
+
+    private void onTaxonNode(TaxonNode taxonNode) {
+        List<String> taxonIds = new ArrayList<>();
+        List<String> taxonPathIdsAndNames = new ArrayList<>();
+        addTaxonId(taxonIds, taxonNode);
+        addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
+
+
+        Node node = taxonNode.getUnderlyingNode();
+        Iterable<Relationship> rels = node.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
+        for (Relationship rel : rels) {
+            TaxonNode sameAsTaxon = new TaxonNode(rel.getStartNode());
+            addTaxonId(taxonIds, sameAsTaxon);
+            addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
+        }
+        taxonPathIdsAndNames.addAll(taxonIds);
+        String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+        node.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
+
+        String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+        node.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
+    }
+
+    private void addTaxonId(List<String> externalIds, TaxonNode taxonNode) {
+        String externalId = taxonNode.getExternalId();
+        if (StringUtils.isNotBlank(externalId)) {
+            externalIds.add(externalId);
+        }
+    }
+
+    private void addPathIdAndNames(List<String> externalIds, TaxonNode taxonNode) {
+        if (StringUtils.isNotBlank(taxonNode.getName())) {
+            externalIds.add(taxonNode.getName());
+        }
+        addDelimitedList(externalIds, taxonNode.getPath());
+        addDelimitedList(externalIds, taxonNode.getPathIds());
+    }
+
+    private void addDelimitedList(List<String> externalIds, String path) {
+        String[] pathElements = StringUtils.splitByWholeSeparator(path, CharsetConstant.SEPARATOR);
+        if (pathElements != null) {
+            externalIds.addAll(Arrays.asList(pathElements));
+        }
     }
 
     private boolean includeAfterHomonymCheck(Taxon taxon, Taxon t) {

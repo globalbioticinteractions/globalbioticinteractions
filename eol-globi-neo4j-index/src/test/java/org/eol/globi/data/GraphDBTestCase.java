@@ -5,6 +5,7 @@ import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -156,6 +157,9 @@ public class GraphDBTestCase {
         return nodeFactory;
     }
 
+    protected PropertyEnricher getPropertyEnricher() {
+        return new PropertyEnricherNoop();
+    }
 
     protected TaxonIndexFactory getTaxonIndexFactory() {
         if (taxonIndexFactory == null) {
@@ -163,7 +167,7 @@ public class GraphDBTestCase {
 
                 @Override
                 public ResolvingTaxonIndex create(Transaction tx) {
-                    ResolvingTaxonIndexImpl resolving = new ResolvingTaxonIndexImpl(new PropertyEnricherNoop(), tx);
+                    ResolvingTaxonIndexImpl resolving = new ResolvingTaxonIndexImpl(getPropertyEnricher(), tx);
                     resolving.setIndexResolvedTaxaOnly(false);
                     return resolving;
                 }
