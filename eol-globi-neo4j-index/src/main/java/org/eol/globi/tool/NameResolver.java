@@ -25,14 +25,14 @@ public class NameResolver implements IndexerNeo4j {
 
     private final TaxonFilter taxonFilter;
     private final GraphServiceFactory factory;
-    private TaxonIndexFactory taxonIndexFactory;
+    private final TaxonIndexFactory taxonIndexFactory;
 
 
     public void setBatchSize(Long batchSize) {
         this.batchSize = batchSize;
     }
 
-    private Long batchSize = 10000L;
+    private Long batchSize = 1000L;
 
     public NameResolver(GraphServiceFactory factory, TaxonIndexFactory indexFactory) {
         this(factory, new KnownBadNameFilter(), indexFactory);
