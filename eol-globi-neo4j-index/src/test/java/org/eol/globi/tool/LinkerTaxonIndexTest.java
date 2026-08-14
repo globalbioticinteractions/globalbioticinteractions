@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NodeBacked;
@@ -13,6 +14,7 @@ import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,31 +28,39 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     public void linking() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
-        Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
-        TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
-        taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
-        taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
-        taxon.setExternalId("FOO 1234");
+            Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
+            TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
+            taxon1.setPathIds("BARZ:111 | FOOZ:777");
+            TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
+            taxon1.setPathIds("BARZ:111 | FOOZ:777");
+            NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+
+            taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
+            taxon.setExternalId("FOO 1234");
+            tx.commit();
+        }
         resolveNames();
 
         assertV2();
 
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
+            Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
 
-        Node taxonNode = ((NodeBacked) node).getUnderlyingNode();
-        assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.NAME_IDS));
-        assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_IDS));
+            Node taxonNode = ((NodeBacked) node).getUnderlyingNode();
+            assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.NAME_IDS));
+            assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_IDS));
 
-        assertThat(taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                , is("Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia"));
-        assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
-                , is("Bar:123 | FOO:444"));
+            assertThat(taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
+                    , is("Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia"));
+            assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
+                    , is("Bar:123 | FOO:444"));
+        }
     }
 
     protected void assertV2() {
@@ -87,10 +97,15 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     @Test
     public void linkingWithNameOnly() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("urn:catalog:AMNH:Mammals:M-39582", null);
-        taxonIndex.getOrCreateTaxon(taxonFound);
-        Taxon foundTaxon = taxonIndex.findTaxonByName("urn:catalog:AMNH:Mammals:M-39582");
-        assertThat(foundTaxon, is(not(nullValue())));
-        assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            taxonIndex.getOrCreateTaxon(taxonFound);
+            Taxon foundTaxon = taxonIndex.findTaxonByName("urn:catalog:AMNH:Mammals:M-39582");
+            assertThat(foundTaxon, is(not(nullValue())));
+            assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
+            tx.commit();
+        }
         resolveNames();
 
         Node next = null;
@@ -107,7 +122,12 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     @Test
     public void linkingWithIdOnlyNoPath() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl(null, "some id");
-        taxonIndex.getOrCreateTaxon(taxonFound);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            taxonIndex.getOrCreateTaxon(taxonFound);
+            tx.commit();
+        }
+
         resolveNames();
 
         Node next = null;
@@ -146,11 +166,16 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     private void indexTaxaWithLiteratureLink() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
-        Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
-        TaxonImpl taxon1 = new TaxonImpl("doi:10.123/456", "doi:10.123/456");
-        taxon1.setPath("doi:10.123/456");
-        taxon1.setPathIds("doi:10.123/456");
-        NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
+            TaxonImpl taxon1 = new TaxonImpl("doi:10.123/456", "doi:10.123/456");
+            taxon1.setPath("doi:10.123/456");
+            taxon1.setPathIds("doi:10.123/456");
+            NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            tx.commit();
+        }
 
         resolveNames();
     }

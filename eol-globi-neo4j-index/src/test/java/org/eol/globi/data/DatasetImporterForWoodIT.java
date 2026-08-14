@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 
@@ -16,7 +17,10 @@ public class DatasetImporterForWoodIT extends GraphDBTestCase {
         wood.setFilter(recordNumber -> recordNumber < 500);
         importStudy(wood);
 
-        assertThat(taxonIndex.findTaxonByName("Amphipoda"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Amphipoda"), is(notNullValue()));
+        }
     }
 
 }

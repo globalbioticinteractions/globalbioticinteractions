@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
@@ -44,7 +45,12 @@ public class LinkerTermMatcherNeo4jTest extends GraphDBTestCase {
     private void assertTaxonMapping(String classifiedId) throws StudyImporterException, IOException {
         Taxon taxon2 = new TaxonImpl("Holorchis castex", classifiedId);
 
-        Taxon createdTaxon = taxonIndex.getOrCreateTaxon(taxon2);
+        Taxon createdTaxon = null;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            createdTaxon = taxonIndex.getOrCreateTaxon(taxon2);
+            tx.commit();
+        }
         Node specimenDummy;
         try (Transaction transaction = getGraphDb().beginTx()) {
             specimenDummy = transaction.createNode();

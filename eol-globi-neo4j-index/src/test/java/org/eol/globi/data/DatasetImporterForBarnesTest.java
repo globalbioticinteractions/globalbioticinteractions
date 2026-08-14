@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.TreeMap;
 
@@ -60,17 +61,21 @@ public class DatasetImporterForBarnesTest extends GraphDBTestCase {
         DatasetImporterForBarnes importer = new DatasetImporterForBarnes(parserFactory, nodeFactory);
         importStudy(importer);
 
-        Taxon taxon = taxonIndex.findTaxonByName("Zeus faber");
-        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-        for (Relationship relationship : relationships) {
-            Node predatorSpecimenNode = relationship.getStartNode();
-            assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-            assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
+            Taxon taxon = taxonIndex.findTaxonByName("Zeus faber");
+            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship relationship : relationships) {
+                Node predatorSpecimenNode = relationship.getStartNode();
+                assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+                assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
+
+            }
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Rhizoprionodon terraenovae"), is(notNullValue()));
+            assertThat("missing location", nodeFactory.findLocation(new LocationImpl(38.0, 23.0, -75.0, null)), is(notNullValue()));
         }
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Rhizoprionodon terraenovae"), is(notNullValue()));
-        assertThat("missing location", nodeFactory.findLocation(new LocationImpl(38.0, 23.0, -75.0, null)), is(notNullValue()));
 
     }
 

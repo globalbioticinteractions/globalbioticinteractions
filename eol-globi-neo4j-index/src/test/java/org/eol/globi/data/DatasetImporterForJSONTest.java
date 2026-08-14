@@ -11,6 +11,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,9 +59,13 @@ public class DatasetImporterForJSONTest extends GraphDBTestCase {
     }
 
     protected void assertExists(String taxonName) throws NodeFactoryException {
-        Taxon taxon = taxonIndex.findTaxonByName(taxonName);
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getName(), is(taxonName));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName(taxonName);
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getName(), is(taxonName));
+            tx.commit();
+        }
     }
 
     public DatasetImpl getDataset(TreeMap<URI, String> treeMap) {

@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetImporterForICESTest extends GraphDBTestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
@@ -43,9 +45,13 @@ public class DatasetImporterForICESTest extends GraphDBTestCase {
 
         StudyNode study = getStudySingleton(getGraphDb());
 
-        assertNotNull(taxonIndex.findTaxonByName("Gadus morhua"));
-        assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));
-        assertNotNull(taxonIndex.findTaxonByName("Nereis"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            assertNotNull(taxonIndex.findTaxonByName("Gadus morhua"));
+            assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));
+            assertNotNull(taxonIndex.findTaxonByName("Nereis"));
+        }
 
         AtomicInteger specimenCollected = new AtomicInteger(0);
         AtomicInteger preyEaten = new AtomicInteger(0);

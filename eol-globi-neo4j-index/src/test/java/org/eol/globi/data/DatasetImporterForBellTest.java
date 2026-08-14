@@ -34,6 +34,7 @@ public class DatasetImporterForBellTest extends GraphDBTestCase {
             Result execute = transaction.execute("MATCH (taxon:Taxon_Verbatim) RETURN (taxon.name)");
             String actual = execute.resultAsString();
             assertThat(actual, CoreMatchers.containsString("Tamias"));
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(transaction);
             assertThat(taxonIndex.findTaxonByName("Tamias speciosus"), is(notNullValue()));
             assertThat(taxonIndex.findTaxonByName("Hoplopleura arboricola"), is(notNullValue()));
             transaction.commit();

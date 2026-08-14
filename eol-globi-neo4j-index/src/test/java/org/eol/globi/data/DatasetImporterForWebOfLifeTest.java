@@ -7,6 +7,7 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,9 +46,12 @@ public class DatasetImporterForWebOfLifeTest extends GraphDBTestCase {
         }
 
         assertThat(references, hasItem("Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
-        assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Juniperus communis"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Turdus torquatus"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Juniperus communis"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Turdus torquatus"), is(notNullValue()));
+        }
     }
 
 
@@ -65,10 +69,13 @@ public class DatasetImporterForWebOfLifeTest extends GraphDBTestCase {
         }
 
         assertThat(references, hasItem("Medan, D., N. H. Montaldo, M. Devoto, A. Mantese, V. Vasellati, and N. H. Bartoloni. 2002. Plant-pollinator relationships at two altitudes in the Andes of Mendoza, Argentina. Arctic Antarctic and Alpine Research 34:233-241."));
-        assertThat(taxonIndex.findTaxonByName("Agrotis ipsilon "), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Sisyrinchium junceum"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Tarasa humilis "), is(nullValue()));
-        assertThat(taxonIndex.findTaxonByName("Tarasa humilis"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Agrotis ipsilon "), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Sisyrinchium junceum"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Tarasa humilis "), is(nullValue()));
+            assertThat(taxonIndex.findTaxonByName("Tarasa humilis"), is(notNullValue()));
+        }
     }
 
 

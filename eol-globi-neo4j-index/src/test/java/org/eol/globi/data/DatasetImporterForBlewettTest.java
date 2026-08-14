@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -75,10 +76,14 @@ public class DatasetImporterForBlewettTest extends GraphDBTestCase {
 
         assertThat(getSpecimenCount(study), is(1824));
 
-        assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
-        Taxon taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
-        assertThat(taxonOfType.getName(), is("Cal sapidus"));
-        assertNotNull(taxonIndex.findTaxonByName("Ort chrysoptera"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
+            Taxon taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
+            assertThat(taxonOfType.getName(), is("Cal sapidus"));
+            assertNotNull(taxonIndex.findTaxonByName("Ort chrysoptera"));
+        }
     }
 
     @Test

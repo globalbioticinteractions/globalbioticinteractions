@@ -17,11 +17,11 @@ public class ExportTaxonMap implements StudyExporter {
     @Override
     public void exportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
-            doExport(study, writer);
+            doExport(writer);
         }
     }
 
-    protected void doExport(StudyNode study, ExportUtil.Appender writer) throws IOException {
+    protected void doExport(ExportUtil.Appender writer) throws IOException {
         String query =
                 "MATCH (study:Reference)-[:COLLECTED|REFUTES|SUPPORTS]->(specimen)-[:ORIGINALLY_DESCRIBED_AS]->(origTaxon), " +
                 "(specimen)-[:CLASSIFIED_AS]->(taxon) " +

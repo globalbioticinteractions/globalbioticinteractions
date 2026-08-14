@@ -11,6 +11,7 @@ import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,8 +51,11 @@ public class DatasetImporterForSzoboszlaiIT extends GraphDBTestCase {
                     assertThat(sampleLocation.getLongitude(), is(notNullValue()));
                 });
 
-        assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
-        assertThat(nodeFactory.findLocation(new LocationImpl(34.00824202376044, -120.72716166720323, null, null)), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
+            assertThat(nodeFactory.findLocation(new LocationImpl(34.00824202376044, -120.72716166720323, null, null)), is(notNullValue()));
+        }
     }
 
 }

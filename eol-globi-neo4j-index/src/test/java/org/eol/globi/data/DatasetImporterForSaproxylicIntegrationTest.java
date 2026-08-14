@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 
@@ -20,8 +21,11 @@ public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBTestCase
         );
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Fagus sylvatica"));
-        assertNotNull(taxonIndex.findTaxonByName("Epuraea variegata"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Fagus sylvatica"));
+            assertNotNull(taxonIndex.findTaxonByName("Epuraea variegata"));
+        }
     }
 
 }

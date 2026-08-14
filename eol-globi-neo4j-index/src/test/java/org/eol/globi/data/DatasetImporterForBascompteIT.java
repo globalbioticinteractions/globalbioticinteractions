@@ -7,6 +7,7 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,7 +39,10 @@ public class DatasetImporterForBascompteIT extends GraphDBTestCase {
 
         assertThat(references.size(), is(referenceSet.size()));
         assertThat(references, hasItem("Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
-        assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
+        }
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -23,23 +25,28 @@ public class StudyTest extends GraphDBTestCase {
     public void populateStudy() throws NodeFactoryException {
         Study study = nodeFactory.createStudy(new StudyImpl("Our first study", null, null));
 
-        taxonIndex.getOrCreateTaxon(new TaxonImpl(CARCHARODON_CARCHARIAS, null));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        Specimen goldFish = nodeFactory.createSpecimen(study, new TaxonImpl(CARASSIUS_AURATUS_AURATUS, null));
+            taxonIndex.getOrCreateTaxon(new TaxonImpl(CARCHARODON_CARCHARIAS, null));
 
-        Specimen shark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON_CARCHARIAS, null));
-        Specimen fuzzyShark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON, null));
+            Specimen goldFish = nodeFactory.createSpecimen(study, new TaxonImpl(CARASSIUS_AURATUS_AURATUS, "gold:123"));
 
-        shark.ate(goldFish);
-        fuzzyShark.ate(goldFish);
+            Specimen shark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON_CARCHARIAS, null));
+            Specimen fuzzyShark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON, "shark:123"));
 
-        Location bolinasBay = nodeFactory.getOrCreateLocation(new LocationImpl(12.2d, 12.1d, -100.0d, null));
-        shark.caughtIn(bolinasBay);
+            shark.ate(goldFish);
+            fuzzyShark.ate(goldFish);
 
-        Season winter = nodeFactory.createSeason("winter");
-        shark.caughtDuring(winter);
+            Location bolinasBay = nodeFactory.getOrCreateLocation(new LocationImpl(12.2d, 12.1d, -100.0d, null));
+            shark.caughtIn(bolinasBay);
 
-        shark.setLengthInMm(1.2d);
+            Season winter = nodeFactory.createSeason("winter");
+            shark.caughtDuring(winter);
+
+            shark.setLengthInMm(1.2d);
+            tx.commit();
+        }
         resolveNames();
 
         StudyNode foundStudy = getStudySingleton(getGraphDb());
@@ -61,10 +68,10 @@ public class StudyTest extends GraphDBTestCase {
                 } else {
                     fail("expected to findNamespaces a specimen");
                 }
-            } else if (specimen.equals(goldFish)) {
+            } else if (specimen.getExternalId().equals("gold:123")) {
                 Node genusNode = NodeUtil.getClassifications(specimen).iterator().next().getEndNode();
                 assertEquals(CARASSIUS_AURATUS_AURATUS, genusNode.getProperty("name"));
-            } else if (specimen.equals(fuzzyShark)) {
+            } else if (specimen.getExternalId().equals("shark:123")) {
                 Node genusNode = NodeUtil.getClassifications(specimen).iterator().next().getEndNode();
                 assertEquals(CARCHARODON, genusNode.getProperty("name"));
             } else {

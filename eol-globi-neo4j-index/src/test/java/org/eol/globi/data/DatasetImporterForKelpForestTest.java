@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Taxon;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -21,9 +22,12 @@ public class DatasetImporterForKelpForestTest extends GraphDBTestCase {
     }
 
     protected void assertSeaOtter() throws NodeFactoryException {
-        Taxon taxon = taxonIndex.findTaxonByName("sea otter");
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getExternalId(), is("ITIS:180547"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName("sea otter");
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getExternalId(), is("ITIS:180547"));
+        }
     }
 
 

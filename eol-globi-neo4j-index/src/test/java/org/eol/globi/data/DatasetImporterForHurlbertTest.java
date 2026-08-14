@@ -9,6 +9,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,16 +37,20 @@ public class DatasetImporterForHurlbertTest extends GraphDBTestCase {
         study = allStudies.get(1);
         assertThat(study.getCitation(), containsString("Cash, K. J., J. P. Austin-Smith"));
 
-        assertThat(taxonIndex.findTaxonByName("Haliaeetus leucocephalus"), is(notNullValue()));
-        Taxon preyTaxon = taxonIndex.findTaxonByName("Ictalurus");
-        assertThat(preyTaxon, is(notNullValue()));
-        assertThat(preyTaxon.getName(), is("Ictalurus"));
-        assertThat(preyTaxon.getExternalId(), is("ITIS:163996"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        preyTaxon = taxonIndex.findTaxonByName("Cyprinus carpio");
-        assertThat(preyTaxon, is(notNullValue()));
-        assertThat(preyTaxon.getName(), is("Cyprinus carpio"));
-        assertThat(preyTaxon.getExternalId(), not(is("ITIS:unverified")));
+            assertThat(taxonIndex.findTaxonByName("Haliaeetus leucocephalus"), is(notNullValue()));
+            Taxon preyTaxon = taxonIndex.findTaxonByName("Ictalurus");
+            assertThat(preyTaxon, is(notNullValue()));
+            assertThat(preyTaxon.getName(), is("Ictalurus"));
+            assertThat(preyTaxon.getExternalId(), is("ITIS:163996"));
+
+            preyTaxon = taxonIndex.findTaxonByName("Cyprinus carpio");
+            assertThat(preyTaxon, is(notNullValue()));
+            assertThat(preyTaxon.getName(), is("Cyprinus carpio"));
+            assertThat(preyTaxon.getExternalId(), not(is("ITIS:unverified")));
+        }
     }
 
     public static InputStream getResource() {
@@ -62,7 +67,7 @@ public class DatasetImporterForHurlbertTest extends GraphDBTestCase {
         DatasetImporter importer = new DatasetImporterForHurlbert(null, nodeFactory);
         Dataset dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir())) {
             @Override
-            public InputStream retrieve(URI name){
+            public InputStream retrieve(URI name) {
                 return DatasetImporterForHurlbertTest.getResource();
             }
 

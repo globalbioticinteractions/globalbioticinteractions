@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,12 +42,13 @@ public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
 
         StudyNode study = getStudySingleton(getGraphDb());
 
-        assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
-        assertNotNull(taxonIndex.findTaxonByName("Atlantic croaker"));
-
-        int totalRels = validateSpecimen(study);
-
-        assertThat(totalRels, Is.is(11));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
+            assertNotNull(taxonIndex.findTaxonByName("Atlantic croaker"));
+            int totalRels = validateSpecimen(study);
+            assertThat(totalRels, Is.is(11));
+        }
     }
 
     @Test
@@ -59,11 +61,12 @@ public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
 
         StudyNode study = getStudySingleton(getGraphDb());
 
-        assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
-
-        int totalRels = validateSpecimen(study);
-
-        assertThat(totalRels, Is.is(1450));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
+            int totalRels = validateSpecimen(study);
+            assertThat(totalRels, Is.is(1450));
+        }
 
     }
 

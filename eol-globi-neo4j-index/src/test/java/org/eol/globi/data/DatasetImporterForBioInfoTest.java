@@ -116,7 +116,11 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
     @Test
     public void parseSomeRelations() throws IOException, StudyImporterException {
 
-        assertThat(taxonIndex.findTaxonByName("Homo sapiens"), is(nullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Homo sapiens"), is(nullValue()));
+            tx.commit();
+        }
 
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
@@ -158,8 +162,12 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(classifiedAs, is(notNullValue()));
         assertThat((String) classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), startsWith("NBN:NBNSYS"));
         assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
+        }
     }
 
     private LabeledCSVParser createParser(String csvString) throws IOException {

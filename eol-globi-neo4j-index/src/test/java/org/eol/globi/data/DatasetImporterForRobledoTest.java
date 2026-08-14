@@ -8,13 +8,14 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
 public class DatasetImporterForRobledoTest extends GraphDBTestCase {
 
     @Test
@@ -26,26 +27,31 @@ public class DatasetImporterForRobledoTest extends GraphDBTestCase {
         importStudy(importer);
         StudyNode study = getStudySingleton(getGraphDb());
 
-        assertNotNull(taxonIndex.findTaxonByName("Heliconia imbricata"));
-        assertNotNull(taxonIndex.findTaxonByName("Renealmia alpinia"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        assertNotNull(nodeFactory.findStudy(study));
+            assertNotNull(taxonIndex.findTaxonByName("Heliconia imbricata"));
+            assertNotNull(taxonIndex.findTaxonByName("Renealmia alpinia"));
 
-        AtomicInteger count = new AtomicInteger(0);
-        NodeUtil.handleCollectedRelationships(
-                new NodeTypeDirection(study.getUnderlyingNode())
-                , relationship -> {
-                    Specimen specimen1 = new SpecimenNode(relationship.getEndNode());
-                    Location sampleLocation = specimen1.getSampleLocation();
-                    assertThat(sampleLocation, is(notNullValue()));
-                    assertThat(sampleLocation.getAltitude(), is(35.0));
-                    assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));
-                    assertThat(Math.round(sampleLocation.getLatitude()), is(10L));
-                    count.incrementAndGet();
+            assertNotNull(nodeFactory.findStudy(study));
 
-                });
+            AtomicInteger count = new AtomicInteger(0);
+            NodeUtil.handleCollectedRelationships(
+                    new NodeTypeDirection(study.getUnderlyingNode())
+                    , relationship -> {
+                        Specimen specimen1 = new SpecimenNode(relationship.getEndNode());
+                        Location sampleLocation = specimen1.getSampleLocation();
+                        assertThat(sampleLocation, is(notNullValue()));
+                        assertThat(sampleLocation.getAltitude(), is(35.0));
+                        assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));
+                        assertThat(Math.round(sampleLocation.getLatitude()), is(10L));
+                        count.incrementAndGet();
 
-        assertThat(count.get(), is(93));
+                    });
+
+            assertThat(count.get(), is(93));
+            tx.commit();
+        }
     }
 
 

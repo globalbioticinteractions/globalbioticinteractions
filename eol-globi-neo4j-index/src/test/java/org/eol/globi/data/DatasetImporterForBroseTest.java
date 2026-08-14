@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -63,25 +64,29 @@ public class DatasetImporterForBroseTest extends GraphDBTestCase {
         DatasetImporter importer = new DatasetImporterForBrose(parserFactory, nodeFactory);
         importStudy(importer);
 
-        Taxon taxon = taxonIndex.findTaxonByName("Praon dorsale");
-        assertThat(taxon, is(notNullValue()));
-        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-        for (Relationship relationship : relationships) {
-            Node predatorSpecimenNode = relationship.getStartNode();
-            assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-            assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            Taxon taxon = taxonIndex.findTaxonByName("Praon dorsale");
+            assertThat(taxon, is(notNullValue()));
+            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship relationship : relationships) {
+                Node predatorSpecimenNode = relationship.getStartNode();
+                assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+                assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
+            }
+            assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
+
+            Location location = nodeFactory.findLocation(new LocationImpl(51.24, -0.34, null, null));
+            assertThat("missing location", location, is(notNullValue()));
+
+            List<Environment> environments = location.getEnvironments();
+            assertThat(environments.size(), is(10));
+            assertThat(environments.get(0).getExternalId(), is("TEST:terrestrial abandoned field"));
+            assertThat(environments.get(0).getName(), is("terrestrial abandoned field"));
+            assertThat(environments.get(9).getExternalId(), is("TEST:terrestrial abandoned field"));
+            assertThat(environments.get(9).getName(), is("terrestrial abandoned field"));
         }
-        assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
-
-        Location location = nodeFactory.findLocation(new LocationImpl(51.24, -0.34, null, null));
-        assertThat("missing location", location, is(notNullValue()));
-
-        List<Environment> environments = location.getEnvironments();
-        assertThat(environments.size(), is(10));
-        assertThat(environments.get(0).getExternalId(), is("TEST:terrestrial abandoned field"));
-        assertThat(environments.get(0).getName(), is("terrestrial abandoned field"));
-        assertThat(environments.get(9).getExternalId(), is("TEST:terrestrial abandoned field"));
-        assertThat(environments.get(9).getName(), is("terrestrial abandoned field"));
 
     }
 

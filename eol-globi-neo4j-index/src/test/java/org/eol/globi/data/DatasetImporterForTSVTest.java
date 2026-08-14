@@ -13,6 +13,7 @@ import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,12 +115,12 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
 
     public DatasetImpl getDataset(TreeMap<URI, String> treeMap) {
         return new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), getResourceService()) {
-                @Override
-                public InputStream retrieve(URI resource) throws IOException {
-                    String input = treeMap.get(resource);
-                    return input == null ? null : IOUtils.toInputStream(input, StandardCharsets.UTF_8);
-                }
-            };
+            @Override
+            public InputStream retrieve(URI resource) throws IOException {
+                String input = treeMap.get(resource);
+                return input == null ? null : IOUtils.toInputStream(input, StandardCharsets.UTF_8);
+            }
+        };
     }
 
     @Test
@@ -163,17 +164,23 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
         DatasetImporterForTSV importer = new DatasetImporterForTSV(null, nodeFactory);
         importer.setDataset(dataset);
         importStudy(importer);
-        Taxon taxon = taxonIndex.findTaxonById("EOL:123");
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getName(), is("no name"));
-        assertThat(taxon.getExternalId(), is("EOL:123"));
-        assertStudyTitles("someRepoGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1");
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonById("EOL:123");
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getName(), is("no name"));
+            assertThat(taxon.getExternalId(), is("EOL:123"));
+            assertStudyTitles("someRepoGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1");
+        }
     }
 
     protected void assertExists(String taxonName) throws NodeFactoryException {
-        Taxon taxon = taxonIndex.findTaxonByName(taxonName);
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getName(), is(taxonName));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName(taxonName);
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getName(), is(taxonName));
+        }
     }
 
 
@@ -193,19 +200,24 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
         importer.setDataset(dataset);
 
         importStudy(importer);
-        Taxon taxon = taxonIndex.findTaxonById("EOL:2912748");
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getName(), is("bacillus subtilis"));
-        assertThat(taxon.getExternalId(), is("EOL:2912748"));
-        final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        final List<String> titles = new ArrayList<String>();
-        final List<String> ids = new ArrayList<String>();
-        for (Study study : allStudies) {
-            titles.add(study.getTitle());
-            ids.add(study.getExternalId());
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            Taxon taxon = taxonIndex.findTaxonById("EOL:2912748");
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getName(), is("bacillus subtilis"));
+            assertThat(taxon.getExternalId(), is("EOL:2912748"));
+            final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+            final List<String> titles = new ArrayList<String>();
+            final List<String> ids = new ArrayList<String>();
+            for (Study study : allStudies) {
+                titles.add(study.getTitle());
+                ids.add(study.getExternalId());
+            }
+            assertThat(titles, hasItem("someRepohttp://www.ncbi.nlm.nih.gov/nuccore/100172732"));
+            assertThat(ids, hasItem("http://www.ncbi.nlm.nih.gov/nuccore/100172732"));
+            tx.commit();
         }
-        assertThat(titles, hasItem("someRepohttp://www.ncbi.nlm.nih.gov/nuccore/100172732"));
-        assertThat(ids, hasItem("http://www.ncbi.nlm.nih.gov/nuccore/100172732"));
     }
 
 
@@ -222,12 +234,15 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
         DatasetImporterForTSV importer = new DatasetImporterForTSV(null, nodeFactory);
         importer.setDataset(dataset);
         importStudy(importer);
-        Taxon taxon = taxonIndex.findTaxonByName("Bacillus");
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getName(), is("Bacillus"));
-        assertThat(taxon.getPath(), is("Bacillaceae | Bacillus"));
-        assertThat(taxon.getPathNames(), is("family | genus"));
-        final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName("Bacillus");
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getName(), is("Bacillus"));
+            assertThat(taxon.getPath(), is("Bacillaceae | Bacillus"));
+            assertThat(taxon.getPathNames(), is("family | genus"));
+            final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        }
     }
 
     @Test

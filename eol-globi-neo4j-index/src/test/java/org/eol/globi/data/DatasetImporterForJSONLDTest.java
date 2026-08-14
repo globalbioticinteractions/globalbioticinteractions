@@ -9,6 +9,7 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,7 +38,11 @@ public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
             assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(study.getCitation(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
         }
-        assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
+        }
     }
 
     @Test(expected = StudyImporterException.class)

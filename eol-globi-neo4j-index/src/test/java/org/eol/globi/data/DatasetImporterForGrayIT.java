@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 
@@ -15,7 +16,10 @@ public class DatasetImporterForGrayIT extends GraphDBTestCase {
         gray.setFilter(recordNumber -> recordNumber < 500);
         importStudy(gray);
 
-        assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
+        }
     }
 
 }

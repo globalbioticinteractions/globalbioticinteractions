@@ -18,18 +18,19 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.text.ParseException;
-import java.util.TreeMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForAkinTest extends GraphDBTestCase {
@@ -50,8 +51,11 @@ public class DatasetImporterForAkinTest extends GraphDBTestCase {
                 ",9,\"Leiostomus xanthurus\",\"03.07.98\",,6,26.7,0,,\"Seine\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\"EMPTY\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         DatasetImporter importer = new StudyImporterTestFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) DatasetImporterForAkin.class);
         importStudy(importer);
-        Taxon taxon = taxonIndex.findTaxonByName("Leiostomus xanthurus");
-        assertNotNull(taxon);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName("Leiostomus xanthurus");
+            assertNotNull(taxon);
+        }
 
     }
 
@@ -65,8 +69,11 @@ public class DatasetImporterForAkinTest extends GraphDBTestCase {
 
         StudyNode study = getStudySingleton(getGraphDb());
 
-        Taxon taxon = taxonIndex.findTaxonByName("Pogonias cromis");
-        assertNotNull(taxon);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Taxon taxon = getTaxonIndexFactory().create(tx).findTaxonByName("Pogonias cromis");
+            assertNotNull(taxon);
+            tx.commit();
+        }
 
         AtomicBoolean success = new AtomicBoolean(false);
 
