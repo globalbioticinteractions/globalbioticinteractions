@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
+public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
 
     private TaxonIndexFactory factory;
 
@@ -62,7 +62,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
         TaxonIndexFactory factory = new TaxonIndexFactory() {
             @Override
             public ResolvingTaxonIndex create(Transaction tx) {
-                return new ResolvingTaxonIndexNoTx(new PropertyEnricher() {
+                return new ResolvingTaxonIndexImpl(new PropertyEnricher() {
                     @Override
                     public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                         return enrichAllMatches(properties).get(0);
@@ -117,7 +117,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
 
             @Override
             public ResolvingTaxonIndex create(Transaction tx) {
-                ResolvingTaxonIndexNoTx resolvingTaxonIndex = new ResolvingTaxonIndexNoTx(new PropertyEnricher() {
+                ResolvingTaxonIndexImpl resolvingTaxonIndex = new ResolvingTaxonIndexImpl(new PropertyEnricher() {
                     @Override
                     public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                         return properties;
@@ -278,7 +278,7 @@ public class ResolvingTaxonIndexNoTxTest extends GraphDBTestCase {
     }
 
     private static ResolvingTaxonIndex createTaxonService(Transaction tx, PropertyEnricher enricher) {
-        return new ResolvingTaxonIndexNoTx(enricher, tx);
+        return new ResolvingTaxonIndexImpl(enricher, tx);
     }
 
     @Test

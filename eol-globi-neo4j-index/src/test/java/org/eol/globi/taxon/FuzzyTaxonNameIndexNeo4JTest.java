@@ -144,7 +144,7 @@ public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
     public static Taxon setTaxonProps(Taxon taxon) {
         taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
         taxon.setExternalId("anExternalId");
-        taxon.setCommonNames(ResolvingTaxonIndexNoTxTest.EXPECTED_COMMON_NAMES);
+        taxon.setCommonNames(ResolvingTaxonIndexImplTest.EXPECTED_COMMON_NAMES);
         taxon.setName("this is the actual name");
         return taxon;
     }

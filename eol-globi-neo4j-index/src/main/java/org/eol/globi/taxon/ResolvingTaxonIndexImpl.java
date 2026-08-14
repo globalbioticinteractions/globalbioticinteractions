@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
+public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
     private final PropertyEnricher enricher;
     private final Transaction tx;
@@ -31,7 +31,7 @@ public class ResolvingTaxonIndexNoTx implements ResolvingTaxonIndex {
 
     public static final Pattern POSSIBLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
 
-    public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, Transaction tx) {
+    public ResolvingTaxonIndexImpl(PropertyEnricher enricher, Transaction tx) {
         this.enricher = enricher;
         this.tx = tx;
     }

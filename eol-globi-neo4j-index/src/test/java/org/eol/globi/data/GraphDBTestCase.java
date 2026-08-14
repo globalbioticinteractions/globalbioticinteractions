@@ -8,7 +8,7 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.ResolvingTaxonIndexNoTx;
+import org.eol.globi.taxon.ResolvingTaxonIndexImpl;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
@@ -163,7 +163,7 @@ public class GraphDBTestCase {
 
                 @Override
                 public ResolvingTaxonIndex create(Transaction tx) {
-                    ResolvingTaxonIndexNoTx resolving = new ResolvingTaxonIndexNoTx(new PropertyEnricherNoop(), tx);
+                    ResolvingTaxonIndexImpl resolving = new ResolvingTaxonIndexImpl(new PropertyEnricherNoop(), tx);
                     resolving.setIndexResolvedTaxaOnly(false);
                     return resolving;
                 }
