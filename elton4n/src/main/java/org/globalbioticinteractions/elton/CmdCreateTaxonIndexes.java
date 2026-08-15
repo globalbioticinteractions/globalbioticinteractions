@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.elton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.tool.CmdNeo4J;
@@ -45,6 +46,6 @@ public class CmdCreateTaxonIndexes extends CmdNeo4J {
     }
 
     private static String indexNameFor(String propertyName) {
-        return NodeLabel.Taxon.name() + propertyName;
+        return StringUtils.joinWith("_", NodeLabel.Taxon.name(), propertyName);
     }
 }
