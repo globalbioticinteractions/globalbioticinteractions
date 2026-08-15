@@ -1,6 +1,5 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.data.NodeLabel;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;

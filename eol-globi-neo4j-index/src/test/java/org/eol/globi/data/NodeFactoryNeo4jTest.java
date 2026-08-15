@@ -140,16 +140,16 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocation() throws NodeFactoryException {
-        LocationImpl location2 = new LocationImpl(1.2d, 1.4d, -1.0d, null);
+        LocationImpl location2 = new LocationImpl(1.2d, 109d, -1.0d, null);
         location2.setLocality("some locale");
         location2.setLocalityId("some:id");
         Location location = getNodeFactory().getOrCreateLocation(location2);
-        getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 109d, -1.0d, null));
         getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
         Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
         assertNotNull(location);
         assertThat(location, is(instanceOf(LocationNode.class)));
-        assertThat(((LocationNode)location).getUnderlyingNode().getProperty(LocationConstant.LATLNG), is(notNullValue()));
+        assertThat(((LocationNode)location).getUnderlyingNode().getProperty(LocationConstant.LNGLAT), is(notNullValue()));
         Location location1 = getNodeFactory().findLocation(location2);
         assertNotNull(location1);
         Location foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));

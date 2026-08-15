@@ -7,15 +7,11 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.graphdb.schema.IndexType;
-import org.neo4j.graphdb.spatial.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.eol.globi.domain.LocationConstant.LATITUDE;
-import static org.eol.globi.domain.LocationConstant.LONGITUDE;
 
 public class CmdCreateLocationIndexes extends CmdNeo4J {
     private final static Logger LOG = LoggerFactory.getLogger(CmdCreateLocationIndexes.class);
@@ -40,7 +36,7 @@ public class CmdCreateLocationIndexes extends CmdNeo4J {
             tx.schema()
                     .indexFor(NodeLabel.Location)
                     .withIndexType(IndexType.POINT)
-                    .on(LocationConstant.LATLNG)
+                    .on(LocationConstant.LNGLAT)
                     .withName(indexName)
                     .create();
             LOG.info("created index [{}]", indexName);

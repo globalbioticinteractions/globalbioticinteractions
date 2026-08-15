@@ -34,8 +34,8 @@ public class LocationNode extends NodeBacked implements Location {
         }
 
         if (location.getLongitude() != null && location.getLatitude() != null) {
-            PointValue pointValue = Values.pointValue(CoordinateReferenceSystem.WGS_84, location.getLatitude(), location.getLongitude());
-            getUnderlyingNode().setProperty(LocationConstant.LATLNG, pointValue);
+            PointValue pointValue = Values.pointValue(CoordinateReferenceSystem.WGS_84, location.getLongitude(), location.getLatitude());
+            getUnderlyingNode().setProperty(LocationConstant.LNGLAT, pointValue);
         }
 
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, LocationNode.class.getSimpleName());
