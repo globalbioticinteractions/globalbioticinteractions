@@ -7,6 +7,7 @@ import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -146,6 +148,8 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
         Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
         assertNotNull(location);
+        assertThat(location, is(instanceOf(LocationNode.class)));
+        assertThat(((LocationNode)location).getUnderlyingNode().getProperty(LocationConstant.LATLNG), is(notNullValue()));
         Location location1 = getNodeFactory().findLocation(location2);
         assertNotNull(location1);
         Location foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));

@@ -5,6 +5,9 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.values.storable.CoordinateReferenceSystem;
+import org.neo4j.values.storable.PointValue;
+import org.neo4j.values.storable.Values;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,11 @@ public class LocationNode extends NodeBacked implements Location {
         }
         if (location.getLatitude() != null) {
             getUnderlyingNode().setProperty(LocationConstant.LONGITUDE, location.getLongitude());
+        }
+
+        if (location.getLongitude() != null && location.getLatitude() != null) {
+            PointValue pointValue = Values.pointValue(CoordinateReferenceSystem.WGS_84, location.getLatitude(), location.getLongitude());
+            getUnderlyingNode().setProperty(LocationConstant.LATLNG, pointValue);
         }
 
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, LocationNode.class.getSimpleName());

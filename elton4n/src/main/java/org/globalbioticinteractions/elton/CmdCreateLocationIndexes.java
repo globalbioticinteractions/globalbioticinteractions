@@ -1,11 +1,13 @@
 package org.globalbioticinteractions.elton;
 
 import org.eol.globi.data.NodeLabel;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.tool.CmdNeo4J;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.graphdb.schema.IndexType;
+import org.neo4j.graphdb.spatial.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,15 +33,14 @@ public class CmdCreateLocationIndexes extends CmdNeo4J {
         List<String> taxonIndexNames = new ArrayList<>();
         Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(NodeLabel.Taxon);
         taxonIndexes.forEach(i -> taxonIndexNames.add(i.getName()));
-        String indexName = NodeLabel.Location.name() + LATITUDE + "_" + LONGITUDE;
+        String indexName = NodeLabel.Location.name();
         if (taxonIndexNames.contains(indexName)) {
             LOG.info("found existing index [{}]", indexName);
         } else {
             tx.schema()
                     .indexFor(NodeLabel.Location)
                     .withIndexType(IndexType.POINT)
-                    .on(LATITUDE)
-                    .on(LONGITUDE)
+                    .on(LocationConstant.LATLNG)
                     .withName(indexName)
                     .create();
             LOG.info("created index [{}]", indexName);

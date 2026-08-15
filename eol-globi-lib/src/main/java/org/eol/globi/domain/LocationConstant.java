@@ -7,4 +7,5 @@ public final class LocationConstant {
     public static final String FOOTPRINT_WKT = "footprintWKT";
     public static final String LOCALITY = "locality";
     public static final String LOCALITY_ID = "localityId";
+    public static final String LATLNG = "latlng";
 }
