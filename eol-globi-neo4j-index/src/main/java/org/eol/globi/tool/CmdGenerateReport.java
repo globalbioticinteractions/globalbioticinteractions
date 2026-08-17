@@ -192,6 +192,7 @@ public class CmdGenerateReport extends CmdNeo4J {
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
+                transaction.commit();
             }
 
 //            getGraphDb()
