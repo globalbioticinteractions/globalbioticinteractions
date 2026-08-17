@@ -51,9 +51,9 @@ public class CypherProxyControllerIT extends ITBase {
 
     @Test
     public void findShortestPaths() throws IOException {
-        CypherQuery cypherQuery = new CypherProxyController().findShortestPathsNew(null, "Homo sapiens", "Rattus rattus");
-        String externalLink = new CypherQueryExecutor(cypherQuery).execute(null);
-        assertThat(externalLink, CoreMatchers.containsString("Rattus rattus"));
+        CypherQuery cypherQuery = new CypherProxyController().findShortestPathsNew(null, "Apodemus mystacinus", "Paragoniocotes tenuigaster");
+        String externalLink = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
+        assertThat(externalLink, CoreMatchers.containsString("Paragoniocotes tenuigaster"));
     }
 
     @Test
