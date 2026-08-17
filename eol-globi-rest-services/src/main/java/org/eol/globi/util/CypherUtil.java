@@ -19,11 +19,13 @@ import java.util.concurrent.TimeUnit;
 
 public class CypherUtil {
     public static final String CYPHER_VERSION_2_3 = "2.3";
+    public static final String CYPHER_VERSION_5 = "5";
 
     private static final Logger LOG = LoggerFactory.getLogger(CypherUtil.class);
 
     private static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = getCypherRequest(query);
+        LOG.info("sending post request to [{}]", httpPost.getURI());
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
     }
@@ -40,7 +42,7 @@ public class CypherUtil {
     private static String getCypherURI() {
         String value = System.getProperty("neo4j.cypher.uri");
         return StringUtils.isBlank(value)
-                ? "https://neo4j.globalbioticinteractions.org/db/data/transaction/commit"
+                ? "http://localhost:7474/db/neo4j/tx/commit"
                 : StringUtils.trim(value);
     }
 

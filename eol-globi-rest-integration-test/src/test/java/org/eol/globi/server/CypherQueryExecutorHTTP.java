@@ -8,10 +8,10 @@ import org.eol.globi.util.CypherUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-public class CypherQueryExecutor {
+public class CypherQueryExecutorHTTP {
     private final CypherQuery cypherQuery;
 
-    public CypherQueryExecutor(CypherQuery cypherQuery) {
+    public CypherQueryExecutorHTTP(CypherQuery cypherQuery) {
         this.cypherQuery = cypherQuery;
     }
 

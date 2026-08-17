@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -14,7 +15,6 @@ import java.util.TreeMap;
 public class NodeIdCollectorImpl implements NodeIdCollector {
 
     private static final Map<String, NodeLabel> INDEX_NAME_TO_LABEL = Collections.unmodifiableMap(new TreeMap<String, NodeLabel>() {{
-        put("taxons", NodeLabel.Taxon_Verbatim);
         put("studies", NodeLabel.Reference);
         put("datasets", NodeLabel.Dataset);
     }});
@@ -34,6 +34,8 @@ public class NodeIdCollectorImpl implements NodeIdCollector {
             ResourceIterator<Node> nodes = transaction.findNodes(
                     INDEX_NAME_TO_LABEL.get(indexName));
             nodes.stream()
+                    .filter(n -> n.hasProperty(queryKey))
+                    .filter(n -> StringUtils.startsWith(n.getProperty(queryKey).toString(), queryOrQueryObject))
                     .map(Node::getId)
                     .forEach(ids::add);
             transaction.commit();

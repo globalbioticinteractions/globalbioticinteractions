@@ -20,6 +20,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
@@ -71,29 +72,24 @@ public class NodeUtil {
 
     public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
         final List<StudyNode> studies = new ArrayList<>();
-        findStudies(graphService, study -> studies.add(new StudyNode(study)));
+        try (Transaction tx = graphService.beginTx()) {
+            ResourceIterator<Node> studyNodes = tx.findNodes(NodeLabel.Reference);
+            while (studyNodes.hasNext()) {
+                Node next = studyNodes.next();
+                studies.add(new StudyNode(next));
+            }
+        }
         return studies;
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener) {
-        findStudies(graphService, listener, "title", "*", new NodeIdCollectorImpl());
-    }
-
-    public static void findStudies(GraphDatabaseService graphService,
-                                   NodeListener listener,
-                                   String queryKey,
-                                   String queryValue,
-                                   NodeIdCollector nodeIdCollector) {
-        processNodes(
-                1000L,
-                graphService,
-                listener,
-                queryKey,
-                queryValue,
-                "studies",
-                new TransactionPerBatch(graphService),
-                nodeIdCollector
-        );
+        try (Transaction tx = graphService.beginTx()) {
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Reference);
+            while(nodes.hasNext()) {
+                listener.on(nodes.next());
+            }
+            tx.commit();
+        }
     }
 
     public static void findDatasetsByQuery(

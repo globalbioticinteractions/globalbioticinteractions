@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @CommandLine.Command(
         name = "report",
@@ -80,7 +81,7 @@ public class CmdGenerateReport extends CmdNeo4J {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return QueryParser.escape(namespace);
+                return Pattern.quote(namespace);
             }
 
             @Override
@@ -99,7 +100,7 @@ public class CmdGenerateReport extends CmdNeo4J {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return namespace + "\\/*";
+                return namespace + "/.*";
             }
 
             @Override
@@ -140,7 +141,7 @@ public class CmdGenerateReport extends CmdNeo4J {
             if (StringUtils.isNotBlank(namespace)) {
                 namespaceGroups.add(namespaceHandler.parse(namespace));
             }
-        }, "namespace", "*", new NodeIdCollectorImpl());
+        }, "namespace", ".*", new NodeIdCollectorImpl());
 
         final Set<Long> distinctTaxonIds = reportCache
                 .createHashSet("distinctTaxonIds")
@@ -167,18 +168,22 @@ public class CmdGenerateReport extends CmdNeo4J {
             distinctTaxonIdsNoMatch.clear();
 
             NodeUtil.findDatasetsByQuery(getGraphDb(), dataset -> {
-                Iterable<Relationship> studiesInDataset = dataset.getUnderlyingNode().getRelationships(
-                        Direction.INCOMING,
-                        NodeUtil.asNeo4j(RelTypes.IN_DATASET));
-                for (Relationship studyInDataset : studiesInDataset) {
-                    StudyNode study = new StudyNode(studyInDataset.getStartNode());
-                    countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, study.getUnderlyingNode());
-                    studyCounter.count();
-                    final String namespace = dataset.getNamespace();
-                    distinctSources.add(namespace);
-                    distinctDatasets.add(namespace);
-                }
-            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup), new NodeIdCollectorImpl());
+                        Iterable<Relationship> studiesInDataset = dataset.getUnderlyingNode().getRelationships(
+                                Direction.INCOMING,
+                                NodeUtil.asNeo4j(RelTypes.IN_DATASET));
+                        for (Relationship studyInDataset : studiesInDataset) {
+                            StudyNode study = new StudyNode(studyInDataset.getStartNode());
+                            countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, study.getUnderlyingNode());
+                            studyCounter.count();
+                            final String namespace = dataset.getNamespace();
+                            distinctSources.add(namespace);
+                            distinctDatasets.add(namespace);
+                        }
+                    },
+                    "namespace",
+                    namespaceHandler.datasetQueryFor(namespaceGroup),
+                    new NodeIdCollectorImpl()
+            );
 
             final Node node;
             try (Transaction transaction = getGraphDb().beginTx()) {

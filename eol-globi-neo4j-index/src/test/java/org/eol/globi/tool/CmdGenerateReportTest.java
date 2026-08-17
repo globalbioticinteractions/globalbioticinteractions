@@ -2,21 +2,31 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class CmdGenerateReportTest extends GraphDBTestCase {
 
@@ -53,6 +63,21 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
 
         getCmdGenerateReport().generateReportForSourceIndividuals();
 
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Report);
+            assertThat(nodes.hasNext(), Is.is(true));
+            Node reportNode = nodes.next();
+            assertThat(reportNode, Is.is(notNullValue()));
+            assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), Is.is("globi:" + namespace));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), Is.is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), Is.is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), Is.is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), Is.is(8));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), Is.is(3));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), Is.is(2));
+            tx.commit();
+        }
+
 //        String escapedQuery = QueryParser.escape("globi:" + namespace);
 //        IndexHits<Node> reports = getGraphDb()
 //                .index()
@@ -86,17 +111,18 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
 
     @Test
     public void generateStudySourceOrganizationReports() throws NodeFactoryException, IOException {
-        assertOrgnanizationReport("az/source1", "az/source2", "zother/source");
+        assertOrganizationReport("az/source1", "az/source2", "zother/source");
     }
+
     @Test
     public void generateStudySourceOrganizationReportsColon() throws NodeFactoryException, IOException {
-        assertOrgnanizationReport(
+        assertOrganizationReport(
                 "az/source1",
                 "az/source2",
                 "zother/urn:lsid:checklistbank:dataset:12345");
     }
 
-    private void assertOrgnanizationReport(String namespace, String namespace1, String namespace2) throws NodeFactoryException, IOException {
+    private void assertOrganizationReport(String namespace, String namespace1, String namespace2) throws NodeFactoryException, IOException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetWithResourceMapping(namespace, URI.create("http://example.com"), getResourceService()));
 
@@ -120,6 +146,21 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         resolveNames();
 
         getCmdGenerateReport().generateReportForSourceOrganizations();
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Report, StudyConstant.SOURCE_ID, "globi:az");
+            assertThat(nodes.hasNext(), is(true));
+            Node reportNode = nodes.next();
+            assertThat(nodes.hasNext(), is(false));
+            assertThat(reportNode, is(notNullValue()));
+            assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az"));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+        }
 
 //        IndexHits<Node> reports = getGraphDb()
 //                .index()
@@ -169,6 +210,19 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
                 .generateReportForCollection();
 
         try (Transaction tx = getGraphDb().beginTx()) {
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Report);
+            assertThat(nodes.hasNext(), is(true));
+            Node reportNode = nodes.next();
+            assertThat(reportNode, is(notNullValue()));
+            assertThat(nodes.hasNext(), is(false));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+            tx.commit();
+
 //            IndexHits<Node> reports = getGraphDb()
 //                    .index()
 //                    .forNodes("reports")
