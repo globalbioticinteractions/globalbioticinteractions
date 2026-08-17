@@ -38,7 +38,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl()
                 .findCloseMatchesForCommonAndScientificNames("homo zapiens", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
-        String result = new CypherQueryExecutor(cypherQuery).execute(null);
+        String result = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(result, containsString("Homo sapiens"));
     }
 
@@ -47,7 +47,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl()
                 .findCloseMatchesForCommonAndScientificNames("Apidae", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
-        String result = new CypherQueryExecutor(cypherQuery).execute(null);
+        String result = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         JsonNode json = new ObjectMapper().readTree(result);
 
         JsonNode data = json.get("data");
@@ -91,7 +91,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Homo s", request);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(request);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(request);
         assertThat(cypherQuery.getQuery(), StringContains.containsString("LIMIT 10"));
         assertThat(response, StringContains.containsString("taxon_external_id"));
         assertThat(response, StringContains.containsString("taxon_name"));
@@ -101,7 +101,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames(searchTerm, null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
 
         assertThat(response, startsWith(COLUMN_PREFIX));
         assertThat(response, StringContains.containsString("Homo sapiens"));
@@ -113,7 +113,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("h s", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         // expect at least one common name
         assertThat(response, StringContains.containsString("@en"));
@@ -124,7 +124,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("vos", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response, startsWith(COLUMN_PREFIX));
         assertThat(response, StringContains.containsString("vos"));
     }
@@ -173,7 +173,7 @@ public class TaxonSearchImplIT extends ITBase {
     public void findCloseMatchesCommonNameFoxFrenchType() throws IOException {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("reinard", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response, StringContains.containsString("Vulpes vulpes"));
         assertThat(response, StringContains.containsString("renard"));
     }
@@ -183,7 +183,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Vulpes vules", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response, StringContains.containsString("Vulpes vulpes"));
     }
 
@@ -192,7 +192,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         JsonNode mapper = new ObjectMapper().readTree(response);
         JsonNode data = mapper.get("data");
         assertThat(data.isArray(), is(true));
@@ -205,7 +205,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response, StringContains.containsString("印度尼西亚海鲶"));
     }
 
@@ -214,7 +214,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("King mackerel", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response, StringContains.containsString("Scomberomorus cavalla"));
         assertThat(response, StringContains.containsString("king mackeral"));
     }
@@ -224,7 +224,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("King Mackerel", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         assertThat(response, StringContains.containsString("Scomberomorus cavalla"));
         assertThat(response, StringContains.containsString("king mackeral"));
     }
@@ -235,7 +235,7 @@ public class TaxonSearchImplIT extends ITBase {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariopsis felis", null);
         //CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
 
-        String response = new CypherQueryExecutor(cypherQuery).execute(null);
+        String response = new CypherQueryExecutorHTTP(cypherQuery).execute(null);
         JsonNode jsonNode = new ObjectMapper().readTree(response);
         assertThat(jsonNode.get("data").get(0).get(0).asText(), is("Ariopsis felis"));
         assertThat(jsonNode.get("data").size(), is(1));
