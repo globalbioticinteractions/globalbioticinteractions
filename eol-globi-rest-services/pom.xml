@@ -111,7 +111,7 @@
         <dependency>
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver</artifactId>
-            <version>1.7.5</version>
+            <version>6.2.1</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
