@@ -1,5 +1,7 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public class CypherQuery {
     }
 
     public String getVersionedQuery() {
-        return ("CYPHER " + version + " " + getQuery());
+        return ("CYPHER " + version + " " + StringUtils.trim(getQuery()));
     }
 
     public String getVersion() {

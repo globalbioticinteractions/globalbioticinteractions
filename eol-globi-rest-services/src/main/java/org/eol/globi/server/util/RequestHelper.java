@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.server.QueryType;
 import org.eol.globi.util.ExternalIdUtil;
@@ -115,7 +116,7 @@ public class RequestHelper {
 
     public static void addSpatialClause(List<LatLng> points, StringBuilder query, QueryType queryType) {
         if (isPointOrBox(points)) {
-            query.append(", sourceSpecimen-[:COLLECTED_AT]->loc ");
+            query.append(", (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) ");
         } else {
             query.append(" ");
         }
@@ -128,25 +129,29 @@ public class RequestHelper {
 
     public static void addSpatialWhereClause(List<LatLng> points, StringBuilder query) {
         if (points.size() == 1 || points.size() == 2) {
-            query.append("exists(loc.latitude) AND exists(loc.longitude) AND ");
+            query.append("loc." + LocationConstant.LNGLAT + " IS NOT NULL")
+                    .append(" AND ");
         }
         if (points.size() == 1) {
-            query.append("loc.latitude = ");
-            query.append(points.get(0).getLat());
-            query.append(" AND loc.longitude = ");
-            query.append(points.get(0).getLng());
-            query.append(" ");
+            query.append("loc." + LocationConstant.LNGLAT);
+            query.append(" = ");
+            appendPoint(query, points.get(0).getLng(), points.get(0).getLat());
         } else if (points.size() == 2) {
-            query.append("loc.latitude < ");
-            query.append(points.get(0).getLat());
-            query.append(" AND loc.longitude > ");
-            query.append(points.get(0).getLng());
-            query.append(" AND loc.latitude > ");
-            query.append(points.get(1).getLat());
-            query.append(" AND loc.longitude < ");
-            query.append(points.get(1).getLng());
+            query.append("point.withinBBox(");
+            query.append("loc." + LocationConstant.LNGLAT);
+            query.append(", ");
+            // note bbox order difference
+            appendPoint(query, points.get(0).getLng(), points.get(1).getLat());
+            query.append(", ");
+            appendPoint(query, points.get(1).getLng(), points.get(0).getLat());
+            query.append(")");
             query.append(" ");
         }
+    }
+
+    private static void appendPoint(StringBuilder query, double lng, double lat) {
+        query.append("POINT({longitude: ").append(lng).append(", ")
+                .append("latitude: ").append(lat).append("})");
     }
 
     private static boolean isPointOrBox(List<LatLng> points) {

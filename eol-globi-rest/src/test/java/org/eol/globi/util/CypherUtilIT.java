@@ -37,7 +37,7 @@ public class CypherUtilIT {
         HashMap<String, String> params = new HashMap<String, String>() {{
             put("accordingTo", "(?i).*(\\\\Qgomexsi\\\\E).*");
         }};
-        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_5));
+        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params));
         ProxyOutputStream proxyOutputStream = new ProxyOutputStream(NullOutputStream.NULL_OUTPUT_STREAM) {
             AtomicLong count = new AtomicLong(0L);
             @Override
@@ -72,7 +72,7 @@ public class CypherUtilIT {
         HashMap<String, String> params = new HashMap<String, String>() {{
             put("accordingTo", "http://arctos.database.museum/guid/MSB:Para:1678");
         }};
-        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_5));
+        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params));
 
         String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         new ResultFormatterJSON().format(body);
@@ -97,7 +97,7 @@ public class CypherUtilIT {
         HashMap<String, String> params = new HashMap<String, String>() {{
             put("accordingTo", "http://arctos.database.museum/guid/MSB:Para:1678999999999999");
         }};
-        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_5));
+        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params));
 
         String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         new ResultFormatterJSON().format(body);

@@ -181,11 +181,11 @@ public class CypherQueryBuilder {
         }
 
         if (RequestHelper.isSpatialSearch(params)) {
-            builder.append("MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc");
+            builder.append("MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[:COLLECTED_AT]->(loc:Location)");
             if (!interactionTypes.isEmpty()) {
-                builder.append(", taxon-[:");
+                builder.append(", (taxon:Taxon)-[:");
                 builder.append(createInteractionTypeSelector(interactionTypes));
-                builder.append("]->otherTaxon ");
+                builder.append("]->(otherTaxon:Taxon) ");
             } else {
                 builder.append(" ");
             }
@@ -225,7 +225,7 @@ public class CypherQueryBuilder {
         List<String> requestedFields = collectParamValues(params, ParamName.FIELD);
         if (requestedFields.isEmpty()) {
             List<String> fields = collectParamValues(params, ParamName.FIELDS);
-            if (fields.size() > 0) {
+            if (!fields.isEmpty()) {
                 String[] requestedFieldsSplit = StringUtils.split(fields.get(0), ',');
                 if (requestedFieldsSplit != null) {
                     for (String s : requestedFieldsSplit) {
@@ -327,7 +327,7 @@ public class CypherQueryBuilder {
 
     static List<String> collectAccordingTo(Map parameterMap) {
         List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
-        if (accordingTo != null && accordingTo.size() > 0) {
+        if (accordingTo != null && !accordingTo.isEmpty()) {
             accordingTo = accordingTo.stream()
                     .map(s -> StringUtils.equalsIgnoreCase(s, "inaturalist")
                             ? "globi:globalbioticinteractions/inaturalist"
@@ -384,7 +384,7 @@ public class CypherQueryBuilder {
 
     public static CypherQuery externalIdForStudy(final String studyTitle) {
         String query = "START study = node:studies(title={studyTitle}) " +
-                " WHERE exists(study.externalId) RETURN study.externalId as study";
+                " WHERE study.externalId IS NOT NULL RETURN study.externalId as study";
 
         HashMap<String, String> params = new HashMap<String, String>() {{
             put("studyTitle", studyTitle);
@@ -395,7 +395,7 @@ public class CypherQueryBuilder {
 
     public static CypherQuery externalIdForTaxon(final String taxonName) {
         String query = "START taxon = node:taxons(name={taxonName}) " +
-                " WHERE exists(taxon.externalId) RETURN taxon.externalId as externalId";
+                " WHERE taxon.externalId IS NOT NULL RETURN taxon.externalId as externalId";
 
         HashMap<String, String> taxonName1 = new HashMap<String, String>() {{
             put("taxonName", taxonName);
@@ -408,35 +408,47 @@ public class CypherQueryBuilder {
         return locations(null);
     }
 
+    public static CypherQuery buildInteractionQuery(final String sourceTaxonName, final String interactionType, final String targetTaxonName, final Map parameterMap, QueryType queryType) {
+        final Map paramMapModified = new TreeMap<ParamName, String[]>(parameterMap);
+        List<String> sourceTaxa = CypherQueryBuilder.putSourceTaxonName(sourceTaxonName, paramMapModified);
+        List<String> targetTaxa = CypherQueryBuilder.putTargetTaxonName(targetTaxonName, paramMapModified);
+        return CypherQueryBuilder.buildInteractionQuery(sourceTaxa, interactionType, targetTaxa, paramMapModified, queryType);
+    }
+
+
     public static CypherQuery locations(Map parameterMap) {
         StringBuilder query = new StringBuilder();
         final List<String> accordingTo = collectAccordingTo(parameterMap);
-        if (accordingTo != null && accordingTo.size() > 0) {
-            appendStartClause2(parameterMap, Collections.<String>emptyList(), Collections.<String>emptyList(), query);
-            query.append(" MATCH study-[:" + createArgumentSelector(parameterMap) + "]->specimen-[:COLLECTED_AT]->location");
+        if (accordingTo != null && !accordingTo.isEmpty()) {
+            appendStartClause2(parameterMap, Collections.emptyList(), Collections.emptyList(), query);
+            query.append(" MATCH (study:Reference)-[:" + createArgumentSelector(parameterMap) + "]->(specimen:Specimen)-[:COLLECTED_AT]->(location:Location)");
             query.append(" WITH DISTINCT(location) as loc");
         } else {
+
             query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
         }
         query.append(" RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT");
         return new CypherQuery(query.toString(), getParams(null, null, false, parameterMap));
     }
 
-    public static CypherQuery buildInteractionQuery(final String sourceTaxonName, final String interactionType, final String targetTaxonName, final Map parameterMap, QueryType queryType) {
-        final Map paramMapModified = new TreeMap<ParamName, String[]>(parameterMap);
-        List<String> sourceTaxa = new ArrayList<String>() {{
-            if (sourceTaxonName != null) {
-                add(sourceTaxonName);
-                paramMapModified.put(ParamName.SOURCE_TAXON.name(), new String[]{sourceTaxonName});
-            }
-        }};
+    public static List<String> putTargetTaxonName(String targetTaxonName, Map paramMapModified) {
         List<String> targetTaxa = new ArrayList<String>() {{
             if (targetTaxonName != null) {
                 add(targetTaxonName);
                 paramMapModified.put(ParamName.TARGET_TAXON.name(), new String[]{targetTaxonName});
             }
         }};
-        return buildInteractionQuery(sourceTaxa, interactionType, targetTaxa, paramMapModified, queryType);
+        return targetTaxa;
+    }
+
+    public static List<String> putSourceTaxonName(String sourceTaxonName, Map paramMapModified) {
+        List<String> sourceTaxa = new ArrayList<String>() {{
+            if (sourceTaxonName != null) {
+                add(sourceTaxonName);
+                paramMapModified.put(ParamName.SOURCE_TAXON.name(), new String[]{sourceTaxonName});
+            }
+        }};
+        return sourceTaxa;
     }
 
     public static CypherQuery buildInteractionQuery(List<String> sourceTaxonName, final String interactionType, List<String> targetTaxonName, Map parameterMap, QueryType queryType) {
@@ -446,7 +458,7 @@ public class CypherQueryBuilder {
         return interactionObservations(sourceTaxonName, interactionTypes, targetTaxonName, parameterMap, queryType, getParams(sourceTaxonName, targetTaxonName, shouldIncludeExactNameMatchesOnly(parameterMap), parameterMap));
     }
 
-    protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType, Map<String, String> cypherParams) {
+    public static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType, Map<String, String> cypherParams) {
         StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap, queryType);
         CypherReturnClauseBuilder.appendReturnClauseMap(query, queryType, parameterMap);
         return new CypherQuery(query.toString(), cypherParams);
@@ -529,36 +541,34 @@ public class CypherQueryBuilder {
                     .filter(name -> StringUtils.contains(name, "_taxon_"))
                     .filter(name -> StringUtils.contains(name, "interaction_type"));
             if (strings.isEmpty() || withoutTaxonOrInteractionTypes.findFirst().isPresent()) {
-                query.append(" study = node:studies('*:*')");
+                //query.append(" study = node:studies('*:*')");
             } else {
-                query.append(" sourceTaxon = node:taxons('*:*')");
+                //query.append(" sourceTaxon = node:taxons('*:*')");
             }
-        } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
-            query.append(ALL_LOCATIONS_INDEX_SELECTOR);
+        } else if (sourceTaxa.isEmpty() && targetTaxa.isEmpty()) {
+            //query.append(ALL_LOCATIONS_INDEX_SELECTOR);
         } else {
-            boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
-            if (sourceTaxa.size() > 0) {
-                query.append(" ");
-                appendTaxonSelectors(true, false, query, exactNameMatchesOnly);
-            } else if (targetTaxa.size() > 0) {
-                query.append(" ");
-                appendTaxonSelectors(false, true, query, exactNameMatchesOnly);
-            }
+//            boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
+//            if (!sourceTaxa.isEmpty()) {
+//                query.append(" ");
+//                appendTaxonSelectors(true, false, query, exactNameMatchesOnly);
+//            } else if (!targetTaxa.isEmpty()) {
+//                query.append(" ");
+//                appendTaxonSelectors(false, true, query, exactNameMatchesOnly);
+//            }
         }
         return query;
     }
 
     private static void appendWithStudy(StringBuilder query, List<String> accordingToParams) {
         if (isAccordingToNamespaceQuery(accordingToParams)) {
-            query.append(" dataset = node:datasets({accordingTo})")
-                    .append(" MATCH study-[:IN_DATASET]->dataset")
+            query
+                    .append(" MATCH (study:Reference)-[:IN_DATASET]->(dataset:Dataset {namespace: $accordingTo})")
                     .append(" WITH study");
         } else {
-            query.append(" externalId = node:externalIds({accordingTo})")
+            query
                     .append(" MATCH")
-                    .append(" x-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->externalId")
-                    .append(" WHERE")
-                    .append(" x.type = 'StudyNode'")
+                    .append(" (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId {externalId: $accordingTo})")
                     .append(" WITH x as study ");
         }
     }
@@ -592,7 +602,7 @@ public class CypherQueryBuilder {
         StringBuilder query = new StringBuilder();
         appendStartClause2(parameterMap, sourceTaxa, targetTaxa, query);
         if (QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY == queryType) {
-            String interactionMatch = "MATCH sourceTaxon-[interaction:" + createInteractionTypeSelector(interactionTypes) + "]->targetTaxon ";
+            String interactionMatch = "MATCH (sourceTaxon:Taxon)-[interaction:" + createInteractionTypeSelector(interactionTypes) + "]->(targetTaxon:Taxon) ";
             query
                     .append(" ")
                     .append(interactionMatch);
@@ -602,17 +612,33 @@ public class CypherQueryBuilder {
         StringBuilder stringBuilder = appendTaxonWhereClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
         if (!RequestHelper.isSpatialSearch(parameterMap) && (QueryType.MULTI_TAXON_ALL.equals(queryType)
                 || QueryType.SINGLE_TAXON_ALL.equals(queryType))) {
-            query.append(" OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc ");
+            query.append(" OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) ");
         }
         return stringBuilder;
     }
 
     protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query, QueryType queryType) {
-        String interactionMatch = getInteractionMatch(createInteractionTypeSelector(interactionTypes), createArgumentSelector(parameterMap));
+        String interactionMatch = getInteractionMatch(
+                createInteractionTypeSelector(interactionTypes),
+                createArgumentSelector(parameterMap),
+                createSourceTaxonSelector(parameterMap));
         query.append(" ")
                 .append(interactionMatch);
         addLocationClausesIfNecessary(query, parameterMap, queryType);
         return query;
+    }
+
+    private static String createSourceTaxonSelector(Map parameterMap) {
+        boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
+        List<String> sourceTaxonNames = collectParamValues(parameterMap, ParamName.SOURCE_TAXON);
+        StringBuilder selector = new StringBuilder("(sourceTaxon:Taxon");
+
+        if (exactNameMatchesOnly && !sourceTaxonNames.isEmpty()) {
+            selector.append(" { name: $source_taxon_name }");
+        }
+
+        selector.append(")");
+        return selector.toString();
     }
 
     private static String createArgumentSelector(Map parameterMap) {
@@ -623,9 +649,9 @@ public class CypherQueryBuilder {
                 .collect(Collectors.joining("|"));
     }
 
-    private static String getInteractionMatch(String interactionTypeSelector, String studyRel) {
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
-                "sourceSpecimen<-[collected_rel:" + studyRel + "]-study-[:IN_DATASET]->dataset";
+    private static String getInteractionMatch(String interactionTypeSelector, String studyRel, String sourceTaxonSelector) {
+        return "MATCH " + sourceTaxonSelector + "<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:" + interactionTypeSelector + "]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
+                "(sourceSpecimen:Specimen)<-[collected_rel:" + studyRel + "]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset)";
     }
 
 
@@ -648,7 +674,7 @@ public class CypherQueryBuilder {
     }
 
     private static boolean noSearchCriteria(boolean spatialSearch, List<String> sourceTaxaSelectors, List<String> targetTaxaSelectors) {
-        return !spatialSearch && sourceTaxaSelectors.size() == 0 && targetTaxaSelectors.size() == 0;
+        return !spatialSearch && sourceTaxaSelectors.isEmpty() && targetTaxaSelectors.isEmpty();
     }
 
     private static void appendTaxonSelector(StringBuilder query, String taxonLabel, List<String> taxonNames, boolean exactNameMatchesOnly) {
@@ -673,7 +699,7 @@ public class CypherQueryBuilder {
                     appendNameWhereClause(query, taxonLabel, ids, "externalId");
                 }
             } else {
-                query.append("(exists(").append(taxonLabel).append(".externalIds) AND ANY(x IN split(")
+                query.append("(").append(taxonLabel).append(".externalIds IS NOT NULL AND ANY(x IN split(")
                         .append(taxonLabel).append(".externalIds, '|') WHERE trim(x) in [");
                 query.append(StringUtils.join(taxonNames.stream().map(x -> "'" + x + "'").collect(Collectors.toList()), ","));
                 query.append("])) ");
@@ -682,7 +708,7 @@ public class CypherQueryBuilder {
     }
 
     private static void appendNameWhereClause(StringBuilder query, String taxonLabel, List<String> taxonNames, String property) {
-        query.append("(exists(").append(taxonLabel).append(".").append(property).append(") AND ").append(taxonLabel).append(".").append(property).append(" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
+        query.append("(").append(taxonLabel).append(".").append(property).append(" IS NOT NULL AND ").append(taxonLabel).append(".").append(property).append(" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
     }
 
     private static boolean isExternalId(String taxonName) {
@@ -766,16 +792,16 @@ public class CypherQueryBuilder {
             query.append("START study = node:studies('*:*') ");
         }
 
-        query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:")
+        query.append("MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)<-[c:")
                 .append(createArgumentSelector(parameterMap))
-                .append("]-study-[:IN_DATASET]->dataset")
-                .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
+                .append("]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset)")
+                .append(", (sourceSpecimen:Specimen)-[interact]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon)");
         if (RequestHelper.isSpatialSearch(parameterMap)) {
-            query.append(", sourceSpecimen-[:COLLECTED_AT]->loc");
+            query.append(", (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location)");
         }
-        query.append(" WHERE not(exists(interact.");
+        query.append(" WHERE interact.");
         query.append(PropertyAndValueDictionary.INVERTED);
-        query.append("))");
+        query.append(" IS NULL)");
 
         Map<String, String> params = addSourceWhereClause(parameterMap, query);
 
@@ -797,7 +823,7 @@ public class CypherQueryBuilder {
     }
 
     public static void appendSpatialStartWhereWith(Map<String, String[]> parameterMap, StringBuilder query) {
-        query.append("START loc = node:locations('latitude:*') WHERE ");
+        query.append("MATCH (loc:Location) WHERE ");
         RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
         query.append("WITH loc ");
     }
