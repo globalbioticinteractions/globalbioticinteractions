@@ -177,7 +177,6 @@ public class CypherQueryBuilder {
         if (RequestHelper.isSpatialSearch(params)) {
             appendSpatialStartWhereWith(params, builder);
         }
-
         if (RequestHelper.isSpatialSearch(params)) {
             builder.append("MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[:COLLECTED_AT]->(loc:Location)");
             if (!interactionTypes.isEmpty()) {
@@ -192,6 +191,8 @@ public class CypherQueryBuilder {
                 builder.append("MATCH (taxon:Taxon)-[:");
                 builder.append(createInteractionTypeSelector(interactionTypes));
                 builder.append("]->(otherTaxon:Taxon) ");
+            } else {
+                builder.append("MATCH (taxon:Taxon) ");
             }
         }
 
@@ -627,24 +628,11 @@ public class CypherQueryBuilder {
         String interactionMatch = getInteractionMatch(
                 createInteractionTypeSelector(interactionTypes),
                 createArgumentSelector(parameterMap),
-                createSourceTaxonSelector(parameterMap));
+                "(sourceTaxon:Taxon)");
         query.append(" ")
                 .append(interactionMatch);
         addLocationClausesIfNecessary(query, parameterMap, queryType);
         return query;
-    }
-
-    private static String createSourceTaxonSelector(Map parameterMap) {
-        boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
-        List<String> sourceTaxonNames = collectParamValues(parameterMap, ParamName.SOURCE_TAXON);
-        StringBuilder selector = new StringBuilder("(sourceTaxon:Taxon");
-
-        if (exactNameMatchesOnly && !sourceTaxonNames.isEmpty()) {
-            selector.append(" { name: $source_taxon_name }");
-        }
-
-        selector.append(")");
-        return selector.toString();
     }
 
     private static String createArgumentSelector(Map parameterMap) {
@@ -793,8 +781,6 @@ public class CypherQueryBuilder {
 
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             appendSpatialStartWhereWith(parameterMap, query);
-        } else {
-            query.append("START study = node:studies('*:*') ");
         }
 
         query.append("MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)<-[c:")

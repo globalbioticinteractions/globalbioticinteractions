@@ -100,7 +100,7 @@ public class CypherReturnClauseBuilderTest {
                 "targetSpecimen, " +
                 "loc, " +
                 "study " +
-                "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
+                "MATCH (sourceTaxon:Taxon)-[:SAME_AS*0..1]->(sourceTaxonSameAs:Taxon), (targetTaxon:Taxon)-[:SAME_AS*0..1]->(targetTaxonSameAs:Taxon) " +
                 "WHERE " +
                 "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
                 "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
