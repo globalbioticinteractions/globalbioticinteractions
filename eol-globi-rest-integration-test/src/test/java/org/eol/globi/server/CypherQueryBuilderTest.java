@@ -50,10 +50,8 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
     private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, "REFUTES|COLLECTED");
     private static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
     private static final String EXPECTED_ACCORDING_TO_START_CLAUSE = EXPECTED_CYPHER_VERSION +
-            "MATCH" +
-            " (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId {externalId: $accordingTo})" +
-            " WITH" +
-            " x as study ";
+            "MATCH (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId {externalId: $accordingTo})" +
+            " WITH x as study ";
     private static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
     private static final String HAS_TARGET_TAXON_PLANTAE = hasTargetTaxon("Plantae");
 
@@ -210,7 +208,9 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
-                "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + hasTargetTaxon("Arthropoda") +
+                "WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) " +
+                "AND " + hasTargetTaxon("Arthropoda") +
+                " AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Actinopterygii' + ' |' OR sourceTaxon.externalIds CONTAINS '| ' + 'Chordata' + ' |') " +
                 EXPECTED_RETURN_CLAUSE_DISTINCT));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
     }
@@ -405,7 +405,9 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
-                "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + hasTargetTaxon("Arthropoda") +
+                "WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) " +
+                "AND " + hasTargetTaxon("Arthropoda") +
+                "AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Actinopterygii' + ' |' OR sourceTaxon.externalIds CONTAINS '| ' + 'Chordata' + ' |')) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
     }
@@ -546,7 +548,6 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
 
         query = buildInteractionQuery(params, QueryType.forParams(params));
         assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
-                "START sourceTaxon = node:taxons('*:*') " +
                 "MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:PATHOGEN_OF]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
                 "(sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
@@ -694,12 +695,14 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
+                "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
                 "MATCH (sourceTaxon:Taxon)-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->(targetTaxon:Taxon) " +
+                "WHERE (targetTaxon.externalIds IS NOT NULL AND (targetTaxon.externalIds CONTAINS '| ' + 'Arthropoda' + ' |')) " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"
         ));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\"Arthropoda\"");
+            put("target_taxon_name", "Arthropoda");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -743,13 +746,12 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
-                "START dataset = node:datasets({accordingTo}) " +
-                "MATCH study-[:IN_DATASET]->(dataset:Dataset) " +
+                "MATCH (study:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
                 "WITH study " +
                 "MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
                 "->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
                 "(sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
-                "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
+                "WHERE (targetTaxon.externalIds IS NOT NULL AND (targetTaxon.externalIds CONTAINS '| ' + 'Arthropoda' + ' |')) " +
                 "WITH " +
                 "distinct targetTaxon, interaction.label as iType, " +
                 "sourceTaxon, count(interaction) as interactionCount, " +
@@ -817,11 +819,13 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START targetTaxon = node:taxons({target_taxon_name}) " +
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
+                "START targetTaxon = node:taxons({target_taxon_name}) " +
                 "MATCH (sourceTaxon:Taxon)-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->(targetTaxon:Taxon) " +
+                "WHERE (targetTaxon.name IS NOT NULL AND targetTaxon.name IN ['Arthropoda']) " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "name:\"Arthropoda\"");
+            put("target_taxon_name", "Arthropoda");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -839,6 +843,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
                 "MATCH (sourceTaxon:Taxon)-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->(targetTaxon:Taxon {name: $targetTaxonName) " +
+                "WHERE (targetTaxon.name IS NOT NULL AND targetTaxon.name IN ['Arthropoda']) " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "Arthropoda");
@@ -946,7 +951,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING +
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=path:\"Arthropoda\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -984,9 +989,9 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         assertThat(query.getVersionedQuery(), is(
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
-                        "WHERE (exists(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
+                        "WHERE (sourceTaxon.name IS NOT NULL AND sourceTaxon.name IN ['Arthropoda']) " +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=name:\"Arthropoda\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -1031,11 +1036,11 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
 
     @Test
     public void prefixSelectorForName() {
-        assertThat(CypherQueryBuilder.selectorPrefixForName("EOL:123", true), is("externalId:"));
-        assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", true), is("name:"));
-        assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", false), is("path:"));
-        assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", false), is("path:"));
-        assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", true), is("name:"));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("EOL:123", true), is(""));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", true), is(""));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", false), is(""));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", false), is(""));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", true), is(""));
     }
 
     @Test
@@ -1079,13 +1084,14 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
                 EXPECTED_MATCH_CLAUSE_ALL +
-                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
+                "WHERE (targetTaxon.name IS NOT NULL AND targetTaxon.name IN ['Insecta']) " +
+                "AND (sourceTaxon.name IS NOT NULL AND sourceTaxon.name IN ['some name']) OR (sourceTaxon.externalId IS NOT NULL AND sourceTaxon.externalId IN ['EOL:123']) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=externalId:\"EOL:123\" OR name:\"some name\", target_taxon_name=name:\"Insecta\"}"));
+                is("{source_taxon_name=EOL:123 OR some name, target_taxon_name=Insecta}"));
     }
 
     @Test
@@ -1100,10 +1106,10 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
                 EXPECTED_MATCH_CLAUSE_ALL +
-                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['some name'])" +
-                " OR (exists(targetTaxon.externalId) AND targetTaxon.externalId IN ['EOL:123']) " +
+                "(targetTaxon.name IS NOT NULL AND targetTaxon.name IN ['some name']) OR (targetTaxon.externalId IS NOT NULL AND targetTaxon.externalId IN ['EOL:123']) " +
+                "AND (sourceTaxon.name IS NOT NULL AND sourceTaxon.name IN ['Arthropoda']) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{" +
@@ -1185,7 +1191,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 "AND " + hasTargetTaxon("Arthropoda") +
                 "AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + '" + "Actinopterygii" + "' + ' |' OR sourceTaxon.externalIds CONTAINS '| ' + 'Chordata' + ' |')) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN targetTaxon.name as target_taxon_name,sourceTaxon.name as source_taxon_name,sourceTaxon.pathNames as source_taxon_path_ranks"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=Actinopterygii OR Chordata, target_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -1278,7 +1284,12 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         };
 
         query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START loc = node:locations('latitude:*') WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->(loc:Location), taxon-[:" + InteractUtil.interactionsCypherClause(KILLS, PARASITE_OF) + "]->otherTaxon RETURN distinct(taxon.name) as taxon_name, taxon.commonNames as taxon_common_names, taxon.externalId as taxon_external_id, taxon.path as taxon_path, taxon.pathIds as taxon_path_ids, taxon.pathNames as taxon_path_ranks"));
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
+                "MATCH (loc:Location) " +
+                "WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) " +
+                "WITH loc " +
+                "MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[:COLLECTED_AT]->(loc:Location), (taxon:Taxon)-[:" + InteractUtil.interactionsCypherClause(KILLS, PARASITE_OF) + "]->(otherTaxon:Taxon) " +
+                "RETURN distinct(taxon.name) as taxon_name, taxon.commonNames as taxon_common_names, taxon.externalId as taxon_external_id, taxon.path as taxon_path, taxon.pathIds as taxon_path_ids, taxon.pathNames as taxon_path_ranks"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -1293,7 +1304,12 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         };
 
         query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START loc = node:locations('latitude:*') WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->(loc:Location), taxon-[:" + InteractUtil.interactionsCypherClause(PREYS_UPON, PARASITE_OF) + "]->otherTaxon RETURN distinct(taxon.name) as taxon_name"));
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
+                "MATCH (loc:Location) " +
+                "WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) " +
+                "WITH loc " +
+                "MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[:COLLECTED_AT]->(loc:Location), (taxon:Taxon)-[:" + InteractUtil.interactionsCypherClause(PREYS_UPON, PARASITE_OF) + "]->(otherTaxon:Taxon) " +
+                "RETURN distinct(taxon.name) as taxon_name"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -1422,6 +1438,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         String expectedQuery = EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(PREYS_UPON, PARASITE_OF), false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Arthropoda' + ' |')) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -1439,9 +1456,10 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
             }
         };
 
-        String expectedQuery = EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+        String expectedQuery = EXPECTED_CYPHER_VERSION +
                 expectedMatchClause(expectedInteractionClause(PREYS_UPON, PARASITE_OF), false, false) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                " AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Arthropoda' + ' |')) " +
                 EXPECTED_RETURN_CLAUSE_DISTINCT;
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1462,6 +1480,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         String expectedQuery = EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(POLLINATED_BY), false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Arthropoda' + ' |')) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -1482,6 +1501,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         String expectedQuery = EXPECTED_CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(SYMBIONT_OF), false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Arthropoda' + ' |')) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -1575,8 +1595,8 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
 
         String expectedQuery = EXPECTED_CYPHER_VERSION +
                 EXPECTED_MATCH_CLAUSE_ALL +
-                "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 "WHERE (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Actinopterygii' + ' |' OR sourceTaxon.externalIds CONTAINS '| ' + 'Chordata' + ' |')) " +
+                "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1638,7 +1658,9 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 "MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
                 "(sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
-                "WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " + expectedReturnClause()));
+                "WHERE " + HAS_TARGET_TAXON_PLANTAE +
+                " AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Homo sapiens' + ' |')) " +
+                "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " + expectedReturnClause()));
         assertThat(query.getParams().toString(),
                 is("{source_taxon_name=path:\"Homo sapiens\", target_taxon_name=path:\"Plantae\"}"));
     }
@@ -1653,7 +1675,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 "WHERE (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Homo sapiens' + ' |')) " +
                 "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " + expectedReturnClause()));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\"Homo sapiens\"}"));
+                is("{source_taxon_name=Homo sapiens}"));
     }
 
     @Test
@@ -1712,7 +1734,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 "(sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
                 "(sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
-                " AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Homo sapiens' + ' |')) " +
+                "AND (sourceTaxon.externalIds IS NOT NULL AND (sourceTaxon.externalIds CONTAINS '| ' + 'Homo sapiens' + ' |')) " +
                 "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
 
     }
@@ -1750,10 +1772,10 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
 
         query = spatialInfo(params);
         assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
-                "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 " +
+                "MATCH (loc:Location) WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) " +
                 "WITH loc " +
                 "MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Soecimen)<-[c:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset), (sourceSpecimen:Specimen)-[interact]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
-                "WHERE not(exists(interact.inverted)) " +
+                "WHERE interact.inverted IS NULL " +
                 "RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.eventDate) as `number of interactions with timestamp`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
         assertThat(query.getParams().toString(), is("{}"));
     }
@@ -1780,11 +1802,10 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
     @Test
     public void stats() {
         query = spatialInfo(null);
-        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION + "START study = node:studies('*:*') " +
-                "MATCH " +
-                "(sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)<-[c:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset), " +
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
+                "MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)<-[c:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset), " +
                 "(sourceSpecimen:Specimen)-[interact]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon) " +
-                "WHERE not(exists(interact.inverted)) " +
+                "WHERE interact.inverted IS NULL " +
                 "RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.eventDate) as `number of interactions with timestamp`, NULL as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
         assertThat(query.getParams().toString(), is("{}"));
     }
@@ -1805,11 +1826,10 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
 
     protected void assertLocationMatchAndWhereClause(String clause) {
         assertThat(clause.replaceAll("\\s+", " ")
-                , is(" MATCH " +
-                        "(sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:PREYS_UPON]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
+                , is(" MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:PREYS_UPON]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
                         "(sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset), " +
                         "(sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location)" +
-                        " WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 "));
+                        " WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) "));
     }
 
     @Test
