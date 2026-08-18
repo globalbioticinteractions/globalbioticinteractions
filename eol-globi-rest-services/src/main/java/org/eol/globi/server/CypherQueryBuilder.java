@@ -241,9 +241,11 @@ public class CypherQueryBuilder {
         String prefix = "path:";
         if (isExactMatch) {
             if (isExternalId(name)) {
-                prefix = "externalId:";
+                //prefix = "externalId:";
+                prefix = "";
             } else {
-                prefix = "name:";
+                //prefix = "name:";
+                prefix = "";
             }
         }
         return prefix;
@@ -264,10 +266,8 @@ public class CypherQueryBuilder {
             }
             lucenePathQuery
                     .append(selectorPrefixForName(taxonSelector, isExactMatch))
-                    .append("\"")
                     // see https://stackoverflow.com/questions/25450308/full-text-search-in-neo4j-with-spaces
-                    .append(escapeWhitespace(taxonSelector))
-                    .append("\"");
+                    .append(escapeWhitespace(taxonSelector));
             count++;
         }
         return lucenePathQuery.toString();
@@ -711,7 +711,7 @@ public class CypherQueryBuilder {
         query.append("(").append(taxonLabel).append(".").append(property).append(" IS NOT NULL AND ").append(taxonLabel).append(".").append(property).append(" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
     }
 
-    private static boolean isExternalId(String taxonName) {
+    public static boolean isExternalId(String taxonName) {
         return StringUtils.contains(taxonName, ":")
                 && (ExternalIdUtil.prefixForUrl(taxonName) != null
                 || ExternalIdUtil.isSupported(taxonName));
