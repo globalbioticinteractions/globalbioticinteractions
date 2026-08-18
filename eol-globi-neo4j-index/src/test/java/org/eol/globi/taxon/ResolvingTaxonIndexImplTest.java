@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -153,6 +154,9 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
         assertThat(aTaxon.getName(), is("some name" + suffix));
         assertThat(aTaxon.getExternalId(), is("anExternalId" + suffix));
+        assertThat(aTaxon, is(instanceOf(TaxonNode.class)));
+        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString(), is("|  | a etc id | a etc name | a kingdom id | a kingdom name | a phylum id | a phylum name | anExternalId | some name |"));
+        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString(), is("| anExternalId |"));
     }
 
 

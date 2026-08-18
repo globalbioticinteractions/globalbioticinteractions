@@ -133,10 +133,14 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
         }
         taxonPathIdsAndNames.addAll(taxonIds);
         String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
-        node.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
+        node.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, completeList(aggregateIds));
 
         String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
-        node.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
+        node.setProperty(PropertyAndValueDictionary.NAME_IDS, completeList(aggregateTaxonIds));
+    }
+
+    private static String completeList(String aggregateIds) {
+        return CharsetConstant.SEPARATOR_START_LIST + aggregateIds + CharsetConstant.SEPARATOR_END_LIST;
     }
 
     private void addTaxonId(List<String> externalIds, TaxonNode taxonNode) {

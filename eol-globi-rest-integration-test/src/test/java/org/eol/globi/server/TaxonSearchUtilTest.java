@@ -15,17 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class TaxonSearchUtilTest {
-
-    public static Neo4j neo4j;
-
-    @BeforeClass
-    public static void initializeNeo4j() {
-        neo4j = Neo4jBuilders.newInProcessBuilder()
-                .withDisabledServer()
-                .withConfig(GraphDatabaseSettings.transaction_timeout, Duration.ofSeconds(30))
-                .build();
-    }
+public class TaxonSearchUtilTest extends Neo4jTestBase {
 
 
     @Test
@@ -39,17 +29,6 @@ public class TaxonSearchUtilTest {
                         "RETURN externalId as taxon_external_id,externalUrl as taxon_external_url"));
         assertThat(query.getParams().toString(), Is.is("{pathQuery=Animalia}"));
         validate(query);
-    }
-
-    public void validate(CypherQuery query) {
-        TreeMap<String, Object> params = new TreeMap<String, Object>() {
-            {
-                putAll(query.getParams());
-            }
-
-        };
-        neo4j.defaultDatabaseService().executeTransactionally(query.getVersionedQuery(), params);
-        //CypherTestUtil.validate(query, neo4j.getGraphDatabaseService());
     }
 
     @Test
