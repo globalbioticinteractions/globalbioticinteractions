@@ -1,6 +1,7 @@
 package org.eol.globi.server.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.server.QueryType;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -37,10 +38,10 @@ public class RequestHelperTest {
 
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
-        assertThat(clause.toString().trim().replaceAll("\\s+", " "), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc " +
-                "WHERE exists(loc.latitude) AND exists(loc.longitude)" +
-                " AND loc.latitude = 12.2" +
-                " AND loc.longitude = 12.1"));
+        assertThat(clause.toString().trim().replaceAll("\\s+", " "),
+                Is.is(", (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
+                "WHERE loc." + LocationConstant.LNGLAT + " IS NOT NULL " +
+                "AND loc." + LocationConstant.LNGLAT + " = POINT({longitude: 12.1, latitude: 12.2})"));
     }
 
     private void assertLocationQuery(Map<String, String[]> paramMap) {
@@ -54,13 +55,13 @@ public class RequestHelperTest {
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
-                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE" +
-                        " exists(loc.latitude)" +
-                        " AND exists(loc.longitude)" +
-                        " AND loc.latitude < 10.0" +
-                        " AND loc.longitude > -20.0" +
-                        " AND loc.latitude > -10.0" +
-                        " AND loc.longitude < 20.0"));
+                Is.is(", (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
+                        "WHERE loc.lnglat IS NOT NULL " +
+                        "AND point.withinBBox(" +
+                        "loc.lnglat, " +
+                        "POINT({longitude: -20.0, latitude: -10.0}), " +
+                        "POINT({longitude: 20.0, latitude: 10.0})" +
+                        ")"));
     }
 
     @Test
@@ -105,11 +106,9 @@ public class RequestHelperTest {
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
-                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE" +
-                        " exists(loc.latitude)" +
-                        " AND exists(loc.longitude)" +
-                        " AND loc.latitude = 10.0" +
-                        " AND loc.longitude = 12.4"));
+                Is.is(", (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) WHERE" +
+                        " loc." + LocationConstant.LNGLAT + " IS NOT NULL" +
+                        " AND loc." + LocationConstant.LNGLAT + " = POINT({longitude: 12.4, latitude: 10.0})"));
     }
 
     @Test(expected = NumberFormatException.class)
