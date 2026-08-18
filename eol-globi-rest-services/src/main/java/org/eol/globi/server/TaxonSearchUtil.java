@@ -81,6 +81,6 @@ public class TaxonSearchUtil {
             {
                 put("pathQuery", pathQuery);
             }
-        }, CypherUtil.CYPHER_VERSION_2_3);
+        });
     }
 }

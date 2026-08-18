@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CypherUtil {
-    public static final String CYPHER_VERSION_2_3 = "2.3";
     public static final String CYPHER_VERSION_5 = "5";
 
     private static final Logger LOG = LoggerFactory.getLogger(CypherUtil.class);

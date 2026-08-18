@@ -520,7 +520,6 @@ public class CypherQueryBuilder {
     }
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
-        query.append("START");
         if (hasAccordingTo(parameterMap)) {
             appendWithStudy(query, collectAccordingTo(parameterMap));
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {

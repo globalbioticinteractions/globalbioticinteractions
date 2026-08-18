@@ -37,7 +37,7 @@ public class ReportController {
             put("source", source);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     @RequestMapping(value = "/dataset", method = RequestMethod.GET)
@@ -99,7 +99,7 @@ public class ReportController {
             put("sourceId", sourceIdActual);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     private CypherQuery datasetQuery(HttpServletRequest request, String searchKey, final String searchValue) {
@@ -129,7 +129,7 @@ public class ReportController {
             put("namespace", searchValue);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     private CypherQuery datasetQuery2(HttpServletRequest request, String searchKey, final String searchValue) {
@@ -158,7 +158,7 @@ public class ReportController {
             put("namespace", searchValue);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     @RequestMapping(value = "/reports/collections", method = RequestMethod.GET)
@@ -176,7 +176,7 @@ public class ReportController {
             + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
             + ", report.nSources as " + ResultField.NUMBER_OF_SOURCES
             + ", report.nTaxaNoMatch as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
-        return new CypherQuery(cypherQuery, null, CypherUtil.CYPHER_VERSION_2_3);
+        return new CypherQuery(cypherQuery);
     }
 
 }

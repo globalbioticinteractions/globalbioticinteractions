@@ -85,7 +85,7 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix() +
-                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_2_3);
+                returnClause(), paramForName(taxonName));
         return CypherUtil.executeRemote(cypherQuery);
     }
 
@@ -102,7 +102,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix()
                 + " AND exists(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
                 "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0 " +
-                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_2_3);
+                returnClause(), paramForName(taxonName));
         return toMap(CypherUtil.executeRemote(cypherQuery));
     }
 
@@ -174,8 +174,7 @@ public class TaxonSearchImpl implements TaxonSearch {
                 new CypherQuery(exactQuery + " LIMIT 1 UNION " + fuzzyQuery.toString(),
                         new TreeMap<String, String>() {{
                             put("taxonName", taxonName);
-                        }},
-                        CypherUtil.CYPHER_VERSION_2_3), 30);
+                        }}), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/**", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

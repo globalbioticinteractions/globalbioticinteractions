@@ -15,7 +15,7 @@ public class CypherQuery {
     }
 
     public CypherQuery(String query, Map<String, String> params) {
-        this(query, params, CypherUtil.CYPHER_VERSION_2_3);
+        this(query, params, CypherUtil.CYPHER_VERSION_5);
     }
 
     public CypherQuery(String query, String version) {
