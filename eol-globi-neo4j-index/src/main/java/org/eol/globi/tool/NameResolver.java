@@ -1,38 +1,20 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
-import org.eol.globi.data.ResolvingTaxonIndex;
-import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class NameResolver implements IndexerNeo4j {
+public class NameResolver extends BatchProcessorAbstract {
     private static final Logger LOG = LoggerFactory.getLogger(NameResolver.class);
-    public static final String NO_NAMESPACE = "no/namespace";
-
-    private final TaxonFilter taxonFilter;
-    private final GraphServiceFactory factory;
-    private final TaxonIndexFactory taxonIndexFactory;
-
-
-    public void setBatchSize(Long batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    private Long batchSize = 1000L;
 
     public NameResolver(GraphServiceFactory factory, TaxonIndexFactory indexFactory) {
         this(factory, new KnownBadNameFilter(), indexFactory);
@@ -41,106 +23,45 @@ public class NameResolver implements IndexerNeo4j {
     public NameResolver(GraphServiceFactory factory,
                         TaxonFilter taxonFilter,
                         TaxonIndexFactory taxonIndexFactor) {
-        this.taxonFilter = taxonFilter;
-        this.factory = factory;
-        this.taxonIndexFactory = taxonIndexFactor;
-
-    }
-
-    public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
-        long totalToBeProcessed = 0;
-        try (Transaction tx = graphService.beginTx()) {
-            Result result = tx.execute("MATCH (t:Taxon_Verbatim & Taxon_Unprocessed) RETURN COUNT(t) AS totalToBeProcessed");
-            if (result.hasNext()) {
-                totalToBeProcessed = Long.parseLong(result.next().get("totalToBeProcessed").toString());
-            }
-            tx.commit();
-        }
-
-        if (totalToBeProcessed == 0) {
-            LOG.info("no unprocessed verbatim taxon names: nothing to do.");
-        } else {
-            StopWatch watchForEntireRun = new StopWatch();
-            watchForEntireRun.start();
-            StopWatch watchForBatch = new StopWatch();
-            watchForBatch.start();
-            final AtomicLong nameCount = new AtomicLong(0L);
-            while (processNextBatch(batchSize, nameCount, graphService)) {
-                // ignore
-                if (totalToBeProcessed < nameCount.get()) {
-                    LOG.info("stop name processing: processed more names (i.e., {}) than expected (i.e., {}).", nameCount.get(), totalToBeProcessed);
-                    break;
-                }
-                watchForBatch.stop();
-                final long duration = watchForBatch.getTime();
-                if (duration > 0) {
-                    LOG.info("resolved batch of [{}] names {} ({} names resolved so far or {}%)",
-                            batchSize,
-                            getProgressMsg(batchSize, duration),
-                            nameCount.get(),
-                            String.format("%.1f", 100 * nameCount.get() / (float) totalToBeProcessed));
-                }
-                watchForBatch.reset();
-                watchForBatch.start();
-            }
-            watchForEntireRun.stop();
-            LOG.info("resolved [{}] names {}",
-                    nameCount,
-                    getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
-        }
-
-    }
-
-    private boolean processNextBatch(Long batchSize,
-                                     AtomicLong nameCount,
-                                     GraphDatabaseService graphService) {
-        long numberOfNamesProcessed = 0;
-        try (Transaction tx = graphService.beginTx()) {
-            Result execute = tx.execute("MATCH (t:Taxon_Verbatim & Taxon_Unprocessed) <-[:ORIGINALLY_DESCRIBED_AS]- (s:Specimen) " +
-                    "RETURN elementid(s) as specimenNodeId, elementid(t) as taxonNodeId " +
-                    "LIMIT " + batchSize);
-            while (execute.hasNext()) {
-                numberOfNamesProcessed += 1;
-                Map<String, Object> next = execute.next();
-                Object taxonNodeId = next.get("taxonNodeId");
-                if (taxonNodeId != null) {
-                    nameCount.incrementAndGet();
-                    Node describedAsTaxonNode = tx.getNodeByElementId(taxonNodeId.toString());
-                    final TaxonNode describedAsTaxon = new TaxonNode(describedAsTaxonNode);
-                    try {
-                        if (taxonFilter.shouldInclude(describedAsTaxon)) {
-                            Taxon resolvedTaxon = taxonIndexFactory.create(tx).getOrCreateTaxon(describedAsTaxon);
-                            if (resolvedTaxon != null) {
-                                Node specimenNodeId = tx.getNodeByElementId(next.get("specimenNodeId").toString());
-                                new SpecimenNode(specimenNodeId).classifyAs(resolvedTaxon);
-                            }
-                        }
-                        describedAsTaxonNode.removeLabel(NodeLabel.Taxon_Unprocessed);
-                    } catch (UnlikelyTaxonNameException e) {
-                        // ignore
-                    } catch (NodeFactoryException e) {
-                        LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
-                    }
-                }
-            }
-            tx.commit();
-        }
-        return numberOfNamesProcessed == batchSize;
-    }
-
-    public static String getProgressMsg(Long count, long duration) {
-        return String.format("in [%.2f] s at [%.2f] taxon/s ",
-                duration / 1000.0,
-                (float) count * 1000.0 / duration
-        );
+        super(taxonFilter, factory, taxonIndexFactor);
     }
 
     @Override
-    public void index() {
-        LOG.info("name resolving started...");
-        resolveNames(batchSize, factory.getGraphService());
-        LOG.info("name resolving complete.");
-
+    protected String getTotalToBeProcessedQuery() {
+        return "MATCH (t:Taxon_Verbatim & Taxon_Unprocessed) RETURN COUNT(t) AS totalToBeProcessed";
     }
+
+    @Override
+    protected String getNextBatchQuery(Long batchSize) {
+        return "MATCH (t:Taxon_Verbatim & Taxon_Unprocessed) <-[:ORIGINALLY_DESCRIBED_AS]- (s:Specimen) RETURN elementid(s) as specimenNodeId, elementid(t) as taxonNodeId " +
+                "LIMIT " + batchSize;
+    }
+
+    @Override
+    protected boolean handleResultRow(Map<String, Object> next, Transaction tx) {
+        boolean handled = false;
+        Object taxonNodeId = next.get("taxonNodeId");
+        if (taxonNodeId != null) {
+            handled = true;
+            Node describedAsTaxonNode = tx.getNodeByElementId(taxonNodeId.toString());
+            final TaxonNode describedAsTaxon = new TaxonNode(describedAsTaxonNode);
+            try {
+                if (taxonFilter.shouldInclude(describedAsTaxon)) {
+                    Taxon resolvedTaxon = taxonIndexFactory.create(tx).getOrCreateTaxon(describedAsTaxon);
+                    if (resolvedTaxon != null) {
+                        Node specimenNodeId = tx.getNodeByElementId(next.get("specimenNodeId").toString());
+                        new SpecimenNode(specimenNodeId).classifyAs(resolvedTaxon);
+                    }
+                }
+                describedAsTaxonNode.removeLabel(NodeLabel.Taxon_Unprocessed);
+            } catch (UnlikelyTaxonNameException e) {
+                // ignore
+            } catch (NodeFactoryException e) {
+                LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
+            }
+        }
+        return handled;
+    }
+
 
 }
