@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class TaxonSearchUtilTest extends Neo4jTestBase {
 
 
@@ -27,6 +28,21 @@ public class TaxonSearchUtilTest extends Neo4jTestBase {
                         "WHERE taxon.externalId IS NOT NULL " +
                         "WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl " +
                         "RETURN externalId as taxon_external_id,externalUrl as taxon_external_url"));
+        assertThat(query.getParams().toString(), Is.is("{pathQuery=Animalia}"));
+        validate(query);
+    }
+
+    @Test
+    public void createPagedQuery() {
+        CypherQuery query = TaxonSearchUtil.createPagedQuery("Animalia", null);
+        assertThat(query.getVersionedQuery(), Is.is(
+                "CYPHER 5 " +
+                        "MATCH (someTaxon:Taxon { name: $pathQuery })-[:SAME_AS*0..1]->(taxon:Taxon) " +
+                        "WHERE taxon.externalId IS NOT NULL " +
+                        "WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl " +
+                        "RETURN externalId as taxon_external_id,externalUrl as taxon_external_url " +
+                        "SKIP 0 " +
+                        "LIMIT 30"));
         assertThat(query.getParams().toString(), Is.is("{pathQuery=Animalia}"));
         validate(query);
     }

@@ -103,11 +103,16 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery(queryPrefix()
-                + " AND exists(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
-                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0 " +
-                returnClause(), paramForName(taxonName));
+        CypherQuery cypherQuery = findTaxonWithImageQuery(taxonName);
         return toMap(CypherUtil.executeRemote(cypherQuery));
+    }
+
+    public CypherQuery findTaxonWithImageQuery(String taxonName) {
+        CypherQuery cypherQuery = new CypherQuery(queryPrefix()
+                + " AND taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + " IS NOT NULL " +
+                "AND NOT isEmpty(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
+                returnClause(), paramForName(taxonName));
+        return cypherQuery;
     }
 
     @Override
