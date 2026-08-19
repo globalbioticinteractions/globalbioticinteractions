@@ -363,9 +363,16 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void paleoBioDatabase3() {
+        String url = "https://paleobiodb.org/classic/basicTaxonInfo?rdr=1&taxon_no=83088";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.PBDB));
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.PBDB, url), is("83088"));
+    }
+
+    @Test
     public void urlForPaleoBioDatabaseTaxon() {
         String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.PBDB.getIdPrefix() + "83088");
-        assertThat(url, is("https://paleobiodb.org/classic/basicTaxonInfo?taxon_no=txn:83088"));
+        assertThat(url, is("https://paleobiodb.org/classic/basicTaxonInfo?rdr=1&taxon_no=83088"));
     }
 
     @Test
