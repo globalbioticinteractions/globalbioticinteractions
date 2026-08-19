@@ -134,9 +134,9 @@ public class TaxonSearchImpl implements TaxonSearch {
     @ResponseBody
     public CypherQuery findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
 
-        StringBuilder exactQuery = new StringBuilder("START taxon = node:taxons(name = {taxonName}) ");
+        StringBuilder exactQuery = new StringBuilder("MATCH (taxon:Taxon {name: $taxonName}) ");
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        StringBuilder fuzzyQuery = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
+        StringBuilder fuzzyQuery = new StringBuilder("CALL db.index.fulltext.queryNodes('taxonNameSuggestions', '" + luceneQuery + "') YIELD node as taxon ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
