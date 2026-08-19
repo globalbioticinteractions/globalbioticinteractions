@@ -26,15 +26,16 @@ public class CmdCreateLocationIndexes extends CmdNeo4J {
     }
 
     private static void createIndexIfNotExists(Transaction tx) {
-        List<String> taxonIndexNames = new ArrayList<>();
-        Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(NodeLabel.Taxon);
-        taxonIndexes.forEach(i -> taxonIndexNames.add(i.getName()));
-        String indexName = NodeLabel.Location.name();
-        if (taxonIndexNames.contains(indexName)) {
+        NodeLabel nodeLabel = NodeLabel.Location;
+        List<String> indexNames = new ArrayList<>();
+        Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(nodeLabel);
+        taxonIndexes.forEach(i -> indexNames.add(i.getName()));
+        String indexName = nodeLabel.name();
+        if (indexNames.contains(indexName)) {
             LOG.info("found existing index [{}]", indexName);
         } else {
             tx.schema()
-                    .indexFor(NodeLabel.Location)
+                    .indexFor(nodeLabel)
                     .withIndexType(IndexType.POINT)
                     .on(LocationConstant.LNGLAT)
                     .withName(indexName)

@@ -27,16 +27,17 @@ public class CmdCreateTaxonIndexes extends CmdNeo4J {
     }
 
     private static void createIndexIfNotExists(Transaction tx, String propertyName) {
-        List<String> taxonIndexNames = new ArrayList<>();
-        Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(NodeLabel.Taxon);
-        taxonIndexes.forEach(i -> taxonIndexNames.add(i.getName()));
+        NodeLabel nodeLabel = NodeLabel.Taxon;
+        List<String> indexNames = new ArrayList<>();
+        Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(nodeLabel);
+        taxonIndexes.forEach(i -> indexNames.add(i.getName()));
         String indexName = indexNameFor(propertyName);
-        if (taxonIndexNames.contains(indexName)) {
+        if (indexNames.contains(indexName)) {
             LOG.info("found existing index [{}]", indexName);
         } else {
             tx
                     .schema()
-                    .indexFor(NodeLabel.Taxon)
+                    .indexFor(nodeLabel)
                     .on(propertyName)
                     .withIndexType(IndexType.RANGE)
                     .withName(indexName)
