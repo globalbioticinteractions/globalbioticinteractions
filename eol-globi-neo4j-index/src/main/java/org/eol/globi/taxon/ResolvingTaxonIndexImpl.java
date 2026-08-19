@@ -55,7 +55,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
     @Override
     public Taxon findTaxonById(String externalId) {
-        return null;
+        return findTaxonById(externalId, null);
     }
 
     @Override
