@@ -6,6 +6,7 @@ import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -190,5 +191,14 @@ public class NodeUtil {
                 .process(listener, batchListener);
     }
 
+    public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {
+        if (interactRel != null && interactType != null) {
+            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.getLabel());
+            interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
+            if (inverted) {
+                interactRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
+            }
+        }
+    }
 }
 

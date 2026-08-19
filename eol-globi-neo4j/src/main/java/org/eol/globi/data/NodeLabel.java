@@ -12,6 +12,9 @@ public enum NodeLabel implements Label {
     Specimen,
     Taxon_Verbatim,
     Taxon,
-    Taxon_Unprocessed, Report, Taxon_Resolved
+    Taxon_Unprocessed,
+    Taxon_HasInteractionShortCut,
+    Report,
+    Taxon_Resolved
 }
 

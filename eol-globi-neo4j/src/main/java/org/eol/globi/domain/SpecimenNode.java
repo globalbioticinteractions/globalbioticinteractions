@@ -30,21 +30,11 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         boolean isFlipped = relType.sourceRole == InteractType.InteractionRole.OBJECT;
 
         final Relationship interactRel = source.createRelationshipToNoTx(target, relType);
-        enrichWithInteractProps(relType, interactRel, isFlipped);
+        NodeUtil.enrichWithInteractProps(relType, interactRel, isFlipped);
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
         Relationship inverseInteractRel = target.createRelationshipToNoTx(source, inverseRelType);
-        enrichWithInteractProps(inverseRelType, inverseInteractRel, !isFlipped);
-    }
-
-    public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {
-        if (interactRel != null && interactType != null) {
-            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.getLabel());
-            interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
-            if (inverted) {
-                interactRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
-            }
-        }
+        NodeUtil.enrichWithInteractProps(inverseRelType, inverseInteractRel, !isFlipped);
     }
 
     @Override

@@ -1,14 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NodeLabel;
 import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -19,15 +13,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BatchProcessorAbstract implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(BatchProcessorAbstract.class);
-    protected final TaxonFilter taxonFilter;
     protected final GraphServiceFactory factory;
-    protected final TaxonIndexFactory taxonIndexFactory;
     private Long batchSize = 1000L;
 
-    public BatchProcessorAbstract(TaxonFilter taxonFilter, GraphServiceFactory factory, TaxonIndexFactory taxonIndexFactor) {
-        this.taxonFilter = taxonFilter;
+    public BatchProcessorAbstract(GraphServiceFactory factory) {
         this.factory = factory;
-        this.taxonIndexFactory = taxonIndexFactor;
     }
 
     protected abstract String getTotalToBeProcessedQuery();

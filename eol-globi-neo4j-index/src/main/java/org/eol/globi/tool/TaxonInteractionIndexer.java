@@ -1,129 +1,73 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.util.NodeIdCollector;
-import org.eol.globi.util.NodeProcessorImpl;
 import org.eol.globi.util.NodeUtil;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.Fun;
 import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class TaxonInteractionIndexer implements IndexerNeo4j {
+public class TaxonInteractionIndexer extends BatchProcessorAbstract {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonInteractionIndexer.class);
-    private final GraphServiceFactory factory;
+    public static final String LABEL_SELECTOR = NodeLabel.Taxon.name() + " & !" + NodeLabel.Taxon_HasInteractionShortCut.name();
     private NodeIdCollector nodeIdCollector;
 
-    TaxonInteractionIndexer(GraphServiceFactory factory, NodeIdCollector nodeIdCollector) {
-        this.factory = factory;
-        this.nodeIdCollector = nodeIdCollector;
+    TaxonInteractionIndexer(GraphServiceFactory factory) {
+        super(factory);
     }
 
     @Override
-    public void index() {
-        LOG.info("indexing interactions started...");
-        indexInteractions(factory.getGraphService());
-        LOG.info("indexing interactions complete.");
+    protected String getTotalToBeProcessedQuery() {
+        return "MATCH (t:" + LABEL_SELECTOR + ") RETURN COUNT(t) AS totalToBeProcessed";
     }
 
-
-    private void indexInteractions(GraphDatabaseService graphService) {
-        DB db = DBMaker
-                .newMemoryDirectDB()
-                .compressionEnable()
-                .transactionDisable()
-                .make();
-        final Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions = db
-                .createTreeMap("ottIdMap")
-                .make();
-
-        NodeIdCollector nodeIdCollector = this.nodeIdCollector;
-        collectTaxonInteractions(taxonInteractions, graphService, nodeIdCollector);
-        createTaxonInteractions(taxonInteractions, graphService);
-
-        db.close();
+    @Override
+    protected String getNextBatchQuery(Long batchSize) {
+        return "MATCH (t:" + LABEL_SELECTOR + ") RETURN elementid(t) as taxonNodeId " +
+                "LIMIT " + batchSize;
     }
 
-    private void createTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions, GraphDatabaseService graphService) {
-        StopWatch watchForEntireRun = new StopWatch();
-        watchForEntireRun.start();
-
-        TransactionPerBatch transactionPerBatch = new TransactionPerBatch(graphService);
-        AtomicLong count = new AtomicLong(0);
-        for (Fun.Tuple3<Long, String, Long> uniqueTaxonInteraction : taxonInteractions.keySet()) {
-            if (count.getAndIncrement() % 1000 == 0) {
-                transactionPerBatch.onStart();
-            }
-            final Node sourceTaxon = transactionPerBatch.getTx().getNodeById(uniqueTaxonInteraction.a);
-            final Node targetTaxon = transactionPerBatch.getTx().getNodeById(uniqueTaxonInteraction.c);
-            if (sourceTaxon != null && targetTaxon != null) {
-                final InteractType relType = InteractType.valueOf(uniqueTaxonInteraction.b);
-                final Long interactionCount = taxonInteractions.get(uniqueTaxonInteraction);
-                createInteraction(sourceTaxon, targetTaxon, relType, false, interactionCount);
-                createInteraction(targetTaxon, sourceTaxon, InteractType.inverseOf(relType), true, interactionCount);
-            }
-        }
-
-        transactionPerBatch.onFinish();
-
-        watchForEntireRun.stop();
-        LOG.info("created [" + count + "] taxon interactions in " + getProgressMsg(count.get(), watchForEntireRun.getTime()));
-    }
-
-    private void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, Long interactionCount) {
-        final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, NodeUtil.asNeo4j(relType));
-        SpecimenNode.enrichWithInteractProps(relType, interactRel, inverted);
-        interactRel.setProperty("count", interactionCount);
-    }
-
-    private void collectTaxonInteractions(
-            Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions,
-            GraphDatabaseService graphService,
-            NodeIdCollector nodeIdCollector) {
-
-        new NodeProcessorImpl(
-                graphService,
-                1000L,
-                "name",
-                "*",
-                "taxons",
-                nodeIdCollector)
-                .process(taxonNode -> onTaxonNode(taxonInteractions, taxonNode)
-                , new TransactionPerBatch(graphService));
-
-    }
-
-    private void onTaxonNode(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions, Node sourceTaxon) {
-        final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-        for (Relationship classifiedA : classifiedAs) {
-            Node specimenNode = classifiedA.getStartNode();
-            final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
-            for (Relationship interaction : interactions) {
-                final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-                for (Relationship targetClassification : targetClassifications) {
-                    final Node targetTaxonNode = targetClassification.getEndNode();
-                    final Fun.Tuple3<Long, String, Long> interactionKey = new Fun.Tuple3<Long, String, Long>(sourceTaxon.getId(), interaction.getType().name(), targetTaxonNode.getId());
-                    final Long distinctInteractions = taxonInteractions.get(interactionKey);
-                    taxonInteractions.put(interactionKey, distinctInteractions == null ? 1L : (distinctInteractions + 1L));
+    @Override
+    protected boolean handleResultRow(Map<String, Object> next, Transaction tx) {
+        boolean handled = false;
+        Node sourceTaxon = tx.getNodeByElementId((String) next.get("taxonNodeId"));
+        if (sourceTaxon != null && !sourceTaxon.hasLabel((NodeLabel.Taxon_HasInteractionShortCut))) {
+            handled = true;
+            final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship classifiedA : classifiedAs) {
+                Node specimenNode = classifiedA.getStartNode();
+                final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
+                for (Relationship interaction : interactions) {
+                    final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+                    for (Relationship targetClassification : targetClassifications) {
+                        final Node targetTaxon = targetClassification.getEndNode();
+                        if (!targetTaxon.hasLabel(NodeLabel.Taxon_HasInteractionShortCut)) {
+                            final InteractType relType = InteractType.valueOf(interaction.getType().name());
+                            createInteraction(sourceTaxon, targetTaxon, relType, false, interaction.getType());
+                            createInteraction(targetTaxon, sourceTaxon, InteractType.inverseOf(relType), true, NodeUtil.asNeo4j(InteractType.inverseOf(relType)));
+                        }
+                    }
                 }
             }
         }
+        return handled;
     }
 
-    private static String getProgressMsg(long count, long duration) {
-        return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
+
+    private void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, RelationshipType relationshipType) {
+        final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, relationshipType);
+        NodeUtil.enrichWithInteractProps(relType, interactRel, inverted);
+        sourceTaxon.addLabel(NodeLabel.Taxon_HasInteractionShortCut);
     }
+
 
 }

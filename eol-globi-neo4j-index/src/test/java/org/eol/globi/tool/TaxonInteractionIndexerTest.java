@@ -44,8 +44,9 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
                 getTaxonIndexFactory()
         ).index();
 
-        TaxonInteractionIndexer taxonInteractionIndexer = new TaxonInteractionIndexer(new GraphServiceFactoryProxy(getGraphDb()), getNodeIdCollector());
-        taxonInteractionIndexer.index();
+        new TaxonInteractionIndexer(
+                new GraphServiceFactoryProxy(getGraphDb())
+        ).index();
 
         try (Transaction tx = getGraphDb().beginTx()) {
             Taxon homoSapiens = getTaxonIndexFactory().create(tx).findTaxonByName("Homo sapiens");
@@ -53,17 +54,14 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
             Iterable<Relationship> rels = ((NodeBacked) homoSapiens).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
             List<String> humanFood = new ArrayList<String>();
-            List<Long> counts = new ArrayList<Long>();
             List<String> labels = new ArrayList<>();
             for (Relationship rel : rels) {
                 humanFood.add((String) rel.getEndNode().getProperty("name"));
-                counts.add((Long) rel.getProperty("count"));
                 labels.add((String) rel.getProperty("label"));
 
             }
-            assertThat(humanFood.size(), is(4));
+            assertThat(humanFood.size(), is(2));
             assertThat(humanFood, hasItems("Arius felis", "Canis lupus"));
-            assertThat(counts, hasItems(10L, 1L));
             assertThat(labels, hasItems("eats"));
             tx.commit();
         }

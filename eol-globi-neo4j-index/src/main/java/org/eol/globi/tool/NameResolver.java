@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class NameResolver extends BatchProcessorAbstract {
     private static final Logger LOG = LoggerFactory.getLogger(NameResolver.class);
+    private final TaxonFilter taxonFilter;
+    private final TaxonIndexFactory taxonIndexFactory;
 
     public NameResolver(GraphServiceFactory factory, TaxonIndexFactory indexFactory) {
         this(factory, new KnownBadNameFilter(), indexFactory);
@@ -23,7 +25,9 @@ public class NameResolver extends BatchProcessorAbstract {
     public NameResolver(GraphServiceFactory factory,
                         TaxonFilter taxonFilter,
                         TaxonIndexFactory taxonIndexFactor) {
-        super(taxonFilter, factory, taxonIndexFactor);
+        super(factory);
+        this.taxonIndexFactory = taxonIndexFactor;
+        this.taxonFilter = taxonFilter;
     }
 
     @Override
