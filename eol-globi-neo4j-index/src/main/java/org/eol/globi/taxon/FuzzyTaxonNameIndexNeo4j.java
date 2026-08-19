@@ -21,7 +21,7 @@ public class FuzzyTaxonNameIndexNeo4j implements TaxonFuzzySearchIndex {
     public FuzzyTaxonNameIndexNeo4j(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
         try (Transaction tx = graphDbService.beginTx()) {
-            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon_Verbatim);
+            Iterable<IndexDefinition> indexes = tx.schema().getIndexes(NodeLabel.Taxon);
             boolean needsIndex = true;
             for (IndexDefinition index : indexes) {
                 if (index.isNodeIndex() && StringUtils.equals(index.getName(), TAXON_NAME_SUGGESTIONS)) {
@@ -31,7 +31,7 @@ public class FuzzyTaxonNameIndexNeo4j implements TaxonFuzzySearchIndex {
             }
             if (needsIndex) {
                 tx.schema()
-                        .indexFor(NodeLabel.Taxon_Verbatim)
+                        .indexFor(NodeLabel.Taxon)
                         .withIndexType(IndexType.FULLTEXT)
                         .withName(TAXON_NAME_SUGGESTIONS)
                         .on(PropertyAndValueDictionary.NAME)
