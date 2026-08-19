@@ -379,7 +379,7 @@ public class ExternalIdUtilTest {
     public void paleobioDatabaseExpand() {
         String externalId = "PBDB:83088";
         assertThat(ExternalIdUtil.taxonomyProviderFor(externalId), is(TaxonomyProvider.PBDB));
-        assertThat(ExternalIdUtil.urlForExternalId(externalId), is("https://paleobiodb.org/classic/basicTaxonInfo?taxon_no=txn:83088"));
+        assertThat(ExternalIdUtil.urlForExternalId(externalId), is("https://paleobiodb.org/classic/basicTaxonInfo?rdr=1&taxon_no=83088"));
     }
 
     @Test
