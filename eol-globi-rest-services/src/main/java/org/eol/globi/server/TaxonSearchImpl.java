@@ -53,7 +53,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         JsonNode rowsAndMetas = RequestHelper.getRowsAndMetas(response);
         Map<String, String> props = NO_PROPERTIES;
 
-        if (rowsAndMetas != null && rowsAndMetas.size() > 0) {
+        if (rowsAndMetas != null && !rowsAndMetas.isEmpty()) {
             props = new HashMap<>();
             JsonNode rowAndMeta = rowsAndMetas.get(0);
             JsonNode row = RequestHelper.getRow(rowAndMeta);
@@ -84,15 +84,19 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery(queryPrefix() +
-                returnClause(), paramForName(taxonName));
+        CypherQuery cypherQuery = findTaxonQuery(taxonName);
         return CypherUtil.executeRemote(cypherQuery);
+    }
+
+    public CypherQuery findTaxonQuery(String taxonName) {
+        return new CypherQuery(queryPrefix() +
+                returnClause(), paramForName(taxonName));
     }
 
     public HashMap<String, String> paramForName(@PathVariable("taxonName") final String taxonName) {
         return new HashMap<String, String>() {
             {
-                put("taxonPathQuery", "path:\"" + CypherQueryBuilder.escapeWhitespace(taxonName) + "\"");
+                put("taxonPathQuery", taxonName);
                 put("taxonName", taxonName);
             }
         };
@@ -233,10 +237,12 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     private String queryPrefix() {
-        return "START taxon = node:taxonPaths({taxonPathQuery}) " +
-                "MATCH taxon-[:SAME_AS*0..1]->otherTaxon " +
-                "WHERE ((exists(taxon.name) AND taxon.name = {taxonName}) OR (exists(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})) " +
-                "AND (((exists(otherTaxon.name) AND otherTaxon.name = {taxonName}) OR (exists(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})))";
+        return "MATCH (taxon:Taxon)-[:SAME_AS*0..1]->(otherTaxon:Taxon) " +
+                "WHERE (taxon.externalIds IS NOT NULL AND taxon.externalIds CONTAINS '| ' + $taxonPathQuery + ' |') " +
+                "AND ((taxon.name IS NOT NULL AND taxon.name = $taxonName) " +
+                "OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName)) " +
+                "AND (((otherTaxon.name IS NOT NULL AND otherTaxon.name = $taxonName) " +
+                "OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName))) ";
     }
 
     private String returnClause() {

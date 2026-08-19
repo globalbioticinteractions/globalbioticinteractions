@@ -11,6 +11,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TaxonSearchImplTest extends Neo4jTestBase {
 
+    @Test
+    public void findTaxon() throws IOException {
+        CypherQuery query = new TaxonSearchImpl().findTaxonQuery("Apidae");
+        validate(query);
+        assertThat(query.getVersionedQuery(), Is.is(
+                "CYPHER 5 MATCH (taxon:Taxon)-[:SAME_AS*0..1]->(otherTaxon:Taxon) " +
+                        "WHERE (taxon.externalIds IS NOT NULL AND taxon.externalIds CONTAINS '| ' + $taxonPathQuery + ' |') " +
+                        "AND ((taxon.name IS NOT NULL AND taxon.name = $taxonName) OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName)) " +
+                        "AND (((otherTaxon.name IS NOT NULL AND otherTaxon.name = $taxonName) OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName))) " +
+                        "RETURN taxon.name as `name`, taxon.commonNames as `commonNames`, taxon.path as `path`, taxon.externalId as `externalId`, taxon.externalUrl as `externalUrl`, taxon.thumbnailUrl as `thumbnailUrl` " +
+                        "LIMIT 1"));
+        assertThat(query.getParams().toString(), Is.is("{taxonPathQuery=Apidae, taxonName=Apidae}"));
+    }
 
     @Test
     public void findCloseMatchesFamily() throws IOException {
