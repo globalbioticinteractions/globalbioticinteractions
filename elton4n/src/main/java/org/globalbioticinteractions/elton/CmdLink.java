@@ -3,6 +3,7 @@ package org.globalbioticinteractions.elton;
 import org.eol.globi.tool.CmdFullTextTaxonIndex;
 import org.eol.globi.tool.CmdInterpretTaxa;
 import org.eol.globi.tool.CmdNeo4J;
+import org.eol.globi.tool.CmdTaxonToTaxonInteractionIndex;
 import picocli.CommandLine;
 
 import java.util.stream.Stream;
