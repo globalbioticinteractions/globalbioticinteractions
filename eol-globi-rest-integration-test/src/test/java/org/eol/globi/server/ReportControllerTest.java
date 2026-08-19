@@ -8,20 +8,15 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ReportControllerTest {
+public class ReportControllerTest extends Neo4jTestBase {
 
-    public static final String CYPHER_VERSION = "CYPHER 2.3 ";
-
-//    @Rule
-//    public Neo4jRule neo4j = getNeo4jRule();
-
-
+    public static final String CYPHER_VERSION = "CYPHER 5 ";
 
     @Test
     public void distinctSourceNoPrefix() throws IOException {
         CypherQuery source = new ReportController().sources("someSourceId", null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START report = node:reports(sourceId={sourceId}) " +
+                "MATCH (report:Report {sourceId: $sourceId}) " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
@@ -42,7 +37,7 @@ public class ReportControllerTest {
     public void distinctSourcePrefix() throws IOException {
         CypherQuery source = new ReportController().sources("bla:someSourceId", null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START report = node:reports(sourceId={sourceId}) " +
+                "MATCH (report:Report {sourceId: $sourceId}) " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
@@ -63,9 +58,8 @@ public class ReportControllerTest {
     public void distinctSourceOrgName() throws IOException {
         CypherQuery source = new ReportController().sourceOrgName("some", "name", null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START " +
-                "dataset = node:datasets(namespace={namespace}), " +
-                "report = node:reports('sourceId:*') " +
+                "MATCH (dataset:Dataset {namespace: $namespace}), " +
+                "(report:Report) " +
                 "WHERE ('globi:' + dataset.namespace) = report.sourceId " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
@@ -88,18 +82,13 @@ public class ReportControllerTest {
 
     }
 
-    public void validate(CypherQuery source) {
-//        CypherTestUtil.validate(source, neo4j.getGraphDatabaseService());
-    }
-
     @Test
     public void collections() throws IOException {
         CypherQuery source = new ReportController().collections();
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START " +
-                "report = node:reports('collection:*') " +
+                "MATCH (report:Report) " +
                 "WHERE " +
-                "not(exists(report.title)) " +
+                "report.title IS NULL " +
                 "RETURN " +
                 "null as study_citation, " +
                 "null as study_url, " +
@@ -119,7 +108,7 @@ public class ReportControllerTest {
     public void distinctSourceOrg() throws IOException {
         CypherQuery source = new ReportController().sourceOrg("some", null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START dataset = node:datasets(namespace={namespace}), report = node:reports('sourceId:*') " +
+                "MATCH (dataset:Dataset {namespace: $namespace}), (report:Report) " +
                 "WHERE ('globi:' + dataset.namespace) = report.sourceId " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
@@ -146,7 +135,7 @@ public class ReportControllerTest {
     public void distinctSourceRoot() throws IOException {
         CypherQuery source = new ReportController().sourceRoot(null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START dataset = node:datasets('namespace:*'), report = node:reports('sourceId:*') " +
+                "MATCH (dataset:Dataset), (report:Report) " +
                 "WHERE ('globi:' + dataset.namespace) = report.sourceId " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
@@ -173,7 +162,7 @@ public class ReportControllerTest {
     public void sources() throws IOException {
         CypherQuery source = new ReportController().sources(null, null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START report = node:reports('sourceId:*') " +
+                "MATCH (report:Report) " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
@@ -194,8 +183,8 @@ public class ReportControllerTest {
     public void studiesForSource() throws IOException {
         CypherQuery source = new ReportController().studies("a source", null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START report = node:reports(source={source}) " +
-                "WHERE exists(report.title) " +
+                "MATCH (report:Report {source: $source}) " +
+                "WHERE report.title IS NOT NULL " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
@@ -215,8 +204,8 @@ public class ReportControllerTest {
     public void studies() throws IOException {
         CypherQuery source = new ReportController().studies(null, null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
-                "START report = node:reports('source:*') " +
-                "WHERE exists(report.title) " +
+                "MATCH (report:Report) " +
+                "WHERE report.title IS NOT NULL " +
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
