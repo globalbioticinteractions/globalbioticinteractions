@@ -25,7 +25,9 @@ public class CmdLink extends CmdNeo4J {
                             new CmdFullTextTaxonIndex(),
                             new CmdCreateTaxonIndexes(),
                             new CmdCreateLocationIndexes(),
-                            new CmdInterpretTaxa()
+                            new CmdInterpretTaxa(),
+                            new CmdTaxonToTaxonInteractionIndex()
+
                     )
                     .forEach(this::configureAndRun);
         } finally {
