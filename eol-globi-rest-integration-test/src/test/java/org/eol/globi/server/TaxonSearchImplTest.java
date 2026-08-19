@@ -16,7 +16,7 @@ public class TaxonSearchImplTest extends Neo4jTestBase {
         CypherQuery query = new TaxonSearchImpl().findTaxonQuery("Apidae");
         validate(query);
         assertThat(query.getVersionedQuery(), Is.is(
-                "CYPHER 5 MATCH (taxon:Taxon)-[:SAME_AS*0..1]->(otherTaxon:Taxon) " +
+                "CYPHER 5 MATCH (taxon:Taxon)-[:SAME_AS*0..1]-(otherTaxon:Taxon) " +
                         "WHERE (taxon.externalIds IS NOT NULL AND taxon.externalIds CONTAINS '| ' + $taxonPathQuery + ' |') " +
                         "AND ((taxon.name IS NOT NULL AND taxon.name = $taxonName) OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName)) " +
                         "AND (((otherTaxon.name IS NOT NULL AND otherTaxon.name = $taxonName) OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName))) " +
@@ -30,7 +30,7 @@ public class TaxonSearchImplTest extends Neo4jTestBase {
         CypherQuery query = new TaxonSearchImpl().findTaxonWithImageQuery("Apidae");
         validate(query);
         assertThat(query.getVersionedQuery(), Is.is(
-                "CYPHER 5 MATCH (taxon:Taxon)-[:SAME_AS*0..1]->(otherTaxon:Taxon) " +
+                "CYPHER 5 MATCH (taxon:Taxon)-[:SAME_AS*0..1]-(otherTaxon:Taxon) " +
                         "WHERE (taxon.externalIds IS NOT NULL AND taxon.externalIds CONTAINS '| ' + $taxonPathQuery + ' |') " +
                         "AND ((taxon.name IS NOT NULL AND taxon.name = $taxonName) OR (otherTaxon.externalId IS NOT NULL " +
                         "AND otherTaxon.externalId = $taxonName)) " +

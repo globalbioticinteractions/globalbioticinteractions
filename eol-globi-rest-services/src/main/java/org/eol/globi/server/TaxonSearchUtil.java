@@ -75,7 +75,7 @@ public class TaxonSearchUtil {
         }
 
 
-        query.append(" MATCH (someTaxon:Taxon" + " { " + (StringUtils.contains(taxonPath, ":") ? "externalId" : "name") + ": $pathQuery }" + ")-[:SAME_AS*0..1]->(taxon:Taxon) WHERE taxon.externalId IS NOT NULL WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl ");
+        query.append(" MATCH (someTaxon:Taxon" + " { " + (StringUtils.contains(taxonPath, ":") ? "externalId" : "name") + ": $pathQuery }" + ")-[:SAME_AS*0..1]-(taxon:Taxon) WHERE taxon.externalId IS NOT NULL WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl ");
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(
                 query,
                 CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()),
