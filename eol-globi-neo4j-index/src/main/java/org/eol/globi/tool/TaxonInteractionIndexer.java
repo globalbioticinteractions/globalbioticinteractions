@@ -1,73 +1,39 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.NodeLabel;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.util.NodeIdCollector;
-import org.eol.globi.util.NodeUtil;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
-public class TaxonInteractionIndexer extends BatchProcessorAbstract {
+public class TaxonInteractionIndexer implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonInteractionIndexer.class);
-    public static final String LABEL_SELECTOR = NodeLabel.Taxon.name() + " & !" + NodeLabel.Taxon_HasInteractionShortCut.name();
-    private NodeIdCollector nodeIdCollector;
+    private final GraphServiceFactory factory;
 
     TaxonInteractionIndexer(GraphServiceFactory factory) {
-        super(factory);
+        this.factory = factory;
     }
 
-    @Override
-    protected String getTotalToBeProcessedQuery() {
-        return "MATCH (t:" + LABEL_SELECTOR + ") RETURN COUNT(t) AS totalToBeProcessed";
-    }
 
     @Override
-    protected String getNextBatchQuery(Long batchSize) {
-        return "MATCH (t:" + LABEL_SELECTOR + ") RETURN elementid(t) as taxonNodeId " +
-                "LIMIT " + batchSize;
-    }
-
-    @Override
-    protected boolean handleResultRow(Map<String, Object> next, Transaction tx) {
-        boolean handled = false;
-        Node sourceTaxon = tx.getNodeByElementId((String) next.get("taxonNodeId"));
-        if (sourceTaxon != null && !sourceTaxon.hasLabel((NodeLabel.Taxon_HasInteractionShortCut))) {
-            handled = true;
-            final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-            for (Relationship classifiedA : classifiedAs) {
-                Node specimenNode = classifiedA.getStartNode();
-                final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
-                for (Relationship interaction : interactions) {
-                    final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-                    for (Relationship targetClassification : targetClassifications) {
-                        final Node targetTaxon = targetClassification.getEndNode();
-                        if (!targetTaxon.hasLabel(NodeLabel.Taxon_HasInteractionShortCut)) {
-                            final InteractType relType = InteractType.valueOf(interaction.getType().name());
-                            createInteraction(sourceTaxon, targetTaxon, relType, false, interaction.getType());
-                            createInteraction(targetTaxon, sourceTaxon, InteractType.inverseOf(relType), true, NodeUtil.asNeo4j(InteractType.inverseOf(relType)));
-                        }
-                    }
-                }
-            }
+    public void index() throws StudyImporterException {
+        InteractType[] values = InteractType.values();
+        for (InteractType value : values) {
+            makeInteractionShortCuts(value, "WHERE r.inverted IS NOT NULL ", ", inverted: r.inverted");
+            makeInteractionShortCuts(value, "WHERE r.inverted IS NULL ", "");
         }
-        return handled;
     }
 
-
-    private void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, RelationshipType relationshipType) {
-        final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, relationshipType);
-        NodeUtil.enrichWithInteractProps(relType, interactRel, inverted);
-        sourceTaxon.addLabel(NodeLabel.Taxon_HasInteractionShortCut);
+    private void makeInteractionShortCuts(InteractType value, String invertedClause, String invertedPropertySet) {
+        factory
+                .getGraphService()
+                .executeTransactionally(
+                        "MATCH(source:Taxon)<-[:CLASSIFIED_AS]-(:Specimen)-[r:" + value.name() + "]->(:Specimen)-[:CLASSIFIED_AS]->(target:Taxon) " +
+                                invertedClause +
+                                "WITH source as source, target as target, r as r " +
+                                "CALL(source, target, r) { " +
+                                "  MERGE (source)-[ter:" + value.name() + " {iri: r.iri, label: r.label " + invertedPropertySet +"}] -> (target) return count(ter) as x " +
+                                "} " +
+                                "IN TRANSACTIONS OF 10000 ROWS RETURN count(x)");
     }
-
-
 }

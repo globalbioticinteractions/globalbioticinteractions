@@ -44,6 +44,11 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
                 getTaxonIndexFactory()
         ).index();
 
+        nodeFactory.startNextBatchUpdate();
+        try (Transaction tx1 = getGraphDb().beginTx()) {
+            tx1.commit();
+        }
+
         new TaxonInteractionIndexer(
                 new GraphServiceFactoryProxy(getGraphDb())
         ).index();
@@ -52,7 +57,9 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
             Taxon homoSapiens = getTaxonIndexFactory().create(tx).findTaxonByName("Homo sapiens");
             assertNotNull(homoSapiens);
 
-            Iterable<Relationship> rels = ((NodeBacked) homoSapiens).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
+            Iterable<Relationship> rels = ((NodeBacked) homoSapiens).getUnderlyingNode().getRelationships(
+                    Direction.OUTGOING,
+                    NodeUtil.asNeo4j(InteractType.ATE));
             List<String> humanFood = new ArrayList<String>();
             List<String> labels = new ArrayList<>();
             for (Relationship rel : rels) {
@@ -63,6 +70,27 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
             assertThat(humanFood.size(), is(2));
             assertThat(humanFood, hasItems("Arius felis", "Canis lupus"));
             assertThat(labels, hasItems("eats"));
+            tx.commit();
+        }
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Taxon homoSapiens = getTaxonIndexFactory().create(tx).findTaxonByName("Homo sapiens");
+            assertNotNull(homoSapiens);
+
+            Iterable<Relationship> rels = ((NodeBacked) homoSapiens).getUnderlyingNode().getRelationships(
+                    Direction.INCOMING,
+                    NodeUtil.asNeo4j(InteractType.EATEN_BY));
+            List<String> humanFood = new ArrayList<String>();
+            List<String> labels = new ArrayList<>();
+            for (Relationship rel : rels) {
+                humanFood.add((String) rel.getStartNode().getProperty("name"));
+                labels.add((String) rel.getProperty("label"));
+                assertThat(rel.getProperty("inverted"), is("true"));
+
+            }
+            assertThat(humanFood.size(), is(2));
+            assertThat(humanFood, hasItems("Arius felis", "Canis lupus"));
+            assertThat(labels, hasItems("eatenBy"));
             tx.commit();
         }
     }
@@ -88,6 +116,8 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 //        assertNull(taxonIndex.findTaxonByName(PropertyAndValueDictionary.NO_NAME));
             tx.commit();
         }
+
+        getNodeFactory().startNextBatchUpdate();
 
     }
 

@@ -23,9 +23,13 @@ public class CmdTaxonToTaxonInteractionIndex extends CmdNeo4J {
 
     @Override
     public void run() {
-        new TaxonInteractionIndexer(
-                getGraphServiceFactory()
-        ).index();
+        try {
+            new TaxonInteractionIndexer(
+                    getGraphServiceFactory()
+            ).index();
+        } catch (StudyImporterException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
