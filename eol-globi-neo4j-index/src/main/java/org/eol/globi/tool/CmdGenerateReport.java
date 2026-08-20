@@ -1,36 +1,9 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.eol.globi.data.NodeLabel;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.StudyConstant;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.CacheService;
-import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.NodeIdCollectorImpl;
-import org.eol.globi.util.NodeTypeDirection;
-import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.RelationshipListener;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.mapdb.DB;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 @CommandLine.Command(
         name = "report",
@@ -41,8 +14,6 @@ public class CmdGenerateReport extends CmdNeo4J {
 
     private static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
-    private CacheService cacheService = null;
-
     public void run() {
         run(LOG);
     }
@@ -51,25 +22,56 @@ public class CmdGenerateReport extends CmdNeo4J {
 
         log.info("report for collection generating ...");
 
-        String collectionReportMatcher = "  (r:Report { collection: 'Global Biotic Interactions' }) ";
+        String collectionReportMatcher = "  (r:Report { collection: '" + GLOBI_COLLECTION_NAME + "' }) ";
+        String interactionMetricsQuery = interactionMetricsQuery(collectionReportMatcher);
+        log.info("running [{}]", interactionMetricsQuery);
         getGraphDb().executeTransactionally(
-                metricsQuery(collectionReportMatcher)
+                interactionMetricsQuery
         );
 
+        String taxonMetricsQuery = taxonMetricsQuery(
+                collectionReportMatcher,
+                "NOT NULL",
+                "nTaxa"
+        );
+        log.info("running [{}]", taxonMetricsQuery);
         getGraphDb().executeTransactionally(
-                taxonMetricsQuery(collectionReportMatcher)
+                taxonMetricsQuery
+        );
+
+        String taxonMetricsQuery2 = taxonMetricsQuery(collectionReportMatcher,
+                "NULL",
+                "nTaxaNoMatch");
+        log.info("running [{}]", taxonMetricsQuery);
+        getGraphDb().executeTransactionally(
+                taxonMetricsQuery2
         );
 
         log.info("report for collection done.");
 
         String datasetReportMatcher = "  (r:Report { sourceId: 'globi:' + dataset.namespace }) ";
         log.info("report for datasets generating ...");
+
+        String datasetInteractionsQuery = wrapWithDatasetContext(interactionMetricsQuery(datasetReportMatcher));
+        log.info("running [{}]", datasetInteractionsQuery);
         getGraphDb().executeTransactionally(
-                wrapWithDatasetContext(metricsQuery(datasetReportMatcher))
+                datasetInteractionsQuery
         );
 
+        String datasetTaxonResolvedQuery = wrapWithDatasetContext(taxonMetricsQuery(datasetReportMatcher,
+                "NOT NULL",
+                "nTaxa"));
+        log.info("running [{}]", datasetTaxonResolvedQuery);
         getGraphDb().executeTransactionally(
-                wrapWithDatasetContext(taxonMetricsQuery(datasetReportMatcher))
+                datasetTaxonResolvedQuery
+        );
+
+        String datasetTaxonUnresolvedQuery = wrapWithDatasetContext(taxonMetricsQuery(datasetReportMatcher,
+                "NULL",
+                "nTaxaNoMatch"));
+        log.info("running [{}]", datasetTaxonUnresolvedQuery);
+        getGraphDb().executeTransactionally(
+                datasetTaxonUnresolvedQuery
         );
 
         log.info("report for datasets done.");
@@ -82,19 +84,18 @@ public class CmdGenerateReport extends CmdNeo4J {
     }
 
 
-    private static String taxonMetricsQuery(String collectionReportMatcher) {
+    private static String taxonMetricsQuery(String collectionReportMatcher, String pathNullOrNotNull, String taxonMetrixName) {
         return "MATCH " +
-                taxonMatchers() +
+                taxonMatchers(pathNullOrNotNull) +
                 "WITH " +
-                "  COUNT(DISTINCT(resolvedTaxon)) as nTaxa, " +
-                "  COUNT(DISTINCT(unresolvedTaxon)) as nTaxaNoMatch " +
+                "  COUNT(DISTINCT(taxon)) as " + taxonMetrixName + " " +
                 "MERGE " +
                 collectionReportMatcher +
-                setTaxonMetrics() +
+                setTaxonMetrics(taxonMetrixName) +
                 "RETURN r ";
     }
 
-    private static String metricsQuery(String collectionReportMatcher) {
+    private static String interactionMetricsQuery(String collectionReportMatcher) {
         return "MATCH " +
                 interactionMatchers() + " " +
                 "WITH " +
@@ -107,10 +108,9 @@ public class CmdGenerateReport extends CmdNeo4J {
                 "RETURN r ";
     }
 
-    private static String taxonMatchers() {
-        return "  (resolvedTaxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen), " +
-                " (unresolvedTaxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen) " +
-                "WHERE resolvedTaxon.path IS NOT NULL AND unresolvedTaxon.path IS NULL ";
+    private static String taxonMatchers(String PathNullOrNotNull) {
+        return "  (taxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen)<-[:COLLECTED]-(:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
+                "WHERE taxon.path IS " + PathNullOrNotNull + " ";
     }
 
     private static String interactionMatchers() {
@@ -123,13 +123,11 @@ public class CmdGenerateReport extends CmdNeo4J {
                 "ON MATCH " + setReportMetrics();
     }
 
-    private static String setTaxonMetrics() {
+    private static String setTaxonMetrics(String taxonMetricName) {
         return "ON CREATE " +
-                "  SET r.nTaxa = nTaxa, " +
-                "  r.nTaxaNoMatch = nTaxaNoMatch " +
+                "  SET  r." + taxonMetricName + " = " + taxonMetricName + " " +
                 "ON MATCH " +
-                "  SET r.nTaxa = nTaxa, " +
-                "  r.nTaxaNoMatch = nTaxaNoMatch ";
+                "  SET  r." + taxonMetricName + " = " + taxonMetricName + " ";
     }
 
     private static String setReportMetrics() {
