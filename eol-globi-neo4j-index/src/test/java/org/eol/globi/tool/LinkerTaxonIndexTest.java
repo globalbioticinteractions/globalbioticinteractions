@@ -94,9 +94,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
             assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_IDS));
 
             assertThat(taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                    , is("Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia"));
+                    , is("| Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia |"));
             assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
-                    , is("Bar:123 | FOO:444"));
+                    , is("| Bar:123 | FOO:444 |"));
         }
 
         try (Transaction tx1 = getGraphDb().beginTx()) {
