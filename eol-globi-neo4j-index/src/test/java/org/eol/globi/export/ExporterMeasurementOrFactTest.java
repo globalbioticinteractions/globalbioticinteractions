@@ -30,12 +30,10 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
                         "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
                         "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
 
-
-        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
-
         StringWriter row = new StringWriter();
 
-        new ExporterMeasurementOrFact(getGraphDb()).exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb())
+                .exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
@@ -47,14 +45,16 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         nodeFactory.createSpecimen(myStudy, new TaxonImpl("Some namus", PropertyAndValueDictionary.NO_MATCH));
 
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb())
+                .exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
     protected void assertResult(String targetTaxonName, String sourceTaxonName, String expected) throws NodeFactoryException, ParseException, IOException {
         createTestData(null, targetTaxonName, sourceTaxonName);
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb())
+                .exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
 
