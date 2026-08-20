@@ -201,6 +201,10 @@ public class GraphDBTestCase {
                 new GraphServiceFactoryProxy(getGraphDb()),
                 getTaxonIndexFactory()
         ).index();
+        getNodeFactory().startNextBatchUpdate();
+        try (Transaction tx1 = getGraphDb().beginTx()) {
+            tx1.commit();
+        }
     }
 
     protected TermLookupService getTermLookupService() {

@@ -3,11 +3,6 @@ package org.eol.globi.tool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.data.NodeLabel;
-import org.eol.globi.util.NodeIdCollectorImpl;
-import org.eol.globi.util.RelationshipListener;
-import org.neo4j.graphdb.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -16,14 +11,19 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.CacheService;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.mapdb.DB;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -49,273 +49,98 @@ public class CmdGenerateReport extends CmdNeo4J {
 
     public void run(Logger log) {
 
-        TransactionPerBatch transactionPerBatch = new TransactionPerBatch(getGraphDb());
-        transactionPerBatch.onStart();
         log.info("report for collection generating ...");
-        generateReportForCollection();
+
+        String collectionReportMatcher = "  (r:Report { collection: 'Global Biotic Interactions' }) ";
+        getGraphDb().executeTransactionally(
+                metricsQuery(collectionReportMatcher)
+        );
+
+        getGraphDb().executeTransactionally(
+                taxonMetricsQuery(collectionReportMatcher)
+        );
+
         log.info("report for collection done.");
 
-        transactionPerBatch.onStart();
-        log.info("report for sources generating ...");
-        generateReportForSourceIndividuals();
-        log.info("report for sources done.");
+        String datasetReportMatcher = "  (r:Report { sourceId: 'globi:' + dataset.namespace }) ";
+        log.info("report for datasets generating ...");
+        getGraphDb().executeTransactionally(
+                wrapWithDatasetContext(metricsQuery(datasetReportMatcher))
+        );
 
-        transactionPerBatch.onStart();
-        log.info("report for source organizations generating ...");
-        generateReportForSourceOrganizations();
-        log.info("report for source organizations done.");
+        getGraphDb().executeTransactionally(
+                wrapWithDatasetContext(taxonMetricsQuery(datasetReportMatcher))
+        );
 
-        transactionPerBatch.onFinish();
+        log.info("report for datasets done.");
+    }
+
+    private static String wrapWithDatasetContext(String subquery) {
+        return "MATCH (dataset:Dataset) WITH dataset CALL(dataset) { " +
+                subquery +
+                "} return r";
+    }
+
+
+    private static String taxonMetricsQuery(String collectionReportMatcher) {
+        return "MATCH " +
+                taxonMatchers() +
+                "WITH " +
+                "  COUNT(DISTINCT(resolvedTaxon)) as nTaxa, " +
+                "  COUNT(DISTINCT(unresolvedTaxon)) as nTaxaNoMatch " +
+                "MERGE " +
+                collectionReportMatcher +
+                setTaxonMetrics() +
+                "RETURN r ";
+    }
+
+    private static String metricsQuery(String collectionReportMatcher) {
+        return "MATCH " +
+                interactionMatchers() + " " +
+                "WITH " +
+                "  COUNT(DISTINCT(r)) as nInteractions, " +
+                "  COUNT(DISTINCT(study)) as nStudies, " +
+                "  COUNT(DISTINCT(dataset)) as nDatasets " +
+                "MERGE " +
+                collectionReportMatcher +
+                setReportMetrics2() +
+                "RETURN r ";
+    }
+
+    private static String taxonMatchers() {
+        return "  (resolvedTaxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen), " +
+                " (unresolvedTaxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen) " +
+                "WHERE resolvedTaxon.path IS NOT NULL AND unresolvedTaxon.path IS NULL ";
+    }
+
+    private static String interactionMatchers() {
+        return "  (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[r]->(:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), " +
+                "  (dataset:Dataset)<-[:IN_DATASET]-(study:Reference)-[:COLLECTED]->(specimen:Specimen) WHERE r.inverted IS NOT NULL";
+    }
+
+    private static String setReportMetrics2() {
+        return "ON CREATE " + setReportMetrics() +
+                "ON MATCH " + setReportMetrics();
+    }
+
+    private static String setTaxonMetrics() {
+        return "ON CREATE " +
+                "  SET r.nTaxa = nTaxa, " +
+                "  r.nTaxaNoMatch = nTaxaNoMatch " +
+                "ON MATCH " +
+                "  SET r.nTaxa = nTaxa, " +
+                "  r.nTaxaNoMatch = nTaxaNoMatch ";
+    }
+
+    private static String setReportMetrics() {
+        return "  SET r.nInteractions = nInteractions" +
+                ", r.nStudies = nStudies " +
+                ", r.nDatasets = nDatasets " +
+                ", r.nSources = nDatasets ";
     }
 
     private GraphDatabaseService getGraphDb() {
         return getGraphServiceFactory().getGraphService();
-    }
-
-    void generateReportForSourceIndividuals() {
-        generateReportForStudySources(new NamespaceHandler() {
-            @Override
-            public String parse(String namespace) {
-                return namespace;
-            }
-
-            @Override
-            public String datasetQueryFor(String namespace) {
-                return Pattern.quote(namespace);
-            }
-
-            @Override
-            public String getNamespaceKey() {
-                return StudyConstant.SOURCE_ID;
-            }
-        });
-    }
-
-    void generateReportForSourceOrganizations() {
-        generateReportForStudySources(new NamespaceHandler() {
-            @Override
-            public String parse(String namespace) {
-                return QueryParser.escape(StringUtils.split(namespace, "/")[0]);
-            }
-
-            @Override
-            public String datasetQueryFor(String namespace) {
-                return namespace + "/.*";
-            }
-
-            @Override
-            public String getNamespaceKey() {
-                return StudyConstant.SOURCE_ID;
-            }
-        });
-    }
-
-    interface NamespaceHandler {
-        String parse(String namespace);
-
-        String datasetQueryFor(String namespace);
-
-        String getNamespaceKey();
-    }
-
-
-    private void generateReportForStudySources(NamespaceHandler namespaceHandler) {
-        try {
-            DB reportCache = getCacheService().initDb("sourceReports" + UUID.randomUUID());
-            reportForHandler(namespaceHandler, reportCache);
-            reportCache.close();
-        } catch (IOException e) {
-            LOG.warn("failed to create report", e);
-        }
-
-    }
-
-    private void reportForHandler(NamespaceHandler namespaceHandler, DB reportCache) {
-        final Set<String> namespaceGroups = reportCache
-                .createHashSet("namespaces")
-                .make();
-
-        // collect distinct namespaces
-        NodeUtil.findDatasetsByQuery(getGraphDb(), dataset -> {
-            String namespace = dataset.getNamespace();
-            if (StringUtils.isNotBlank(namespace)) {
-                namespaceGroups.add(namespaceHandler.parse(namespace));
-            }
-        }, "namespace", ".*", new NodeIdCollectorImpl());
-
-        final Set<Long> distinctTaxonIds = reportCache
-                .createHashSet("distinctTaxonIds")
-                .make();
-
-        final Set<Long> distinctTaxonIdsNoMatch = reportCache
-                .createHashSet("distinctTaxonIdsNoMatch")
-                .make();
-
-        final Set<String> distinctDatasets = reportCache
-                .createHashSet("distinctDatasets")
-                .make();
-
-        final Set<String> distinctSources = reportCache
-                .createHashSet("distinctSources")
-                .make();
-
-        for (final String namespaceGroup : namespaceGroups) {
-            final Counter counter = new Counter();
-            final Counter studyCounter = new Counter();
-            distinctDatasets.clear();
-            distinctSources.clear();
-            distinctTaxonIds.clear();
-            distinctTaxonIdsNoMatch.clear();
-
-            NodeUtil.findDatasetsByQuery(getGraphDb(), dataset -> {
-                        Iterable<Relationship> studiesInDataset = dataset.getUnderlyingNode().getRelationships(
-                                Direction.INCOMING,
-                                NodeUtil.asNeo4j(RelTypes.IN_DATASET));
-                        for (Relationship studyInDataset : studiesInDataset) {
-                            StudyNode study = new StudyNode(studyInDataset.getStartNode());
-                            countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, study.getUnderlyingNode());
-                            studyCounter.count();
-                            final String namespace = dataset.getNamespace();
-                            distinctSources.add(namespace);
-                            distinctDatasets.add(namespace);
-                        }
-                    },
-                    "namespace",
-                    namespaceHandler.datasetQueryFor(namespaceGroup),
-                    new NodeIdCollectorImpl()
-            );
-
-            final Node node;
-            try (Transaction transaction = getGraphDb().beginTx()) {
-                node = createReportNode(transaction);
-                String sourceIdPrefix = "globi:" + namespaceGroup;
-                node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
-                node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
-                transaction.commit();
-            }
-
-//            getGraphDb()
-//                    .index()
-//                    .forNodes("reports")
-//                    .add(node, namespaceHandler.getNamespaceKey(), sourceIdPrefix);
-
-        }
-    }
-
-    void generateReportForCollection() {
-        try {
-            DB reportCache = getCacheService().initDb("collectionReport");
-            generateCollectionReport(reportCache);
-            reportCache.close();
-        } catch (IOException e) {
-            LOG.warn("failed to generate collection report", e);
-        }
-    }
-
-    private CacheService getCacheService() {
-        if (cacheService == null) {
-            cacheService = new CacheService(new File(getCacheDir()));
-        }
-        return cacheService;
-    }
-
-    private void generateCollectionReport(DB reportCache) {
-        final Set<Long> distinctTaxonIds = makeOrRemake(reportCache, "distinctTaxonIds");
-        final Set<Long> distinctTaxonIdsNoMatch = makeOrRemake(reportCache, "distinctTaxonIdsNoMatch");
-        final Counter counter = new Counter();
-        final Counter studyCounter = new Counter();
-        final Set<String> distinctSources = makeOrRemakeString(reportCache, "distinctSources");
-        final Set<String> distinctDatasets = makeOrRemakeString(reportCache, "distinctDatasets");
-
-        NodeUtil.findStudies(getGraphDb(), studyNode -> {
-            countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, studyNode);
-            studyCounter.count();
-            final Dataset originatingDataset = new StudyNode(studyNode).getOriginatingDataset();
-            if (originatingDataset != null) {
-                final String namespace = originatingDataset.getNamespace();
-                distinctSources.add(namespace);
-                distinctDatasets.add(namespace);
-            }
-        });
-
-        try (Transaction tx = getGraphDb().beginTx()) {
-            final Node node = createReportNode(tx);
-            node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
-            //getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            tx.commit();
-        }
-    }
-
-    private static Node createReportNode(Transaction tx) {
-        return tx.createNode(NodeLabel.Report);
-    }
-
-    private Set<Long> makeOrRemake(DB reportCache, String setName) {
-        if (reportCache.exists(setName)) {
-            reportCache.delete(setName);
-        }
-        return reportCache.createHashSet(setName).make();
-    }
-
-    private Set<String> makeOrRemakeString(DB reportCache, String setName) {
-        if (reportCache.exists(setName)) {
-            reportCache.delete(setName);
-        }
-        return reportCache.createHashSet(setName).make();
-    }
-
-
-    private void countInteractionsAndTaxa(Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch, Node studyNode) {
-
-        RelationshipListener handler = specimen -> {
-            Iterable<Relationship> relationships = specimen.getEndNode().getRelationships();
-            for (Relationship relationship : relationships) {
-                InteractType[] types = InteractType.values();
-                for (InteractType type : types) {
-                    if (relationship.isType(NodeUtil.asNeo4j(type))
-                            && !relationship.hasProperty(PropertyAndValueDictionary.INVERTED)) {
-                        interactionCounter.count();
-                        break;
-                    }
-                }
-            }
-            Relationship classifiedAs = specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-            if (classifiedAs != null) {
-                Node taxonNode = classifiedAs.getEndNode();
-                ids.add(taxonNode.getId());
-                if (!TaxonUtil.isResolved(new TaxonNode(taxonNode))) {
-                    idsNoMatch.add(taxonNode.getId());
-                }
-            }
-        };
-
-        NodeUtil.handleCollectedRelationshipsNoTx(
-                new NodeTypeDirection(studyNode),
-                handler);
-    }
-
-    private static class Counter {
-        int counter = 0;
-
-        public void count() {
-            counter++;
-        }
-
-        public int getCount() {
-            return counter;
-        }
     }
 
 }
