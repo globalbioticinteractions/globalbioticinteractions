@@ -24,10 +24,9 @@ public class CmdQuery extends CmdNeo4J {
     public void run() {
         GraphDatabaseService graphService = getGraphServiceFactory().getGraphService();
         try (Transaction tx = graphService.beginTx()) {
-            Result query1 = null;
-            try {
-                query1 = tx.execute(IOUtils.toString(getStdin(), StandardCharsets.UTF_8));
-                System.out.println(query1.resultAsString());
+            try (Result query = tx.execute(IOUtils.toString(getStdin(), StandardCharsets.UTF_8))) {
+                System.out.println(query.resultAsString());
+                tx.commit();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
