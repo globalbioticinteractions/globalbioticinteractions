@@ -457,7 +457,8 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTargetTaxon("Arthropoda") + "AND " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda, target_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(),
+                is(is("{accordingTo=foo, source_taxon_name=Arthropoda, target_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -477,7 +478,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", target_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo, target_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -497,7 +498,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://inaturalist.org/bla\", target_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=http://inaturalist.org/bla, target_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -518,7 +519,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is(
-                "{accordingTo=externalId:\"10.1234/4325\" externalId:\"10.332/222\" externalId:\"10.444/222\", target_taxon_name=Arthropoda}")));
+                "{accordingTo=10.1234/4325 10.332/222 10.444/222, target_taxon_name=Arthropoda}")));
 
     }
 
@@ -537,7 +538,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         assertThat(query.getVersionedQuery(), is(
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         "MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:PREYS_UPON|PARASITE_OF|HAS_HOST|HAS_RESERVOIR_HOST|INTERACTS_WITH|TROPHICALLY_INTERACTS_WITH|HOST_OF|RESERVOIR_HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|ACQUIRES_NUTRIENTS_FROM|PROVIDES_NUTRIENTS_FOR|HAS_VECTOR|VECTOR_OF|VISITED_BY|VISITS|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF|INHABITED_BY|INHABITS|ADJACENT_TO|CREATES_HABITAT_FOR|HAS_HABITAT|LIVED_ON_BY|LIVES_ON|LIVED_INSIDE_OF_BY|LIVES_INSIDE_OF|LIVED_NEAR_BY|LIVES_NEAR|LIVED_UNDER_BY|LIVES_UNDER|LIVES_WITH|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|GUEST_OF|HAS_GUEST_OF|FARMED_BY|FARMS|DAMAGED_BY|DAMAGES|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|KILLED_BY|KILLS|EPIPHITE_OF|HAS_EPIPHITE|LAYS_EGGS_ON|HAS_EGGS_LAYED_ON_BY|LAYS_EGGS_IN|HAS_EGGS_LAYED_IN_BY|CO_OCCURS_WITH|CO_ROOSTS_WITH|HAS_ROOST|ROOST_OF|COMMENSALIST_OF|MUTUALIST_OF|AGGRESSOR_OF|HAS_AGGRESSOR|ALLELOPATH_OF|HAS_ALLELOPATH|HEMIPARASITE_OF|ROOTPARASITE_OF|HAS_ECTOMYCORRHIZAL_HOST|ECTOMYCORRHIZAL_HOST_OF|HAS_ARBUSCULAR_MYCORRHIZAL_HOST|ARBUSCULAR_MYCORRHIZAL_HOST_OF|RELATED_TO]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon), (sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset) OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) RETURN sourceTaxon.name as source_taxon_name,sourceSpecimen.sexLabel as source_specimen_sex"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"https://arctos.database.museum/guid/MSB:Mamm:79902\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=https://arctos.database.museum/guid/MSB:Mamm:79902}")));
 
     }
 
@@ -635,7 +636,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://inaturalist.org/bla\", target_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=http://inaturalist.org/bla, target_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -737,7 +738,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "Arthropoda");
-            put("accordingTo", "namespace:\"some/namespace\"");
+            put("accordingTo", "some/namespace");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -773,7 +774,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "Arthropoda");
-            put("accordingTo", "namespace:\"some/namespace\"");
+            put("accordingTo", "some/namespace");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -811,7 +812,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "Arthropoda");
-            put("accordingTo", "externalId:\"someSource\"");
+            put("accordingTo", "someSource");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -919,7 +920,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://inaturalist.org/bla\" externalId:\"http://inaturalist.org/bla2\", target_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=http://inaturalist.org/bla http://inaturalist.org/bla2, target_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -939,7 +940,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo, source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -959,7 +960,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING +
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo, source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -979,7 +980,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING +
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo, source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -999,7 +1000,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE (sourceTaxon.name IS NOT NULL AND sourceTaxon.name IN ['Arthropoda']) " +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo, source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -1020,7 +1021,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                         "WHERE (sourceTaxon.name IS NOT NULL AND sourceTaxon.name IN ['Arthropoda']) " +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=Arthropoda}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo, source_taxon_name=Arthropoda}")));
     }
 
     @Test
@@ -1163,7 +1164,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo}")));
     }
 
     @Test
@@ -1180,7 +1181,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\" externalId:\"gomexsi.edu\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=foo gomexsi.edu}")));
     }
 
     @Test
@@ -1893,19 +1894,19 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         "MATCH (study:Reference)-[:COLLECTED]->(specimen:Specimen)-[:COLLECTED_AT]->(location:Location) WITH " +
                         "DISTINCT(location) as loc RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT"));
-        assertThat(query.getParams().toString(), is("{accordingTo=externalId:\"some source\"}"));
+        assertThat(query.getParams().toString(), is("{accordingTo=some source}"));
     }
 
     @Test
     public void regexAccordingToGoMexSI() {
         String regex = CypherQueryBuilder.matchReferenceOrDataset(Collections.singletonList("http://gomexsi.tamucc.edu"));
-        assertThat(regex, is("externalId:\"http://gomexsi.tamucc.edu\" externalId:\"http://gomexsi.tamucc.edu/\""));
+        assertThat(regex, is("http://gomexsi.tamucc.edu http://gomexsi.tamucc.edu/"));
 
         regex = CypherQueryBuilder.matchReferenceOrDataset(Arrays.<String>asList("http://gomexsi.tamucc.edu", "https://example.com"));
-        assertThat(regex, is("externalId:\"http://gomexsi.tamucc.edu\" externalId:\"https://example.com\" externalId:\"http://gomexsi.tamucc.edu/\""));
+        assertThat(regex, is("http://gomexsi.tamucc.edu https://example.com http://gomexsi.tamucc.edu/"));
 
         regex = CypherQueryBuilder.matchReferenceOrDataset(Collections.singletonList("https://example.com"));
-        assertThat(regex, is("externalId:\"https://example.com\""));
+        assertThat(regex, is("https://example.com"));
     }
 
     @Test

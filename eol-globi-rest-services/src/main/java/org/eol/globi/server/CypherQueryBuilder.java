@@ -279,9 +279,9 @@ public class CypherQueryBuilder {
     }
 
     protected static String strictExternalIdMatch(List<String> terms) {
-        List<String> quotedTerms = new ArrayList<String>();
+        List<String> quotedTerms = new ArrayList<>();
         for (String term : terms) {
-            quotedTerms.add("externalId:\"" + escapeWhitespace(term) + "\"");
+            quotedTerms.add(escapeWhitespace(term));
         }
         return orNestedTerms(quotedTerms);
     }
@@ -304,12 +304,12 @@ public class CypherQueryBuilder {
 
         if (accordingTo != null && accordingTo.size() > 0) {
             List<DOI> dois = extractDOIs(accordingTo);
-            if (dois.size() > 0) {
+            if (!dois.isEmpty()) {
                 List<String> DOIs = dois.stream().map(DOI::toString).collect(Collectors.toList());
                 paramMap.put("accordingTo", matchReferenceOrDataset(DOIs));
             } else if (isAccordingToNamespaceQuery(accordingTo)) {
                 List<String> namespaces = getNamespaces(accordingTo);
-                paramMap.put("accordingTo", "namespace:\"" + orNestedTerms(namespaces) + "\"");
+                paramMap.put("accordingTo", orNestedTerms(namespaces));
             } else {
                 paramMap.put("accordingTo", matchReferenceOrDataset(accordingTo));
             }
