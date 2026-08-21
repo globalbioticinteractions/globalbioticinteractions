@@ -38,7 +38,7 @@ public class Neo4jIndexUtil {
         List<String> indexNames = new ArrayList<>();
         Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(nodeLabel);
         taxonIndexes.forEach(i -> indexNames.add(i.getName()));
-        String indexName = indexNameFor(propertyName);
+        String indexName = indexNameFor(propertyName, nodeLabel);
         if (indexNames.contains(indexName)) {
             LOG.info("found index [{}]", indexName);
         } else {
@@ -53,7 +53,7 @@ public class Neo4jIndexUtil {
         }
     }
 
-    private static String indexNameFor(String propertyName) {
-        return StringUtils.joinWith("_", NodeLabel.Taxon.name(), propertyName);
+    private static String indexNameFor(String propertyName, NodeLabel nodeLabel) {
+        return StringUtils.joinWith("_", nodeLabel.name(), propertyName);
     }
 }
