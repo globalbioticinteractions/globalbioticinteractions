@@ -3,4 +3,4 @@
 # Launches Elton4N in JVM
 #
 
-java -cp "/usr/share/elton4n/lib/*" org.globalbioticinteractions.elton.Elton4N $@
+java -Xms8G -Xmx8G -cp "/usr/share/elton4n/lib/*" org.globalbioticinteractions.elton.Elton4N $@
