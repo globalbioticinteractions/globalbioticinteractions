@@ -49,6 +49,9 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
+import org.neo4j.values.storable.CoordinateReferenceSystem;
+import org.neo4j.values.storable.PointValue;
+import org.neo4j.values.storable.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -709,10 +712,11 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         Node matchingLocation = null;
         if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+            PointValue pointValue = Values.pointValue(CoordinateReferenceSystem.WGS_84, location.getLongitude(), location.getLatitude());
             ResourceIterator<Node> nodes = tx.findNodes(
                     NodeLabel.Location,
-                    LocationConstant.LATITUDE, location.getLatitude(),
-                    LocationConstant.LONGITUDE, location.getLongitude()
+                    LocationConstant.LNGLAT,
+                    pointValue
             );
             matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
         }

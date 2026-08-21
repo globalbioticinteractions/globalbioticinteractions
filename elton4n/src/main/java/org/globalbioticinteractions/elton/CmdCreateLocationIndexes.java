@@ -10,7 +10,7 @@ public class CmdCreateLocationIndexes extends CmdNeo4J {
     public void run() {
         GraphDatabaseService graphService = getGraphServiceFactory().getGraphService();
         try (Transaction tx = graphService.beginTx()) {
-            Neo4jIndexUtil.createLocationIndexIfNotExists(tx);
+            Neo4jIndexUtil.createPointLocationIndexIfNotExists(tx);
             tx.commit();
         }
     }

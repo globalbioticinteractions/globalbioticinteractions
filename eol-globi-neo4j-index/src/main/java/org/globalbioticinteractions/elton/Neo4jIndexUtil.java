@@ -15,7 +15,7 @@ import java.util.List;
 public class Neo4jIndexUtil {
     private final static Logger LOG = LoggerFactory.getLogger(Neo4jIndexUtil.class);
 
-    public static void createLocationIndexIfNotExists(Transaction tx) {
+    public static void createPointLocationIndexIfNotExists(Transaction tx) {
         NodeLabel nodeLabel = NodeLabel.Location;
         List<String> indexNames = new ArrayList<>();
         Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(nodeLabel);
