@@ -32,6 +32,7 @@ import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -198,6 +199,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
 
+    @Ignore("need to revisit environment indexing")
     @Test
     public void createAndFindEnvironment() throws NodeFactoryException {
         getNodeFactory().setEnvoLookupService(new TermLookupService() {

@@ -481,6 +481,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     protected LocationNode getOrCreateLocationNode(Transaction transaction, Location location) throws NodeFactoryException {
+        validate(location);
         return createLocationNode(transaction, location);
     }
 
