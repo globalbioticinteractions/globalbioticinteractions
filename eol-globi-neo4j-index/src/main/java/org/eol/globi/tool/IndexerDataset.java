@@ -49,6 +49,7 @@ public class IndexerDataset implements IndexerNeo4j {
         try (Transaction tx = graphService.beginTx()) {
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Reference, StudyConstant.TITLE_IN_NAMESPACE);
             Neo4jIndexUtil.createLocationIndexIfNotExists(tx);
+            tx.commit();
         }
 
         try (Transaction tx = graphService.beginTx();) {
