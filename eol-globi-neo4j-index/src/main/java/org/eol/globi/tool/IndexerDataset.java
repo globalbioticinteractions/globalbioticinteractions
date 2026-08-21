@@ -9,6 +9,7 @@ import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.InputStreamFactoryNoop;
@@ -53,6 +54,7 @@ public class IndexerDataset implements IndexerNeo4j {
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Reference, StudyConstant.TITLE_IN_NAMESPACE);
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Location, LocationConstant.LOCALITY_ID);
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Location, LocationConstant.LOCALITY);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID);
             Neo4jIndexUtil.createPointLocationIndexIfNotExists(tx);
             tx.commit();
         }
