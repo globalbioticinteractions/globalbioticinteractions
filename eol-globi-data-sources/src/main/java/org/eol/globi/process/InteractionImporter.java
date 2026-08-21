@@ -176,7 +176,6 @@ public class InteractionImporter implements InteractionListener {
         InteractType type = InteractType.typeOf(interactionTypeId);
 
         source.interactsWith(target, type, getOrCreateLocation(interaction));
-        nodeFactory.startNextBatchUpdate();
     }
 
     private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
