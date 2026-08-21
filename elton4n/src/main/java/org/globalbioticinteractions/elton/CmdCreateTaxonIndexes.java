@@ -1,18 +1,12 @@
 package org.globalbioticinteractions.elton;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.tool.CmdNeo4J;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.schema.IndexDefinition;
-import org.neo4j.graphdb.schema.IndexType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CmdCreateTaxonIndexes extends CmdNeo4J {
     private final static Logger LOG = LoggerFactory.getLogger(CmdCreateTaxonIndexes.class);
@@ -20,33 +14,10 @@ public class CmdCreateTaxonIndexes extends CmdNeo4J {
     public void run() {
         GraphDatabaseService graphService = getGraphServiceFactory().getGraphService();
         try (Transaction tx = graphService.beginTx()) {
-            createIndexIfNotExists(tx, PropertyAndValueDictionary.EXTERNAL_ID);
-            createIndexIfNotExists(tx, PropertyAndValueDictionary.NAME);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Taxon, PropertyAndValueDictionary.EXTERNAL_ID);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Taxon, PropertyAndValueDictionary.NAME);
             tx.commit();
         }
     }
 
-    private static void createIndexIfNotExists(Transaction tx, String propertyName) {
-        NodeLabel nodeLabel = NodeLabel.Taxon;
-        List<String> indexNames = new ArrayList<>();
-        Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(nodeLabel);
-        taxonIndexes.forEach(i -> indexNames.add(i.getName()));
-        String indexName = indexNameFor(propertyName);
-        if (indexNames.contains(indexName)) {
-            LOG.info("found existing index [{}]", indexName);
-        } else {
-            tx
-                    .schema()
-                    .indexFor(nodeLabel)
-                    .on(propertyName)
-                    .withIndexType(IndexType.RANGE)
-                    .withName(indexName)
-                    .create();
-            LOG.info("created index [{}]", indexName);
-        }
-    }
-
-    private static String indexNameFor(String propertyName) {
-        return StringUtils.joinWith("_", NodeLabel.Taxon.name(), propertyName);
-    }
 }
