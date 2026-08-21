@@ -12,6 +12,7 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetUtil;
@@ -47,6 +48,7 @@ public class IndexerDataset implements IndexerNeo4j {
         NodeFactory nodeFactory;
 
         try (Transaction tx = graphService.beginTx()) {
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Dataset, DatasetConstant.NAMESPACE);
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Reference, StudyConstant.TITLE_IN_NAMESPACE);
             Neo4jIndexUtil.createLocationIndexIfNotExists(tx);
             tx.commit();
