@@ -90,7 +90,6 @@ public class InteractionImporter implements InteractionListener {
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
 
-
     public InteractionImporter(NodeFactory factory, ImportLogger logger, GeoNamesService geonamesService) {
         this.logger = logger;
         this.nodeFactory = factory;
@@ -106,6 +105,7 @@ public class InteractionImporter implements InteractionListener {
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         importInteraction(interaction);
+
     }
 
 
