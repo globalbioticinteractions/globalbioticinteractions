@@ -72,7 +72,8 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
                 if (StringUtils.isBlank(sourceCitation)) {
                     LOG.warn(createMsg("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "]"));
                 } else {
-                    importRecords(regions, locales, habitats, record, sourceCitation);
+                    importRecord(regions, locales, habitats, record, sourceCitation);
+                    getNodeFactory().startNextBatchUpdate();
                 }
             }
         } catch (IOException e) {
@@ -81,7 +82,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
 
     }
 
-    private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
+    private void importRecord(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
         String namespace = getDataset() == null ? "" : getDataset().getNamespace();
         StudyImpl study1 = new StudyImpl(namespace + sourceCitation, null, sourceCitation);
         study1.setOriginatingDataset(getDataset());
