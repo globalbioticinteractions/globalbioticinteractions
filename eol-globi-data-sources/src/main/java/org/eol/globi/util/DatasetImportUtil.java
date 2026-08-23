@@ -135,7 +135,11 @@ public class DatasetImportUtil {
         }
     }
 
-    public static void importDatasets(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, File workDir) throws StudyImporterException {
+    public static void importDatasets(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds,
+                                      List<Dataset> datasets,
+                                      ImportLogger logger,
+                                      NodeFactory nodeFactory,
+                                      File workDir) throws StudyImporterException {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
@@ -153,7 +157,11 @@ public class DatasetImportUtil {
         }
     }
 
-    private static void indexDatasets(List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, InteractionListener indexingListener, File workDir) {
+    private static void indexDatasets(List<Dataset> datasets,
+                                      ImportLogger logger,
+                                      NodeFactory nodeFactory,
+                                      InteractionListener indexingListener,
+                                      File workDir) {
         for (Dataset dataset : datasets) {
             if (needsIndexing(dataset)) {
                 try {
