@@ -7,8 +7,6 @@ import org.globalbioticinteractions.dataset.Dataset;
 
 public abstract class DatasetImporterWithListener extends NodeBasedImporter {
 
-    private InteractionListener interactionListener = null;
-
     public DatasetImporterWithListener(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -26,15 +24,12 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
                 dataset));
     }
 
+    @Override
     public InteractionListener getInteractionListener() {
-        if (interactionListener == null) {
+        if (super.getInteractionListener() == null) {
             interactionListener = initListener(getNodeFactory());
         }
         return interactionListener;
-    }
-    
-    public void setInteractionListener(InteractionListener interactionListener) {
-        this.interactionListener = interactionListener;
     }
 
     @Override
