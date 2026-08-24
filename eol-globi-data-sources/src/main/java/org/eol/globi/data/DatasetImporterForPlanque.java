@@ -162,8 +162,4 @@ public class DatasetImporterForPlanque extends NodeBasedImporter {
         return URI.create("referencesForLinks");
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

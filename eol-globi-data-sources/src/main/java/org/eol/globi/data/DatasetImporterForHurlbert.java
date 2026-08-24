@@ -259,8 +259,4 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
         return StringUtils.isNotBlank(str) && !StringUtils.equalsIgnoreCase(StringUtils.trim(str), "NA");
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

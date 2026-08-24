@@ -113,9 +113,4 @@ public class DatasetImporterForBarnes extends NodeBasedImporter {
             throw new StudyImporterException(("failed to map life stage [" + lifeStageString + "]"));
         }
     }
-
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

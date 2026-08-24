@@ -104,8 +104,4 @@ public class DatasetImporterForBaremore extends NodeBasedImporter {
         }
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

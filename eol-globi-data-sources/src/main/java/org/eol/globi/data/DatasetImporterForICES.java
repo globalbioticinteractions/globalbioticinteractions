@@ -115,8 +115,4 @@ public class DatasetImporterForICES extends NodeBasedImporter {
         return aDouble;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

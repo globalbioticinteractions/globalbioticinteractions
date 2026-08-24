@@ -47,11 +47,6 @@ public class DatasetImporterForLifeWatchGreece extends NodeBasedImporter {
         }
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
-
     public static class InteractionListener implements RowListener {
         private final Map<String, String> TERM_TO_TAXON_NAME = new HashMap<String, String>() {{
             put("http://polytraits.lifewatchgreece.eu/terms/PRED_BIRD", "Aves");

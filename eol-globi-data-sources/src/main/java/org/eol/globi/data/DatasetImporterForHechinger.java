@@ -179,8 +179,4 @@ public class DatasetImporterForHechinger extends DatasetImporterNodesAndLinks {
         notifyInteractionRecordIndexed();
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

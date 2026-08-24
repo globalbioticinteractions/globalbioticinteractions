@@ -313,11 +313,6 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(timeObservedAtUtc);
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
-
     private static class TermLookupServiceNoOp implements TermLookupService {
         @Override
         public List<Term> lookupTermByName(String name) throws TermLookupServiceException {

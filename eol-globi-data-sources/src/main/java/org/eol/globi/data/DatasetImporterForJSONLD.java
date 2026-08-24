@@ -109,8 +109,4 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
         return model;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

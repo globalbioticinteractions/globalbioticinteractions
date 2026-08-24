@@ -156,8 +156,4 @@ public class DatasetImporterForBell extends NodeBasedImporter {
         return location;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

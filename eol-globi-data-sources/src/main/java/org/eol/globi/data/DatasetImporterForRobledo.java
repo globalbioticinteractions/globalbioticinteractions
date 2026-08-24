@@ -117,8 +117,4 @@ public class DatasetImporterForRobledo extends NodeBasedImporter {
         return completedName;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

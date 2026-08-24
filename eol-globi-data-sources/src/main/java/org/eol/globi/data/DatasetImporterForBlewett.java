@@ -185,8 +185,4 @@ public class DatasetImporterForBlewett extends NodeBasedImporter {
         return preyItems;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

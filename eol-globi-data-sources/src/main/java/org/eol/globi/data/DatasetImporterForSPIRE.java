@@ -235,8 +235,4 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
         return importFilter;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

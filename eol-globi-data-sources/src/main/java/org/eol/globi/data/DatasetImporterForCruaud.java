@@ -83,8 +83,4 @@ public class DatasetImporterForCruaud extends NodeBasedImporter {
                 && !StringUtils.equals("na", parasiteName) && !StringUtils.equals("na", hostName);
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

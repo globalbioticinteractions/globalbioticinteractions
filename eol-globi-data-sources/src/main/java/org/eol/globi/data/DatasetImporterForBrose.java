@@ -175,8 +175,4 @@ public class DatasetImporterForBrose extends NodeBasedImporter {
         }
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

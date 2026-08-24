@@ -89,9 +89,4 @@ public class DatasetImporterForDunne extends DatasetImporterNodesAndLinks {
         this.notifyInteractionRecordIndexed();
     }
 
-
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

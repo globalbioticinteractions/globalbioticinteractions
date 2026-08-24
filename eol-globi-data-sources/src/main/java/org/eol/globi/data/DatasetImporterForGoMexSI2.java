@@ -539,7 +539,4 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
         return "NA".equals(value) ? "" : value;
     }
 
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

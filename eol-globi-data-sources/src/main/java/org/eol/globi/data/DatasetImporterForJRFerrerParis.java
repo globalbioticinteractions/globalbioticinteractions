@@ -78,8 +78,4 @@ public class DatasetImporterForJRFerrerParis extends NodeBasedImporter {
         }
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

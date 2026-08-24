@@ -201,8 +201,4 @@ public class DatasetImporterForRoopnarine extends NodeBasedImporter {
         return guildNumber;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

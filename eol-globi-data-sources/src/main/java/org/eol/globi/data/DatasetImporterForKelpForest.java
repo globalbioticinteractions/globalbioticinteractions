@@ -85,8 +85,4 @@ public class DatasetImporterForKelpForest extends NodeBasedImporter {
         return sourceSpecimen;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

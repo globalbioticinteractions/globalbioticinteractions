@@ -279,8 +279,4 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
         return locations;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

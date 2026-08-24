@@ -169,7 +169,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
                     final Specimen targetSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(targetTaxonName, null));
                     targetSpecimen.caughtIn(networkLocation);
                     sourceSpecimen.interactsWith(targetSpecimen, interactType1);
-                    this.notifyInteractionRecordIndexed();
+                    notifyInteractionRecordIndexed();
                 }
             }
         }
@@ -202,7 +202,4 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
         return URI.create(StringUtils.join(Arrays.asList(prefix, joinedNames, suffix), ""));
     }
 
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }

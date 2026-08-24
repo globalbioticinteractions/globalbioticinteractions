@@ -332,10 +332,6 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
         }
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        super.notifyInteractionRecordIndexed();
-    }
 }
 
 
