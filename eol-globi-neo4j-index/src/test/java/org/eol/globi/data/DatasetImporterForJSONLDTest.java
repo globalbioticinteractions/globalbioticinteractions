@@ -34,9 +34,10 @@ public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
 
         importStudy(importer);
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.isEmpty(), is(false));
         for (Study study : allStudies) {
-            assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(study.getCitation(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
+            assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
         }
 
         try (Transaction tx = getGraphDb().beginTx()) {
