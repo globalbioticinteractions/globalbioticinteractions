@@ -315,7 +315,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
 
     @Override
     public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        getInteractionListener().on(null);
+        super.notifyInteractionRecordIndexed();
     }
 
     private static class TermLookupServiceNoOp implements TermLookupService {

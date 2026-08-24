@@ -358,6 +358,6 @@ public class DatasetImporterForBioInfo extends NodeBasedImporter implements Data
 
     @Override
     public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        getInteractionListener().on(null);
+        super.notifyInteractionRecordIndexed();
     }
 }

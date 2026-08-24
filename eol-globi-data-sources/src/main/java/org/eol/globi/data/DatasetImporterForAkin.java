@@ -246,8 +246,4 @@ public class DatasetImporterForAkin extends NodeBasedImporter {
         return study;
     }
 
-    @Override
-    public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        getInteractionListener().on(null);
-    }
 }

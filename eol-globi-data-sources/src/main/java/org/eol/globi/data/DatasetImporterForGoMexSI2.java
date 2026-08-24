@@ -540,6 +540,6 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
     }
 
     public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        getInteractionListener().on(null);
+        super.notifyInteractionRecordIndexed();
     }
 }

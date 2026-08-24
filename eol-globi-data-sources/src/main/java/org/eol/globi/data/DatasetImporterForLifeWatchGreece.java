@@ -49,7 +49,7 @@ public class DatasetImporterForLifeWatchGreece extends NodeBasedImporter {
 
     @Override
     public void notifyInteractionRecordIndexed() throws StudyImporterException {
-        getInteractionListener().on(null);
+        super.notifyInteractionRecordIndexed();
     }
 
     public static class InteractionListener implements RowListener {
