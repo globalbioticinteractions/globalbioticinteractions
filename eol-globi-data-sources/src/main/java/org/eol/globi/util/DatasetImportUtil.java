@@ -7,6 +7,7 @@ import org.eol.globi.data.DatasetImporterForRSS;
 import org.eol.globi.data.DatasetImporterWithListener;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LogUtil;
+import org.eol.globi.data.NodeBasedImporter;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.StudyImporterConfigurator;
@@ -143,11 +144,11 @@ public class DatasetImportUtil {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
-                    if (studyImporter instanceof DatasetImporterWithListener) {
+                    if (studyImporter instanceof NodeBasedImporter) {
                         final InteractionListenerResolving interactionListener = new InteractionListenerResolving(
                                 interactionsWithUnresolvedOccurrenceIds,
-                                ((DatasetImporterWithListener) studyImporter).getInteractionListener());
-                        ((DatasetImporterWithListener) studyImporter).setInteractionListener(interactionListener);
+                                ((NodeBasedImporter) studyImporter).getInteractionListener());
+                        ((NodeBasedImporter) studyImporter).setInteractionListener(interactionListener);
                     }
 
                 }, dataset, nodeFactory, logger, workDir);
