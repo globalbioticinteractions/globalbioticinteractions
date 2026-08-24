@@ -28,4 +28,11 @@ public abstract class NodeBasedImporter extends BaseDatasetImporter implements I
         this.interactionListener = interactionListener;
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        InteractionListener listener = getInteractionListener();
+        if (listener != null) {
+            listener.on(null);
+        }
+    }
 }
