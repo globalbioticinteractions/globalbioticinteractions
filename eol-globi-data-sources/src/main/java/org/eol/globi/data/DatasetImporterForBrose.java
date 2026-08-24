@@ -158,6 +158,7 @@ public class DatasetImporterForBrose extends NodeBasedImporter {
                 throw new StudyImporterException("found unsupported interaction type [" + interactionType + "]");
             }
             consumer.interactsWith(resource, interactType);
+            notifyInteractionRecordIndexed();
         }
     }
 
@@ -174,4 +175,8 @@ public class DatasetImporterForBrose extends NodeBasedImporter {
         }
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

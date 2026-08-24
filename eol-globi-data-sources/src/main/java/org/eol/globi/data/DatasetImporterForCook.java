@@ -70,7 +70,7 @@ public class DatasetImporterForCook extends NodeBasedImporter {
         }
     }
 
-    private void addParasites(LabeledCSVParser parser, Study study, Location sampleLocation, Specimen host, Date collectionDate, String isoCol) throws NodeFactoryException {
+    private void addParasites(LabeledCSVParser parser, Study study, Location sampleLocation, Specimen host, Date collectionDate, String isoCol) throws StudyImporterException {
         try {
             String valueByLabel = parser.getValueByLabel(isoCol);
             boolean parasiteDetected = !"0".equals(valueByLabel);
@@ -85,9 +85,15 @@ public class DatasetImporterForCook extends NodeBasedImporter {
                 }
                 getNodeFactory().setUnixEpochProperty(parasite, collectionDate);
                 parasite.interactsWith(host, InteractType.PARASITE_OF);
+                this.notifyInteractionRecordIndexed();
             }
         } catch (NumberFormatException ex) {
             // ignore
         }
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

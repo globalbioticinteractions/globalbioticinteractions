@@ -238,4 +238,8 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
         return dataset;
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        // nothing to do - events are handled by associated datasets
+    }
 }

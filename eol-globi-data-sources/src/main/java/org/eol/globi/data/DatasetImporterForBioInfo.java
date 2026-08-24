@@ -282,6 +282,7 @@ public class DatasetImporterForBioInfo extends NodeBasedImporter implements Data
             addLifeStage(parser, recipientSpecimen, "stage of active taxon", study);
             addBodyPart(parser, donorSpecimen, "part of active taxon", study);
             recipientSpecimen.interactsWith(donorSpecimen, interactType);
+            this.notifyInteractionRecordIndexed();
         }
     }
 
@@ -355,4 +356,8 @@ public class DatasetImporterForBioInfo extends NodeBasedImporter implements Data
         specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

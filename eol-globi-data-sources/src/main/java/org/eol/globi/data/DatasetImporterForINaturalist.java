@@ -268,7 +268,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         sourceSpecimen.caughtIn(location);
         targetSpecimen.caughtIn(location);
         sourceSpecimen.interactsWith(targetSpecimen, interactType);
-
+        this.notifyInteractionRecordIndexed();
         return sourceSpecimen;
     }
 
@@ -311,6 +311,11 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
 
     private DateTime parseUTCDateTime(String timeObservedAtUtc) {
         return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(timeObservedAtUtc);
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 
     private static class TermLookupServiceNoOp implements TermLookupService {

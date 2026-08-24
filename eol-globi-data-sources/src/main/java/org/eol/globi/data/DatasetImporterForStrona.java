@@ -41,6 +41,7 @@ public class DatasetImporterForStrona extends NodeBasedImporter {
                             Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl(parasiteName, null));
                             Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
+                            this.notifyInteractionRecordIndexed();
                         }
                     } catch (NodeFactoryException | NumberFormatException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);
@@ -58,4 +59,8 @@ public class DatasetImporterForStrona extends NodeBasedImporter {
                 && !StringUtils.equals("na", parasiteName) && !StringUtils.equals("na", hostName);
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

@@ -95,6 +95,12 @@ public class DatasetImporterForByrnes extends NodeBasedImporter {
             } else {
                 predator.interactsWith(prey, InteractType.INTERACTS_WITH);
             }
+            this.notifyInteractionRecordIndexed();
         }
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

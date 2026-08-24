@@ -154,6 +154,8 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
                 throw new StudyImporterException("specimen not associated to study", e);
             }
 
+            this.notifyInteractionRecordIndexed();
+
         }
     }
 
@@ -330,6 +332,10 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
         }
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }
 
 

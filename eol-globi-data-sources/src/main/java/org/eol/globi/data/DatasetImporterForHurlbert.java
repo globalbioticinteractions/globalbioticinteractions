@@ -73,7 +73,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
                     LOG.warn(createMsg("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "]"));
                 } else {
                     importRecord(regions, locales, habitats, record, sourceCitation);
-                    getNodeFactory().startNextBatchUpdate();
+                    this.notifyInteractionRecordIndexed();
                 }
             }
         } catch (IOException e) {
@@ -259,4 +259,8 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
         return StringUtils.isNotBlank(str) && !StringUtils.equalsIgnoreCase(StringUtils.trim(str), "NA");
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

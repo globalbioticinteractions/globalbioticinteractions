@@ -98,6 +98,7 @@ public class DatasetImporterForSIAD extends NodeBasedImporter {
                 Specimen hostSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                 InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
                 specimen.interactsWith(hostSpecimen, type);
+                notifyInteractionRecordIndexed();
             }
         } catch (FileNotFoundException e) {
             throw new StudyImporterException("failed to open tmp file", e);
@@ -106,5 +107,10 @@ public class DatasetImporterForSIAD extends NodeBasedImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource [" + resource + "]", e);
         }
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

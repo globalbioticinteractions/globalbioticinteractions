@@ -105,6 +105,7 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
         }
 
         predator.ate(prey);
+        this.notifyInteractionRecordIndexed();
 
     }
 
@@ -153,6 +154,10 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
         }
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }
 
 

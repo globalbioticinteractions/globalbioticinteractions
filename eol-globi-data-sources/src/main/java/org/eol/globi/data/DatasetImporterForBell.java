@@ -93,6 +93,7 @@ public class DatasetImporterForBell extends NodeBasedImporter {
                     getNodeFactory().setUnixEpochProperty(parasite, date);
                     getNodeFactory().setUnixEpochProperty(host, date);
                     parasite.interactsWith(host, InteractType.PARASITE_OF);
+                    this.notifyInteractionRecordIndexed();
                 }
             } catch (Throwable e) {
                 throw new StudyImporterException(getErrorMessage(resource, parser), e);
@@ -155,4 +156,8 @@ public class DatasetImporterForBell extends NodeBasedImporter {
         return location;
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

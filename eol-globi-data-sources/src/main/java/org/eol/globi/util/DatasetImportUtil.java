@@ -144,7 +144,7 @@ public class DatasetImportUtil {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
-                    if (studyImporter instanceof NodeBasedImporter) {
+                    if (hasListener(studyImporter)) {
                         final InteractionListenerResolving interactionListener = new InteractionListenerResolving(
                                 interactionsWithUnresolvedOccurrenceIds,
                                 ((NodeBasedImporter) studyImporter).getInteractionListener());
@@ -158,6 +158,10 @@ public class DatasetImportUtil {
         }
     }
 
+    private static boolean hasListener(DatasetImporter studyImporter) {
+        return studyImporter instanceof NodeBasedImporter;
+    }
+
     private static void indexDatasets(List<Dataset> datasets,
                                       ImportLogger logger,
                                       NodeFactory nodeFactory,
@@ -168,7 +172,7 @@ public class DatasetImportUtil {
                 try {
                     importDataset(studyImporter -> {
                         studyImporter.setLogger(logger);
-                        if (studyImporter instanceof DatasetImporterWithListener) {
+                        if (hasListener(studyImporter)) {
                             ((DatasetImporterWithListener) studyImporter)
                                     .setInteractionListener(indexingListener);
                         }

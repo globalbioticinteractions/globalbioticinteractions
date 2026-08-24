@@ -32,10 +32,15 @@ public class DatasetImporterForHafner extends NodeBasedImporter {
                 Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                 Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl(parasiteName, null));
                 parasite.interactsWith(host, InteractType.PARASITE_OF);
+                this.notifyInteractionRecordIndexed();
             }
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

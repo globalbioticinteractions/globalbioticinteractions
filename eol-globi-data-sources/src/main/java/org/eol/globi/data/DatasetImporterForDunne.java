@@ -86,7 +86,12 @@ public class DatasetImporterForDunne extends DatasetImporterNodesAndLinks {
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);
         consumer.interactsWith(resource, InteractType.ATE);
+        this.notifyInteractionRecordIndexed();
     }
 
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

@@ -97,6 +97,7 @@ public class DatasetImporterForBarnes extends NodeBasedImporter {
             Specimen prey = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(preyName, null));
             prey.caughtIn(location);
             predator.ate(prey);
+            notifyInteractionRecordIndexed();
         }
     }
 
@@ -113,4 +114,8 @@ public class DatasetImporterForBarnes extends NodeBasedImporter {
         }
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

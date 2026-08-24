@@ -72,6 +72,7 @@ public class DatasetImporterForBaremore extends NodeBasedImporter {
                         preySpecimen.caughtIn(collectionLocation);
                         getNodeFactory().setUnixEpochProperty(preySpecimen, getNodeFactory().getUnixEpochProperty(predatorSpecimen));
                         predatorSpecimen.ate(preySpecimen);
+                        this.notifyInteractionRecordIndexed();
                     }
                 }
             }
@@ -101,5 +102,10 @@ public class DatasetImporterForBaremore extends NodeBasedImporter {
         } catch (IllegalArgumentException ex) {
             throw new NodeFactoryException("failed to parse [" + dateTime + "]");
         }
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

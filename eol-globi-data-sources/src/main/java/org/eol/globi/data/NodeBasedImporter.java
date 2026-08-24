@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.process.InteractionListener;
 
-public abstract class NodeBasedImporter extends BaseDatasetImporter {
+public abstract class NodeBasedImporter extends BaseDatasetImporter implements IndexEventListener {
     protected final ParserFactory parserFactory;
     private final NodeFactory nodeFactory;
     protected InteractionListener interactionListener = null;
@@ -27,4 +27,5 @@ public abstract class NodeBasedImporter extends BaseDatasetImporter {
     public void setInteractionListener(InteractionListener interactionListener) {
         this.interactionListener = interactionListener;
     }
+
 }

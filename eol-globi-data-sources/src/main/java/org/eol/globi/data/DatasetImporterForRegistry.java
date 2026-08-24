@@ -93,4 +93,9 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
     public void setDatasetFilter(Predicate<Dataset> datasetFilter) {
         this.datasetFilter = datasetFilter;
     }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        // nothing to do: not directly importing interactions
+    }
 }

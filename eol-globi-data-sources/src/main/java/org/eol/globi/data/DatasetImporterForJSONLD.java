@@ -80,6 +80,7 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
                 target.caughtIn(loc);
                 source.caughtIn(loc);
                 source.interactsWith(target, interactType1);
+                this.notifyInteractionRecordIndexed();
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import jsonld data in [" + getResourceURI() + "]", e);
@@ -108,4 +109,8 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
         return model;
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+getInteractionListener().on(null);
+    }
 }

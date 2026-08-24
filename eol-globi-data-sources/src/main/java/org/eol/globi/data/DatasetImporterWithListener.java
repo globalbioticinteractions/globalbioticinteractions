@@ -17,11 +17,14 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
     }
 
     private InteractionListener initListener(NodeFactory nodeFactory, Dataset dataset) {
-        return new InteractionListenerBatching(nodeFactory, new InteractionListenerImpl(
+        return new InteractionListenerBatching(
                 nodeFactory,
-                getGeoNamesService(),
-                getLogger(),
-                dataset));
+                new InteractionListenerImpl(
+                        nodeFactory,
+                        getGeoNamesService(),
+                        getLogger(),
+                        dataset
+                ));
     }
 
     @Override
@@ -54,6 +57,11 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
     public void setDataset(Dataset dataset) {
         super.setDataset(dataset);
         reinitializeListenerIfNeeded();
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() {
+        // nothing to do: already using interaction listener mechanism
     }
 
 }

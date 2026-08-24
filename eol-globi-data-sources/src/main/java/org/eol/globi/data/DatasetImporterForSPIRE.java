@@ -177,9 +177,8 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
             }
             Specimen prey = createSpecimen(properties.get(PREY_NAME), study);
             predator.ate(prey);
-        } catch (NodeFactoryException e) {
-            getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
-        } catch (IOException e) {
+            this.notifyInteractionRecordIndexed();
+        } catch (IOException | StudyImporterException e) {
             getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
         }
     }
@@ -236,4 +235,8 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
         return importFilter;
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }

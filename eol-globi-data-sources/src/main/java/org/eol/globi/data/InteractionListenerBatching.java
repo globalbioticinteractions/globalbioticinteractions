@@ -12,7 +12,8 @@ public class InteractionListenerBatching implements InteractionListener {
     private final NodeFactory nodeFactory;
     private final int batchSize;
 
-    public InteractionListenerBatching(NodeFactory nodeFactory, InteractionListener interactionListener) {
+    public InteractionListenerBatching(NodeFactory nodeFactory,
+                                       InteractionListener interactionListener) {
         this.nodeFactory = nodeFactory;
         this.batchSize = BATCH_SIZE_DEFAULT;
         this.interactionListener = interactionListener;
@@ -21,9 +22,10 @@ public class InteractionListenerBatching implements InteractionListener {
 
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
-        if (interactionListener != null) {
+        if (interactionListener != null && interaction != null) {
             interactionListener.on(interaction);
         }
+
         if (counter.decrementAndGet() <= 0) {
             nodeFactory.startNextBatchUpdate();
             counter.set(batchSize);

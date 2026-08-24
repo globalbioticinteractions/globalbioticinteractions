@@ -150,6 +150,7 @@ public class DatasetImporterForPlanque extends NodeBasedImporter {
             Specimen prey = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(normalizeName(preyName), null));
             prey.caughtIn(location);
             predator.ate(prey);
+            this.notifyInteractionRecordIndexed();
         }
     }
 
@@ -159,5 +160,10 @@ public class DatasetImporterForPlanque extends NodeBasedImporter {
 
     public URI getReferencesForLinks() {
         return URI.create("referencesForLinks");
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

@@ -153,6 +153,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
             getNodeFactory().setUnixEpochProperty(prey, date);
             getNodeFactory().setUnixEpochProperty(predator, date);
             predator.ate(prey);
+            this.notifyInteractionRecordIndexed();
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import data", e);
         }
@@ -276,5 +277,10 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
 
     public Collection<String> getLocations() {
         return locations;
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

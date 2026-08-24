@@ -53,6 +53,7 @@ public class DatasetImporterForICES extends NodeBasedImporter {
                         getNodeFactory().setUnixEpochProperty(prey, date);
                         prey.caughtIn(location);
                         predator.ate(prey);
+                        notifyInteractionRecordIndexed();
                     }
                     lastStomachId = currentStomachId;
                 }
@@ -112,5 +113,10 @@ public class DatasetImporterForICES extends NodeBasedImporter {
             aDouble = Double.parseDouble(LatString);
         }
         return aDouble;
+    }
+
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
     }
 }

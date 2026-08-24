@@ -176,6 +176,11 @@ public class DatasetImporterForHechinger extends DatasetImporterNodesAndLinks {
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);
         consumer.interactsWith(resource, interactType);
+        notifyInteractionRecordIndexed();
     }
 
+    @Override
+    public void notifyInteractionRecordIndexed() throws StudyImporterException {
+        getInteractionListener().on(null);
+    }
 }
