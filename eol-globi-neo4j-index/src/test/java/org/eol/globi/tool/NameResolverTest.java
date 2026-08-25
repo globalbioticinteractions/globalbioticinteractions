@@ -35,20 +35,20 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void doNameResolving() throws NodeFactoryException {
-        assertResolveNames(RelTypes.COLLECTED, getGraphDb());
+        assertResolveNames(RelTypes.COLLECTED);
     }
 
     @Test
     public void doNameResolvingForRefuting() throws NodeFactoryException {
-        assertResolveNames(RelTypes.REFUTES, getGraphDb());
+        assertResolveNames(RelTypes.REFUTES);
     }
 
     @Test
     public void doNameResolvingForSupporting() throws NodeFactoryException {
-        assertResolveNames(RelTypes.SUPPORTS, getGraphDb());
+        assertResolveNames(RelTypes.SUPPORTS);
     }
 
-    private void assertResolveNames(RelTypes relTypes, final GraphDatabaseService graphDb) throws NodeFactoryException {
+    private void assertResolveNames(RelTypes relTypes) throws NodeFactoryException {
         StudyImpl study = new StudyImpl("bla", null, null);
         Specimen human = nodeFactory.createSpecimen(
                 study,
