@@ -173,7 +173,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         Node node = tx.findNode(
                 NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE,
-                getIdInNamespace(tx, study)
+                getIdInNamespace(study)
         );
         return node == null
                 ? null
@@ -345,7 +345,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         studyNode.getUnderlyingNode().setProperty(
                 StudyConstant.TITLE_IN_NAMESPACE,
-                getIdInNamespace(transaction, study)
+                getIdInNamespace(study)
         );
         return studyNode;
     }
@@ -414,7 +414,9 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            return getOrCreateStudyNode(tx, study);
+            StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            tx.commit();
+            return studyNode;
         }
 
 
@@ -437,7 +439,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
 
-    String getIdInNamespace(Transaction tx, Study study) {
+    String getIdInNamespace(Study study) {
         String namespace = namespaceOrNull(study);
         String externalIdOrDOI = getExternalIdOrDOI(study);
         String id = StringUtils.isBlank(externalIdOrDOI)

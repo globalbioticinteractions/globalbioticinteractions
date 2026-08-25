@@ -2,7 +2,6 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
-import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
@@ -15,7 +14,6 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.tool.TransactionPerBatch;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -93,25 +91,6 @@ public class NodeUtil {
         }
     }
 
-    public static void findDatasetsByQuery(
-            GraphDatabaseService graphService,
-            DatasetNodeListener listener,
-            String queryKey,
-            String queryValue,
-            NodeIdCollector nodeIdCollector) {
-        new NodeProcessorImpl(
-                graphService,
-                1000L,
-                queryKey,
-                queryValue,
-                "datasets",
-                nodeIdCollector
-        ).process(
-                node -> listener.on(new DatasetNode(node)),
-                new TransactionPerBatch(graphService)
-        );
-    }
-
     public static RelationshipType asNeo4j(RelType type) {
         return type::name;
     }
@@ -176,19 +155,6 @@ public class NodeUtil {
         for (Relationship rel : relIterable) {
             listener.on(rel);
         }
-    }
-
-    public static void processNodes(Long batchSize,
-                                    GraphDatabaseService graphService,
-                                    NodeListener listener,
-                                    String queryKey,
-                                    String queryOrQueryObject,
-                                    String indexName,
-                                    BatchListener batchListener,
-                                    NodeIdCollector nodeIdCollector) {
-
-        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject, indexName, nodeIdCollector)
-                .process(listener, batchListener);
     }
 
     public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {

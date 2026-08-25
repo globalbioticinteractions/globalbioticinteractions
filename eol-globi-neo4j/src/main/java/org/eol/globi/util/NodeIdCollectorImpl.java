@@ -35,7 +35,10 @@ public class NodeIdCollectorImpl implements NodeIdCollector {
                     INDEX_NAME_TO_LABEL.get(indexName));
             nodes.stream()
                     .filter(n -> n.hasProperty(queryKey))
-                    .filter(n -> StringUtils.startsWith(n.getProperty(queryKey).toString(), queryOrQueryObject))
+                    .filter(n -> {
+                        System.out.println("found [" + n.getProperty(queryKey) + "]" + " for queryKey in context of [" + queryOrQueryObject + "]");
+                        return StringUtils.startsWith(n.getProperty(queryKey).toString(), queryOrQueryObject);
+                    })
                     .map(Node::getId)
                     .forEach(ids::add);
             transaction.commit();

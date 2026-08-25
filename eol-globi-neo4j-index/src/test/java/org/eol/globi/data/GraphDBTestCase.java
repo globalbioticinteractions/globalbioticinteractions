@@ -246,10 +246,6 @@ public class GraphDBTestCase {
         return getNodeFactory().getGraphDb();
     }
 
-    protected NodeIdCollector getNodeIdCollector() {
-        return new NodeIdCollectorImpl();
-    }
-
     protected NodeFactoryNeo4j createNodeFactory() {
         NodeFactoryFactory factoryFactory;
 
