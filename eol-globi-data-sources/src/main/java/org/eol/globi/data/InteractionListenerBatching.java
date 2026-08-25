@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class InteractionListenerBatching implements InteractionListener {
-    public static final int BATCH_SIZE_DEFAULT = 10000;
+    public static final int BATCH_SIZE_DEFAULT = 1000;
     final InteractionListener interactionListener;
     final AtomicLong counter;
     private final NodeFactory nodeFactory;
