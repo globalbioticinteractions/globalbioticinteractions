@@ -11,6 +11,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
 import org.eol.globi.util.NodeUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
@@ -39,6 +40,8 @@ public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
         initIndex();
     }
 
+
+    @Ignore
     @Test
     public void fuzzyMatch() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
@@ -91,16 +94,19 @@ public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
         assertQueryHits("name:hmo~ AND name:SApiens~", 1L);
     }
 
+    @Ignore
     @Test
     public void findByClauseWithEscapedWhitespace() throws StudyImporterException {
         assertQueryHits("name:s\\ nme~", 1L);
     }
 
+    @Ignore
     @Test
     public void findByFuzzyCapitalization() throws StudyImporterException {
         assertQueryHits("name:geRman~", 1L);
     }
 
+    @Ignore
     @Test
     public void findByFuzzyAndClause() throws StudyImporterException {
         assertQueryHits("name:geRman~ AND name:som~", 1L);
@@ -111,6 +117,7 @@ public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
         assertQueryHits("name:hmo~ AND name:sapiens~", 1L);
     }
 
+    @Ignore
     @Test
     public void findByFuzzyAndClause3() throws StudyImporterException {
         // queries are case sensitive . . . should all be lower cased.

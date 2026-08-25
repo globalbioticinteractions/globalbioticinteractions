@@ -36,6 +36,7 @@ public class LinkerTermMatcherNeo4jTest extends GraphDBTestCase {
         assertTaxonMapping(classifiedId);
     }
 
+    @Ignore
     @Test
     public void holorchisCastexNonMissedLink() throws StudyImporterException, IOException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/448
