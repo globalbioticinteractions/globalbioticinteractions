@@ -84,12 +84,12 @@ public class ExportTestUtil {
 
     static void assertSameAsideFromNodeIds(String[] actualLines, String[] expectedLines) {
         Stream<String> actual = Stream.of(actualLines)
-                .map(line -> line.replaceAll("([a-z]+):[0-9]+", "$1:X"));
+                .map(line -> line.replaceAll("([a-z_]+):[0-9]+", "$1:X"));
         List<String> actualLinesCollection = actual.collect(Collectors.toList());
-        assertThat(actualLinesCollection.size(), is(expectedLines.length));
         List<String> expectedCollection = Arrays.asList(expectedLines);
         for (String line : actualLinesCollection) {
             assertThat(expectedCollection, hasItem(line));
         }
+        assertThat(actualLinesCollection.size(), is(expectedLines.length));
     }
 }

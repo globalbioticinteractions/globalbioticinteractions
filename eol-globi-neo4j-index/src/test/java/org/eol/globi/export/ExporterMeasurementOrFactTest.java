@@ -61,8 +61,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
     @Test
     public void noMatchTargetTaxon() throws IOException, NodeFactoryException, ParseException {
         String expected =
-                "globi:occur:stomach_volume:X\tglobi:occur:X\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
-                        "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\nglobi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
+                "globi:occur:stomach_volume:X\tglobi:occur:X\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
         assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", expected);
     }
 
