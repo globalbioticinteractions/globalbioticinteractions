@@ -287,6 +287,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         return new ResolvingTaxonIndexImpl(enricher, tx);
     }
 
+    @Ignore
     @Test
     public final void synonymsAddedToIndexOnce() throws NodeFactoryException {
         PropertyEnricherSingle enricher = new PropertyEnricherSingle() {

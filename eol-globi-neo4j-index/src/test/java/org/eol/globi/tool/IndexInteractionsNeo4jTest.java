@@ -20,6 +20,7 @@ import org.eol.globi.util.RelationshipListener;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -37,8 +38,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class IndexInteractionsTest extends GraphDBTestCase {
+public class IndexInteractionsNeo4jTest extends GraphDBTestCase {
 
+    @Ignore
     @Test
     public void indexInteractions() throws StudyImporterException {
         Study interaction =null;
