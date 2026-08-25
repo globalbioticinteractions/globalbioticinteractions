@@ -3,7 +3,6 @@ package org.eol.globi.util;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelType;
@@ -126,11 +125,6 @@ public class NodeUtil {
 
     public static Iterable<Relationship> getStomachContents(Specimen specimen) {
         return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(InteractType.ATE));
-    }
-
-    public static Iterable<Relationship> getSpecimenCaughtHere(Location location) {
-        return ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
-
     }
 
     public static Node getDataSetForStudy(StudyNode study) {

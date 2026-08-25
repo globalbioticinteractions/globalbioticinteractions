@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
@@ -153,9 +155,9 @@ public class DatasetImporterForBlewettTest extends GraphDBTestCase {
                     Node preyNode = preyRels.getEndNode();
                     assertThat(preyNode, is(not(nullValue())));
 
-                    Node taxonNode = preyNode.getRelationships(Direction.OUTGOING,NodeUtil.asNeo4j( RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
+                    Node taxonNode = preyNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                     assertThat(taxonNode, is(not(nullValue())));
-                    preyNames.add((String)taxonNode.getProperty(PropertyAndValueDictionary.NAME));
+                    preyNames.add((String) taxonNode.getProperty(PropertyAndValueDictionary.NAME));
                 }
 
                 assertThat(preyNames, hasItem("Lag rhomboides"));
@@ -176,23 +178,29 @@ public class DatasetImporterForBlewettTest extends GraphDBTestCase {
                 Iterable<Relationship> ate = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 assertThat(ate.iterator().hasNext(), is(false));
 
-                Location location = null;
-                try {
-                    location = nodeFactory.findLocation(new LocationImpl(26.651833, -82.103833, 0.0, null));
-                } catch (NodeFactoryException e) {
-                    fail(e.getMessage());
+                try (Transaction tx = getGraphDb().beginTx()) {
+
+                    LocationNode location = null;
+                    try {
+                        location = nodeFactory.findLocationNode(tx, new LocationImpl(26.651833, -82.103833, 0.0, null));
+                    } catch (NodeFactoryException e) {
+                        fail(e.getMessage());
+                    }
+                    assertThat(location, is(not(nullValue())));
+
+                    Iterable<Relationship> specimenCaughtHere = location
+                            .getUnderlyingNode()
+                            .getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
+                    Iterator<Relationship> iterator = specimenCaughtHere.iterator();
+                    assertThat(iterator.hasNext(), is(true));
+                    iterator.next();
+                    assertThat(iterator.hasNext(), is(true));
+                    iterator.next();
+                    assertThat(iterator.hasNext(), is(true));
+                    iterator.next();
+                    assertThat(iterator.hasNext(), is(false));
+                    success.set(true);
                 }
-                assertThat(location, is(not(nullValue())));
-                Iterable<Relationship> specimenCaughtHere = NodeUtil.getSpecimenCaughtHere(location);
-                Iterator<Relationship> iterator = specimenCaughtHere.iterator();
-                assertThat(iterator.hasNext(), is(true));
-                iterator.next();
-                assertThat(iterator.hasNext(), is(true));
-                iterator.next();
-                assertThat(iterator.hasNext(), is(true));
-                iterator.next();
-                assertThat(iterator.hasNext(), is(false));
-                success.set(true);
             }
 
         };
