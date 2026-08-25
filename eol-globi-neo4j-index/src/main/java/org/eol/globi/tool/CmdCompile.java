@@ -14,6 +14,8 @@ import picocli.CommandLine;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,7 +45,8 @@ public class CmdCompile extends CmdNeo4J {
 
         List<String> namepaces = new ArrayList<>();
         if (StringUtils.isNotBlank(datasetNamespaceFile)) {
-            try (InputStream retrieve = resourceService.retrieve(URI.create(datasetNamespaceFile))) {
+            try (InputStream retrieve = new FileInputStream(datasetNamespaceFile))
+             {
                 InputStreamReader inputStreamReader = new InputStreamReader(retrieve, StandardCharsets.UTF_8);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String line;
