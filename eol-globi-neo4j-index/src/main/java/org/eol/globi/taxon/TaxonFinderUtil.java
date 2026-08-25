@@ -19,17 +19,6 @@ public class TaxonFinderUtil {
     public static TaxonNode findTaxonOrRelated(String key, String value, Taxon taxonContext, Transaction tx) {
         Node foundNode = findNode(key, value, tx, NodeLabel.Taxon, taxonContext);
 
-        if (foundNode == null) {
-            foundNode = findNode(key, value, tx, NodeLabel.Taxon_Verbatim, taxonContext);
-            if (foundNode != null) {
-                try (ResourceIterable<Relationship> relationships = foundNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ALIGNED_TO))) {
-                    Optional<Relationship> first = relationships.stream().findFirst();
-                    foundNode = first.map(Relationship::getStartNode).orElse(null);
-                }
-            }
-
-        }
-
         return foundNode == null
                 ? null
                 : new TaxonNode(foundNode);
