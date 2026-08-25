@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -18,11 +17,11 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     @Override
     public void doExportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
-            exportDistinct(study, writer);
+            exportDistinct(writer);
         }
     }
 
-    public void exportDistinct(StudyNode study, ExportUtil.Appender writer) throws IOException {
+    public void exportDistinct(ExportUtil.Appender writer) throws IOException {
         ExporterAggregateUtil
                 .exportDistinctInteractionsByStudy(
                         writer,

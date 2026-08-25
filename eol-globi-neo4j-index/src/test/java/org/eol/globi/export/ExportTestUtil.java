@@ -18,6 +18,7 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 public class ExportTestUtil {
     public static StudyNode createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
@@ -82,9 +84,12 @@ public class ExportTestUtil {
 
     static void assertSameAsideFromNodeIds(String[] actualLines, String[] expectedLines) {
         Stream<String> actual = Stream.of(actualLines)
-                .map(line -> line.replaceAll("([a-z]):\\d+", "$1:X"));
-        List<String> collect = actual.collect(Collectors.toList());
-        assertThat(collect, containsInAnyOrder(expectedLines));
-        assertThat(collect.size(), is(expectedLines.length));
+                .map(line -> line.replaceAll("(source|target):[0-9]+", "$1:X"));
+        List<String> actualLinesCollection = actual.collect(Collectors.toList());
+        assertThat(actualLinesCollection.size(), is(expectedLines.length));
+        List<String> expectedCollection = Arrays.asList(expectedLines);
+        for (String line : actualLinesCollection) {
+            assertThat(expectedCollection, hasItem(line));
+        }
     }
 }
