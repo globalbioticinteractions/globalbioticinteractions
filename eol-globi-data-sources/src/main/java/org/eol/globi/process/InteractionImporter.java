@@ -112,17 +112,14 @@ public class InteractionImporter implements InteractionListener {
     private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy(studyOf(interaction, logger));
 
-        Consumer<Specimen> sourceSpecimenInitializer = new Consumer<Specimen>() {
-            @Override
-            public void accept(Specimen source) {
-                setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
-                setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
-                setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
-                setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
-                setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
-                setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
-            }
-        };
+        Consumer<Specimen> sourceSpecimenInitializer = new SpecimenInitializerIds(
+                interaction,
+                SOURCE_OCCURRENCE_ID,
+                SOURCE_CATALOG_NUMBER,
+                SOURCE_COLLECTION_CODE,
+                SOURCE_COLLECTION_ID,
+                SOURCE_INSTITUTION_CODE
+        );
 
         Specimen source = createSpecimen(
                 interaction,
@@ -142,18 +139,15 @@ public class InteractionImporter implements InteractionListener {
                 SOURCE_TAXON_PATH_IDS);
 
 
-        Consumer<Specimen> targetSpecimenInitializer = new Consumer<Specimen>() {
-            @Override
-            public void accept(Specimen target) {
-                setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
-                setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
-                setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
-                setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
-                setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
-                setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
+        Consumer<Specimen> targetSpecimenInitializer = new SpecimenInitializerIds(
+                interaction,
+                TARGET_OCCURRENCE_ID,
+                TARGET_CATALOG_NUMBER,
+                TARGET_COLLECTION_CODE,
+                TARGET_COLLECTION_ID,
+                TARGET_INSTITUTION_CODE
+        );
 
-            }
-        };
         Specimen target = createSpecimen(
                 interaction,
                 study,
@@ -194,7 +188,7 @@ public class InteractionImporter implements InteractionListener {
 
     private Specimen createSpecimen(Map<String, String> interaction,
                                     Study study,
-                                    Consumer<Specimen> initializer,
+                                    final Consumer<Specimen> specimenInitializer,
                                     String taxonNameLabel,
                                     String taxonIdLabel,
                                     String bodyPartName,
@@ -238,12 +232,16 @@ public class InteractionImporter implements InteractionListener {
 
         Consumer<Specimen> initializerProxy = new Consumer<Specimen>() {
 
+            private Consumer<Specimen> initializer = specimenInitializer;
+            private NodeFactory nodeFactory = InteractionImporter.this.nodeFactory;
+
+
             @Override
             public void accept(Specimen specimen) {
                 initializer.accept(specimen);
                 setBasisOfRecordIfAvailable(interaction, specimen);
                 try {
-                    setDateTimeIfAvailable(interaction, specimen);
+                    setDateTimeIfAvailable(interaction, specimen, nodeFactory);
                 } catch (StudyImporterException e) {
                     throw new RuntimeException(e);
                 }
@@ -300,7 +298,7 @@ public class InteractionImporter implements InteractionListener {
         return study1;
     }
 
-    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
+    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target, NodeFactory nodeFactory1) throws StudyImporterException {
         final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
@@ -314,7 +312,7 @@ public class InteractionImporter implements InteractionListener {
                     if (StringUtils.isNoneBlank(msg)) {
                         logWarningIfPossible(link, msg);
                     }
-                    nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
+                    nodeFactory1.setUnixEpochProperty(target, dateTime.toDate());
                 }
 
             } catch (IllegalArgumentException ex) {
@@ -418,4 +416,31 @@ public class InteractionImporter implements InteractionListener {
         return latitude;
     }
 
+    private class SpecimenInitializerIds implements Consumer<Specimen> {
+        private final Map<String, String> interaction;
+        private final String sourceOccurrenceIdLabel;
+        private final String sourceCatalogNumberLabel;
+        private final String sourceCollectionCodeLabel;
+        private final String sourceCollectionIdLabel;
+        private final String sourceInstitutionCodeLabel;
+
+        public SpecimenInitializerIds(Map<String, String> interaction, String sourceOccurrenceIdLabel, String sourceCatalogNumberLabel, String sourceCollectionCodeLabel, String sourceCollectionIdLabel, String sourceInstitutionCodeLabel) {
+            this.interaction = interaction;
+            this.sourceOccurrenceIdLabel = sourceOccurrenceIdLabel;
+            this.sourceCatalogNumberLabel = sourceCatalogNumberLabel;
+            this.sourceCollectionCodeLabel = sourceCollectionCodeLabel;
+            this.sourceCollectionIdLabel = sourceCollectionIdLabel;
+            this.sourceInstitutionCodeLabel = sourceInstitutionCodeLabel;
+        }
+
+        @Override
+        public void accept(Specimen source) {
+            setExternalIdNotBlank(interaction, sourceOccurrenceIdLabel, source);
+            setPropertyIfAvailable(interaction, source, sourceOccurrenceIdLabel, OCCURRENCE_ID);
+            setPropertyIfAvailable(interaction, source, sourceCatalogNumberLabel, CATALOG_NUMBER);
+            setPropertyIfAvailable(interaction, source, sourceCollectionCodeLabel, COLLECTION_CODE);
+            setPropertyIfAvailable(interaction, source, sourceCollectionIdLabel, COLLECTION_ID);
+            setPropertyIfAvailable(interaction, source, sourceInstitutionCodeLabel, INSTITUTION_CODE);
+        }
+    }
 }
