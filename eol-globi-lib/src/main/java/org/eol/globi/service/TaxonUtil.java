@@ -483,6 +483,7 @@ public class TaxonUtil {
     public static boolean isNonEmptyValue(String value) {
         return isNotBlank(value)
                 && !StringUtils.equals(value, NO_MATCH)
+                && !StringUtils.equals(value, PropertyAndValueDictionary.AMBIGUOUS_MATCH)
                 && !StringUtils.equals(value, NO_NAME);
     }
 
