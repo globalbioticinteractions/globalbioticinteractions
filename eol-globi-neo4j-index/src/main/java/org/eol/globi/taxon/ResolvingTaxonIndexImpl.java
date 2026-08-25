@@ -170,7 +170,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
     }
 
     private boolean includeAfterHomonymCheck(Taxon taxon, Taxon t) {
-        return !(skipHomonymMatches && TaxonUtil.likelyHomonym(t, taxon));
+        return !skipHomonymMatches || !TaxonUtil.likelyHomonym(t, taxon);
     }
 
     private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {

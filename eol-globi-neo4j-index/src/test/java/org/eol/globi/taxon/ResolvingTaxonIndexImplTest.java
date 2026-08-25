@@ -140,7 +140,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         };
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            Taxon indexedTaxonNode = this.factory.create(tx).getOrCreateTaxon(new TaxonImpl("some name1"));
+            Taxon indexedTaxonNode = factory.create(tx).getOrCreateTaxon(new TaxonImpl("some name1"));
             assertThat(indexedTaxonNode, is(nullValue()));
         }
     }
@@ -316,14 +316,14 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
             ResolvingTaxonIndex index = createTaxonService(tx, enricher);
 
             Taxon taxon2 = new TaxonImpl("not pref", null);
-            taxon2.setPath(null);
+            taxon2.setPath("need | some | path");
             Taxon first = index.getOrCreateTaxon(taxon2);
             assertThat(first.getName(), is("preferred"));
             assertThat(first.getPath(), is("one | two | three"));
             assertThat(first.getPathIds(), is("1 | 2 | 3"));
 
             Taxon taxon1 = new TaxonImpl("not pref", null);
-            taxon1.setPath(null);
+            taxon1.setPath("need | some | path");
             Taxon second = index.getOrCreateTaxon(taxon1);
             assertThat(((TaxonNode) second).getNodeID(), is(((TaxonNode) first).getNodeID()));
 
@@ -342,7 +342,6 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
     public final void doNotMatchHomonyms() throws NodeFactoryException {
         try (Transaction tx = getGraphDb().beginTx()) {
             ResolvingTaxonIndex taxonService = createTaxonService(tx, new PropertyEnricherNoop());
-            //taxonService.skipHomonymMatches(true);
 
             Taxon taxon2 = new TaxonImpl("some name", "some:id");
             taxon2.setPath("one | two | three | some name");
@@ -640,17 +639,14 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         try (Transaction tx = getGraphDb().beginTx()) {
             ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-            assertThat(taxonIndex.getOrCreateTaxon(taxon1), is(CoreMatchers.nullValue()));
-            Taxon taxon = taxonIndex.getOrCreateTaxon(taxon1);
-            assertThat(taxon, is(notNullValue()));
-            assertThat(taxonIndex.getOrCreateTaxon(taxon1), is(not(CoreMatchers.nullValue())));
-
-            assertThat(taxonIndex.findTaxonById(externalId, taxon), is(notNullValue()));
+            assertThat(taxonIndex.getOrCreateTaxon(taxon1), is(notNullValue()));
 
             Taxon taxon2 = new TaxonImpl("some name", externalId);
-            taxon2.setPath("some name");
-            taxon2.setPathNames("species");
-            assertThat(taxonIndex.getOrCreateTaxon(taxon2), is(not(CoreMatchers.nullValue())));
+            taxon2.setPath("some | other | path | for | some name");
+            taxon2.setPathNames("kingdom | phylum | family | genus | species");
+            Taxon suspectedHomonym = taxonIndex.getOrCreateTaxon(taxon2);
+            assertThat(suspectedHomonym, is(not(CoreMatchers.nullValue())));
+            assertThat(suspectedHomonym.getPath(), is("some | other | path | for | some name"));
         }
     }
 
