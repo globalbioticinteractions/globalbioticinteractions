@@ -15,8 +15,6 @@ import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDataset;
 import org.eol.globi.tool.TaxonIndexFactory;
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.NodeIdCollector;
-import org.eol.globi.util.NodeIdCollectorImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
