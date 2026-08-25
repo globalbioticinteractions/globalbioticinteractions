@@ -225,14 +225,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
-        Consumer<Specimen> initializer = new Consumer<Specimen>() {
-
-            @Override
-            public void accept(Specimen specimen) {
-
-            }
-        };
-        return createSpecimen(study, taxon, initializer, types);
+        return createSpecimen(study, taxon, specimen -> {}, types);
     }
 
     @Override

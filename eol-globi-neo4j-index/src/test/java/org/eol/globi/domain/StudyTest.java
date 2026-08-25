@@ -31,9 +31,11 @@ public class StudyTest extends GraphDBTestCase {
             taxonIndex.getOrCreateTaxon(new TaxonImpl(CARCHARODON_CARCHARIAS, null));
 
             Specimen goldFish = nodeFactory.createSpecimen(study, new TaxonImpl(CARASSIUS_AURATUS_AURATUS, "gold:123"));
+            goldFish.setExternalId("goldfish:specimen:1");
 
             Specimen shark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON_CARCHARIAS, null));
             Specimen fuzzyShark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON, "shark:123"));
+            fuzzyShark.setExternalId("shark:specimen:2");
 
             shark.ate(goldFish);
             fuzzyShark.ate(goldFish);
@@ -66,21 +68,24 @@ public class StudyTest extends GraphDBTestCase {
                     assertEquals(new Double(-100.0d), specimen.getSampleLocation().getAltitude());
                     assertEquals(new Double(1.2d), specimen.getLengthInMm());
                 } else {
-                    fail("expected to findNamespaces a specimen");
+                    fail("expected to find a specimen");
                 }
-            } else if (specimen.getExternalId().equals("gold:123")) {
+            } else if (specimen.getExternalId() != null && specimen.getExternalId().equals("goldfish:specimen:1")) {
                 Node genusNode = NodeUtil.getClassifications(specimen).iterator().next().getEndNode();
                 assertEquals(CARASSIUS_AURATUS_AURATUS, genusNode.getProperty("name"));
-            } else if (specimen.getExternalId().equals("shark:123")) {
+            } else if (specimen.getExternalId() != null && specimen.getExternalId().equals("shark:specimen:2")) {
                 Node genusNode = NodeUtil.getClassifications(specimen).iterator().next().getEndNode();
                 assertEquals(CARCHARODON, genusNode.getProperty("name"));
             } else {
-                fail("found unexpected specimen [" + specimen + "] in study");
+                fail("found unexpected specimen [" + specimen.getExternalId() + "] in study");
             }
 
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(foundStudy.getUnderlyingNode()), handler);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(foundStudy.getUnderlyingNode()), handler);
+            tx.commit();
+        }
 
     }
 
