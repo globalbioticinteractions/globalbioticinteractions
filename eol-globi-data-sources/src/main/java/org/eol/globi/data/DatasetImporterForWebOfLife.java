@@ -85,7 +85,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
                 throw new StudyImporterException("failed to find expected [references.csv] resource in [" + archiveURL + "]");
             }
 
-            if (networkTempFileMap.size() == 0) {
+            if (networkTempFileMap.isEmpty()) {
                 throw new StudyImporterException("failed to find expected network csv files");
             }
 
