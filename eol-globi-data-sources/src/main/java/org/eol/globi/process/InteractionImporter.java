@@ -64,11 +64,6 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
-import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
-import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
-import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
-import static org.eol.globi.domain.PropertyAndValueDictionary.INSTITUTION_CODE;
-import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
@@ -172,14 +167,14 @@ public class InteractionImporter implements InteractionListener {
         source.interactsWith(target, type, getOrCreateLocation(interaction));
     }
 
-    private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
+    public static void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
         String value = link.get(key);
         if (StringUtils.isNotBlank(value)) {
             source.setProperty(propertyKey, value);
         }
     }
 
-    private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
+    public static void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
         String s = link.get(sourceOccurrenceId);
         if (StringUtils.isNotBlank(s)) {
             source1.setExternalId(s);
@@ -230,26 +225,8 @@ public class InteractionImporter implements InteractionListener {
             taxon.setPathNames(taxonPathNames);
         }
 
-        Consumer<Specimen> initializerProxy = new Consumer<Specimen>() {
-
-            private Consumer<Specimen> initializer = specimenInitializer;
-            private NodeFactory nodeFactory = InteractionImporter.this.nodeFactory;
-
-
-            @Override
-            public void accept(Specimen specimen) {
-                initializer.accept(specimen);
-                setBasisOfRecordIfAvailable(interaction, specimen);
-                try {
-                    setDateTimeIfAvailable(interaction, specimen, nodeFactory);
-                } catch (StudyImporterException e) {
-                    throw new RuntimeException(e);
-                }
-                setBodyPartIfAvailable(interaction, specimen, bodyPartName, bodyPartId);
-                setLifeStageIfAvailable(interaction, specimen, lifeStageName, lifeStageId);
-                setSexIfAvailable(interaction, specimen, sexLabel, sexId);
-            }
-        };
+        Consumer<Specimen> initializerProxy = new SpecimenInitializerProperties(
+                InteractionImporter.this.nodeFactory, specimenInitializer, interaction, bodyPartName, bodyPartId, lifeStageName, lifeStageId, sexLabel, sexId, InteractionImporter.this.logger);
         return nodeFactory.createSpecimen(study, taxon, initializerProxy, argumentType);
     }
 
@@ -257,7 +234,7 @@ public class InteractionImporter implements InteractionListener {
         return StringUtils.equalsIgnoreCase(argumentTypeId, PropertyAndValueDictionary.REFUTES);
     }
 
-    private void setLifeStageIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+    public static void setLifeStageIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String lifeStageName = link.get(name);
         final String lifeStageId = link.get(id);
         if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
@@ -265,7 +242,7 @@ public class InteractionImporter implements InteractionListener {
         }
     }
 
-    private void setSexIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+    public static void setSexIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String sexName = link.get(name);
         final String sexId = link.get(id);
         if (StringUtils.isNotBlank(sexName) || StringUtils.isNotBlank(sexId)) {
@@ -298,7 +275,7 @@ public class InteractionImporter implements InteractionListener {
         return study1;
     }
 
-    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target, NodeFactory nodeFactory1) throws StudyImporterException {
+    public static void setDateTimeIfAvailable(NodeFactory nodeFactory1, ImportLogger importLogger, Map<String, String> link, Specimen target) throws StudyImporterException {
         final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
@@ -310,13 +287,13 @@ public class InteractionImporter implements InteractionListener {
                     String msg = DateUtil.validateDate(eventDate, dateTime);
 
                     if (StringUtils.isNoneBlank(msg)) {
-                        logWarningIfPossible(link, msg);
+                        LogUtil.logWarningIfPossible(link, msg, importLogger);
                     }
                     nodeFactory1.setUnixEpochProperty(target, dateTime.toDate());
                 }
 
             } catch (IllegalArgumentException ex) {
-                logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
+                LogUtil.logWarningIfPossible(link, "invalid date string [" + eventDate + "]", importLogger);
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
             }
@@ -326,7 +303,7 @@ public class InteractionImporter implements InteractionListener {
     }
 
 
-    private String applySymbiotaDateTimeFix(String eventDate) {
+    public static String applySymbiotaDateTimeFix(String eventDate) {
         String eventDateCorrected = eventDate;
         if (StringUtils.contains(eventDate, "-00")) {
             // see https://github.com/globalbioticinteractions/scan/issues/2
@@ -337,7 +314,7 @@ public class InteractionImporter implements InteractionListener {
         return eventDateCorrected;
     }
 
-    private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
+    public static void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
         final String basisOfRecordName = link.get(BASIS_OF_RECORD_NAME);
         final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
         if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
@@ -345,7 +322,7 @@ public class InteractionImporter implements InteractionListener {
         }
     }
 
-    private void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+    public static void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String bodyPartName = link.get(name);
         final String bodyPartId = link.get(id);
         if (StringUtils.isNotBlank(bodyPartName) || StringUtils.isNotBlank(bodyPartId)) {
@@ -416,31 +393,4 @@ public class InteractionImporter implements InteractionListener {
         return latitude;
     }
 
-    private class SpecimenInitializerIds implements Consumer<Specimen> {
-        private final Map<String, String> interaction;
-        private final String sourceOccurrenceIdLabel;
-        private final String sourceCatalogNumberLabel;
-        private final String sourceCollectionCodeLabel;
-        private final String sourceCollectionIdLabel;
-        private final String sourceInstitutionCodeLabel;
-
-        public SpecimenInitializerIds(Map<String, String> interaction, String sourceOccurrenceIdLabel, String sourceCatalogNumberLabel, String sourceCollectionCodeLabel, String sourceCollectionIdLabel, String sourceInstitutionCodeLabel) {
-            this.interaction = interaction;
-            this.sourceOccurrenceIdLabel = sourceOccurrenceIdLabel;
-            this.sourceCatalogNumberLabel = sourceCatalogNumberLabel;
-            this.sourceCollectionCodeLabel = sourceCollectionCodeLabel;
-            this.sourceCollectionIdLabel = sourceCollectionIdLabel;
-            this.sourceInstitutionCodeLabel = sourceInstitutionCodeLabel;
-        }
-
-        @Override
-        public void accept(Specimen source) {
-            setExternalIdNotBlank(interaction, sourceOccurrenceIdLabel, source);
-            setPropertyIfAvailable(interaction, source, sourceOccurrenceIdLabel, OCCURRENCE_ID);
-            setPropertyIfAvailable(interaction, source, sourceCatalogNumberLabel, CATALOG_NUMBER);
-            setPropertyIfAvailable(interaction, source, sourceCollectionCodeLabel, COLLECTION_CODE);
-            setPropertyIfAvailable(interaction, source, sourceCollectionIdLabel, COLLECTION_ID);
-            setPropertyIfAvailable(interaction, source, sourceInstitutionCodeLabel, INSTITUTION_CODE);
-        }
-    }
 }
