@@ -122,39 +122,6 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return season;
     }
 
-    public static void initSchema(Transaction tx) {
-        NodeFactoryNeo4j.initConstraints(tx);
-        NodeFactoryNeo4j.initIndexes(tx);
-    }
-
-    private static void initIndexes(Transaction tx) {
-        NodeFactoryNeo4j.createIndexIfNeeded(
-                tx,
-                NodeLabel.Location,
-                LocationConstant.LATITUDE
-        );
-        NodeFactoryNeo4j.createIndexIfNeeded(
-                tx,
-                NodeLabel.Reference,
-                StudyConstant.TITLE_IN_NAMESPACE
-        );
-    }
-
-    private static void initConstraints(Transaction tx) {
-        NodeFactoryNeo4j.createConstraintIfNeeded(
-                tx, NodeLabel.Dataset,
-                DatasetConstant.NAMESPACE
-        );
-        NodeFactoryNeo4j.createConstraintIfNeeded(
-                tx, NodeLabel.Reference,
-                StudyConstant.TITLE_IN_NAMESPACE
-        );
-        NodeFactoryNeo4j.createConstraintIfNeeded(
-                tx, NodeLabel.ExternalId,
-                PropertyAndValueDictionary.EXTERNAL_ID
-        );
-    }
-
     protected Node createSeasonNode() {
         try (Transaction transaction = getGraphDb().beginTx()) {
             Node node = transaction.createNode(NodeLabel.Season);

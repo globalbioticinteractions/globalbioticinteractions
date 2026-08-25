@@ -16,6 +16,7 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
 import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
+import org.globalbioticinteractions.elton.Neo4jIndexUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -38,17 +39,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 
     @Test
-    public void doSingleImportWithSchema() throws StudyImporterException {
+    public void doSingleImportAssertWithIndex() throws StudyImporterException {
         NodeFactoryNeo4j factory = getNodeFactory();
-
-        try (Transaction tx = factory.getGraphDb().beginTx()) {
-            NodeFactoryNeo4j.initSchema(tx);
-            tx.commit();
-        }
-        factory.startNextBatchUpdate();
-        try (Transaction tx = factory.getGraphDb().beginTx()) {
-            tx.commit();
-        }
 
         try (Transaction tx = factory.getGraphDb().beginTx()) {
             assertGraphDBImportNativeIndexes(factory, factory.getGraphDb());
