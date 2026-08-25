@@ -12,6 +12,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -85,20 +86,28 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
-        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
+        StudyImpl study = new StudyImpl("myStudy", null, null);
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(study);
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setBasisOfRecord(new TermImpl("test:123", "aBasisOfRecord"));
         resolveNames();
 
         StringWriter row = new StringWriter();
 
-        exportOccurrences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), true);
+        try (Transaction tx = nodeFactory.getGraphDb().beginTx()) {
 
-        String expected = "";
-        expected += getExpectedHeader();
-        expected += "globi:occur:X\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n";
+            exportOccurrences().exportStudy(
+                    nodeFactory.findStudyNode(tx, study),
+                    ExportUtil.AppenderWriter.of(row),
+                    true
+            );
 
-        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\\n"), expected.split("\\n"));
+            String expected = "";
+            expected += getExpectedHeader();
+            expected += "globi:occur:X\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n";
+
+            ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\\n"), expected.split("\\n"));
+        }
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
