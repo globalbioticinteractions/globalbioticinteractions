@@ -2,12 +2,14 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.PropertyEnricherNoop;
 import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.process.TaxonNameEnricher;
 import org.eol.globi.tool.TaxonIndexFactory;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -139,13 +141,8 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
         taxon.setPath("some path");
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            ResolvingTaxonIndex taxonIndex = new TaxonIndexFactory() {
-
-                @Override
-                public ResolvingTaxonIndex create(Transaction tx) {
-                    return ExportTestUtil.taxonIndexWithEnricher(null, tx);
-                }
-            }.create(tx);
+            ResolvingTaxonIndex taxonIndex = ExportTestUtil
+                    .taxonIndexWithEnricher(new PropertyEnricherNoop(), tx);
             taxonIndex.getOrCreateTaxon(taxon);
 
             taxon = new TaxonImpl("Homo sapiens", "foo:123");
