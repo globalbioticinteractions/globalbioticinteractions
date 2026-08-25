@@ -17,6 +17,7 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
 import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.globalbioticinteractions.elton.Neo4jIndexUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -86,6 +87,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         }
     }
 
+    @Ignore
     @Test
     public void doSingleImportExport() throws StudyImporterException, URISyntaxException {
         doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));

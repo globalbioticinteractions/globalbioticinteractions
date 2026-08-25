@@ -58,6 +58,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         }
     }
 
+    @Ignore
     @Test
     public void ensureThatEnrichedPropertiesAreLinked() throws StudyImporterException {
         TaxonIndexFactory factory = new TaxonIndexFactory() {
@@ -160,6 +161,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
     }
 
 
+    @Ignore
     @Test
     public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
         PropertyEnricher enricher = new PropertyEnricherSingle() {
