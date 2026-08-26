@@ -4,7 +4,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 public final class GraphServiceUtil {
 
-    private static final long TIMEOUT_MS = 5000;
+    private static final long TIMEOUT_MS = 30000;
 
     public static void verifyState(GraphDatabaseService graphDb) {
         if (graphDb == null) {
