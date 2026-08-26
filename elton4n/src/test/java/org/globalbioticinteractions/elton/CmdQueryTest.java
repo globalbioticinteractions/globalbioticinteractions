@@ -18,17 +18,25 @@ public class CmdQueryTest {
     @Test
     public void query() throws IOException {
         CmdQuery cmd = new CmdQuery();
-        cmd.setGraphDbDir(folder.newFolder("neo4j").getAbsolutePath());
-        cmd.setStdin(IOUtils.toInputStream("MATCH (n) RETURN n LIMIT 1;", StandardCharsets.UTF_8));
-        cmd.run();
+        try {
+            cmd.setGraphDbDir(folder.newFolder("neo4j").getAbsolutePath());
+            cmd.setStdin(IOUtils.toInputStream("MATCH (n) RETURN n LIMIT 1;", StandardCharsets.UTF_8));
+            cmd.run();
+        } finally {
+            cmd.destroy();
+        }
     }
 
     @Test(expected = QueryExecutionException.class)
     public void invalidQuery() throws IOException {
         CmdQuery cmd = new CmdQuery();
-        cmd.setGraphDbDir(folder.newFolder("neo4j").getAbsolutePath());
-        cmd.setStdin(IOUtils.toInputStream("why did the chicken cross the street?", StandardCharsets.UTF_8));
-        cmd.run();
+        try {
+            cmd.setGraphDbDir(folder.newFolder("neo4j").getAbsolutePath());
+            cmd.setStdin(IOUtils.toInputStream("why did the chicken cross the street?", StandardCharsets.UTF_8));
+            cmd.run();
+        } finally {
+            cmd.destroy();
+        }
     }
 
 }

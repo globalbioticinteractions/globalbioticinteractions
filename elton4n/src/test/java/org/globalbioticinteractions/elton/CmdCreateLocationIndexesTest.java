@@ -14,12 +14,12 @@ public class CmdCreateLocationIndexesTest  {
     @Test
     public void query() throws IOException {
         Path neo4j = Files.createTempDirectory("neo4j");
+        CmdCreateLocationIndexes cmd = new CmdCreateLocationIndexes();
         try {
-            CmdCreateLocationIndexes cmd = new CmdCreateLocationIndexes();
             cmd.setGraphDbDir(neo4j.toString());
             cmd.run();
-            cmd.destroy();
         } finally {
+            cmd.destroy();
             FileUtils.deleteQuietly(neo4j.toFile());
         }
     }
