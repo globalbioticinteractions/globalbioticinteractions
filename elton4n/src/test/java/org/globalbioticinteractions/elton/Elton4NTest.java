@@ -57,18 +57,12 @@ public class Elton4NTest {
             File interactions = new File(csvDir, "interactions.tsv.gz");
             FileInputStream is = new FileInputStream(interactions);
             String actualContent = IOUtils.toString(new GZIPInputStream(is), StandardCharsets.UTF_8);
-            InputStream resourceAsStream = Elton4NTestUtil.class.getResourceAsStream("/exported/interactions.tsv");
+            InputStream resourceAsStream = Elton4NTestUtil.class.getResourceAsStream("expected-interactions.tsv");
             assertNotNull(resourceAsStream);
             String expected = IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
 
             assertThat(StringUtils.split(actualContent, "\n").length,
                     Is.is(StringUtils.split(expected, "\n").length));
-
-            System.out.println("----");
-            System.out.println(actualContent);
-
-            System.out.println("----");
-            System.out.println(expected);
 
             assertThat(actualContent, Is.is(expected));
         } finally {
