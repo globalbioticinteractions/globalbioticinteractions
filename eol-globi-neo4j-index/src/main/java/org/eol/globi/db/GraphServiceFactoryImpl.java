@@ -31,11 +31,11 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
 
     @Override
     public GraphDatabaseService getGraphService() {
-        GraphServiceUtil.verifyState(graphDb);
-
         if (graphDb == null) {
             graphDb = startNeo4j(graphDbDir);
         }
+
+        GraphServiceUtil.verifyState(graphDb);
         return graphDb;
     }
 
