@@ -1,8 +1,6 @@
 package org.eol.globi.db;
 
-import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.NodeLabel;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
