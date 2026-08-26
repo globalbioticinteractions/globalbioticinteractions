@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.elton;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.core.Is;
 
 import java.io.File;
@@ -36,8 +37,6 @@ public class Elton4NTestUtil {
                         "-datasetDir", getTestDatasetDir(),
                         "-provDir", getTestDatasetDir(),
                         "-graphDbDir", graphDb,
-                        "-exportDir", export,
-                        "-nameIndexCache", nameIndexCache,
                         "link",
                         "-datasetDir", getTestDatasetDir(),
                         "-provDir", getTestDatasetDir(),
@@ -62,7 +61,12 @@ public class Elton4NTestUtil {
         String actualContent = IOUtils.toString(new GZIPInputStream(is), StandardCharsets.UTF_8);
         InputStream resourceAsStream = Elton4NTestUtil.class.getResourceAsStream(resourceWithExpectedOutput);
         assertNotNull(resourceAsStream);
-        assertThat(actualContent, Is.is(IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8)));
+        String expected = IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
+
+        assertThat(StringUtils.split(actualContent, "\n").length,
+                Is.is(StringUtils.split(expected, "\n").length));
+
+        assertThat(actualContent, Is.is(expected));
     }
 
 }

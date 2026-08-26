@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.elton;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -7,18 +8,23 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 public class Elton4NTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder(new File("target"));
-
     @Test
     public void runCompositeCommands() throws IOException, URISyntaxException {
-        Elton4NTestUtil.assertCompileLinkExport(
-                folder.newFolder(),
-                "/exported/interactions.tsv"
-        );
+        File tmpDir = new File(new File("target"), UUID.randomUUID().toString());
+        tmpDir.deleteOnExit();
+        FileUtils.forceMkdir(tmpDir);
+        try {
+            Elton4NTestUtil.assertCompileLinkExport(
+                    tmpDir,
+                    "/exported/interactions.tsv"
+            );
+        } finally {
+            FileUtils.deleteQuietly(tmpDir);
+        }
     }
 
 }
