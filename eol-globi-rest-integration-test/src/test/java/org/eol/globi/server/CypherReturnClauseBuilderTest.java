@@ -102,8 +102,8 @@ public class CypherReturnClauseBuilderTest {
                 "study " +
                 "MATCH (sourceTaxon:Taxon)-[:SAME_AS*0..1]->(sourceTaxonSameAs:Taxon), (targetTaxon:Taxon)-[:SAME_AS*0..1]->(targetTaxonSameAs:Taxon) " +
                 "WHERE " +
-                "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
-                "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
+                "sourceTaxonSameAs.externalId =~ $source_taxon_prefix AND " +
+                "targetTaxonSameAs.externalId =~ $target_taxon_prefix " +
                 "WITH sourceTaxonSameAs as sourceTaxon, " +
                 "sourceSpecimen, " +
                 "interaction, " +
@@ -145,10 +145,10 @@ public class CypherReturnClauseBuilderTest {
                 knownFieldsWithTaxonomy());
         assertThat(query.toString(), is(" WITH " +
                 "sourceTaxon, sourceSpecimen, interaction, targetTaxon, targetSpecimen, loc, study " +
-                "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
+                "MATCH (sourceTaxon:Taxon)-[:SAME_AS*0..1]->(sourceTaxonSameAs:Taxon), (targetTaxon:Taxon)-[:SAME_AS*0..1]->(targetTaxonSameAs:Taxon) " +
                 "WHERE " +
-                "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
-                "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
+                "sourceTaxonSameAs.externalId =~ $source_taxon_prefix AND " +
+                "targetTaxonSameAs.externalId =~ $target_taxon_prefix " +
                 "WITH sourceTaxonSameAs as sourceTaxon, sourceSpecimen, interaction, targetTaxonSameAs as targetTaxon, targetSpecimen, loc, study " +
                 "RETURN " +
                 "sourceTaxon.name as source_taxon_name," +
@@ -258,10 +258,10 @@ public class CypherReturnClauseBuilderTest {
                         "sourceTaxon " +
                         "WITH " +
                         "sourceTaxon, iType, targetTaxon " +
-                        "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
+                        "MATCH (sourceTaxon:Taxon)-[:SAME_AS*0..1]->(sourceTaxonSameAs:Taxon), (targetTaxon:Taxon)-[:SAME_AS*0..1]->(targetTaxonSameAs:Taxon) " +
                         "WHERE " +
-                        "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
-                        "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
+                        "sourceTaxonSameAs.externalId =~ $source_taxon_prefix AND " +
+                        "targetTaxonSameAs.externalId =~ $target_taxon_prefix " +
                         "WITH sourceTaxonSameAs as sourceTaxon, iType, targetTaxonSameAs as targetTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name," +
                         "targetTaxon.name as target_taxon_name"));
