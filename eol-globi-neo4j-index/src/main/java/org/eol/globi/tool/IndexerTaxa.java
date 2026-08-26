@@ -17,7 +17,7 @@ public class IndexerTaxa implements IndexerNeo4j {
 
     private final TaxonCacheService taxonCacheService;
     private final GraphServiceFactory factory;
-    private TaxonIndexFactory taxonIndexFactory;
+    private final TaxonIndexFactory taxonIndexFactory;
 
     public IndexerTaxa(TaxonCacheService taxonCacheService,
                        GraphServiceFactory factory,
@@ -28,7 +28,7 @@ public class IndexerTaxa implements IndexerNeo4j {
             @Override
             public ResolvingTaxonIndex create(Transaction tx) {
                 ResolvingTaxonIndex resolvingTaxonIndex = taxonIndexFactory.create(tx);
-                resolvingTaxonIndex.setIndexResolvedTaxaOnly(true);
+                resolvingTaxonIndex.setIndexResolvedTaxaOnly(false);
                 return resolvingTaxonIndex;
             }
         };

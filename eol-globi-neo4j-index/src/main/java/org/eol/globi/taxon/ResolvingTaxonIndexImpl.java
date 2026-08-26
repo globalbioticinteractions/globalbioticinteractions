@@ -36,6 +36,17 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
     public static final Pattern POSSIBLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
 
+    private static final String[] RANKS = new String[]{
+            "kingdom",
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "genus",
+            "subgenus",
+            "species"
+    };
+
     public ResolvingTaxonIndexImpl(PropertyEnricher enricher, Transaction tx) {
         this.enricher = enricher;
         this.tx = tx;
@@ -101,17 +112,21 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
                         .map(r -> taxonNodeFor(r, NodeLabel.Taxon))
                         .collect(Collectors.toList());
 
+                TaxonNode taxonNodeFound;
                 if (matchCandidates.isEmpty()) {
                     TaxonNode noMatch = createNoMatch(taxon);
-                    taxonFound = indexResolvedOnly ? null : noMatch;
+                    taxonNodeFound = indexResolvedOnly ? null : noMatch;
                 } else {
                     TaxonNode primary = matchCandidates.get(0);
                     matchCandidates.stream().skip(1)
                             .forEach(n -> {
                                 n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
                             });
-                    onTaxonNode(primary);
-                    taxonFound = primary;
+                    taxonNodeFound = primary;
+                }
+                if (taxonNodeFound != null) {
+                    onTaxonNode(taxonNodeFound);
+                    taxonFound = taxonNodeFound;
                 }
             } catch (PropertyEnricherException e) {
                 // ignore
@@ -121,12 +136,35 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
         return taxonFound;
     }
 
+    private void populateRankNames(Node node, String rank, Map<String, String> pathNameMap1) {
+        String name = pathNameMap1.get(rank);
+        if (StringUtils.isNotBlank(name)) {
+            node.setProperty(rank + "Name", name);
+        }
+    }
+
+    private void populateRankIds(Node node, String rank, Map<String, String> pathIdMap1) {
+        String id = pathIdMap1.get(rank);
+        if (StringUtils.isNotBlank(id)) {
+            node.setProperty(rank + "Id", id);
+        }
+    }
+
+
     private void onTaxonNode(TaxonNode taxonNode) {
         List<String> taxonIds = new ArrayList<>();
         List<String> taxonPathIdsAndNames = new ArrayList<>();
         addTaxonId(taxonIds, taxonNode);
         addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
 
+        if (TaxonUtil.isNonEmptyTaxonNameOrId(taxonNode.getName())) {
+            final Map<String, String> pathIdMap1 = TaxonUtil.toPathNameMap(taxonNode, taxonNode.getPathIds());
+            final Map<String, String> pathNameMap1 = TaxonUtil.toPathNameMap(taxonNode, taxonNode.getPath());
+            for (String rank : RANKS) {
+                populateRankIds(taxonNode.getUnderlyingNode(), rank, pathIdMap1);
+                populateRankNames(taxonNode.getUnderlyingNode(), rank, pathNameMap1);
+            }
+        }
 
         Node node = taxonNode.getUnderlyingNode();
         Iterable<Relationship> rels = node.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.SAME_AS));

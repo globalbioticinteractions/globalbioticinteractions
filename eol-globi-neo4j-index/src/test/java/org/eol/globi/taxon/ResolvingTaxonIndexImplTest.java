@@ -158,6 +158,8 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         assertThat(aTaxon, is(instanceOf(TaxonNode.class)));
         assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString(), is("|  | a etc id | a etc name | a kingdom id | a kingdom name | a phylum id | a phylum name | anExternalId | some name |"));
         assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString(), is("| anExternalId |"));
+        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty("kingdomId").toString(), is("a kingdom id"));
+        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty("kingdomName").toString(), is("a kingdom name"));
     }
 
 

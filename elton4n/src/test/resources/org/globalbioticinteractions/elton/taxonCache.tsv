@@ -1,6 +1,6 @@
 id	name	rank	commonNames	path	pathIds	pathNames	externalUrl	thumbnailUrlprovidedTaxonId	providedTaxonName	resolvedTaxonId	resolvedTaxonName
-NAME:1	Leptoconchus incycloseris			one | two							
-NAME:2	Fungia (Cycloseris) costulata			one | two							
-NAME:3	Leptoconchus infungites			one | two							
-NAME:4	Fungia (Fungia) fungites			one | two							
-NAME:5	Leptoconchus ingrandifungi			one | two							
+NAME:1	Leptoconchus incycloseris			one | two	NAME:10 | NAME:100	kingdom | phylum					
+NAME:2	Fungia (Cycloseris) costulata			one | two	NAME:10 | NAME:100	kingdom | phylum					
+NAME:3	Leptoconchus infungites			one | two	NAME:10 | NAME:100	kingdom | phylum					
+NAME:4	Fungia (Fungia) fungites			one | two	NAME:10 | NAME:100	kingdom | phylum					
+NAME:5	Leptoconchus ingrandifungi			one | two	NAME:10 | NAME:100	kingdom | phylum					

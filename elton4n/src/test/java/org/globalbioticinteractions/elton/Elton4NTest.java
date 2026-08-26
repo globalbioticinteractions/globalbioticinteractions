@@ -64,6 +64,12 @@ public class Elton4NTest {
             assertThat(StringUtils.split(actualContent, "\n").length,
                     Is.is(StringUtils.split(expected, "\n").length));
 
+            System.out.println("----");
+            System.out.println(actualContent);
+
+            System.out.println("----");
+            System.out.println(expected);
+
             assertThat(actualContent, Is.is(expected));
         } finally {
             FileUtils.deleteQuietly(tmpDir);
