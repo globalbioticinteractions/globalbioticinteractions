@@ -15,6 +15,7 @@ public enum NodeLabel implements Label {
     Taxon_Unprocessed,
     Taxon_HasInteractionShortCut,
     Report,
-    Taxon_Resolved
+    Taxon_Resolved,
+    Interaction
 }
 

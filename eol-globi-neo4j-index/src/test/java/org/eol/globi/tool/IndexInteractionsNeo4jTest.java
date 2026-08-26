@@ -40,10 +40,8 @@ import static org.junit.Assert.assertTrue;
 
 public class IndexInteractionsNeo4jTest extends GraphDBTestCase {
 
-    @Ignore
     @Test
     public void indexInteractions() throws StudyImporterException {
-        Study interaction =null;
         try (Transaction tx1 = getGraphDb().beginTx()) {
             TaxonIndex taxonIndex = getTaxonIndexFactory().create(tx1);
             // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
@@ -51,7 +49,7 @@ public class IndexInteractionsNeo4jTest extends GraphDBTestCase {
             DatasetWithResourceMapping dataset = new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"),
                     getResourceService());
             NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
-            interaction = factory.getOrCreateStudy(study);
+            Study interaction = factory.getOrCreateStudy(study);
             TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
             Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
             donald.classifyAs(taxonIndex.getOrCreateTaxon(donaldTaxon));
@@ -63,6 +61,11 @@ public class IndexInteractionsNeo4jTest extends GraphDBTestCase {
             donald.ate(mickey);
             tx1.commit();
         }
+        getNodeFactory().startNextBatchUpdate();
+        resolveNames();
+
+        getInteractionIndexer().index();
+        getNodeFactory().startNextBatchUpdate();
 
         NodeFactoryNeo4j nodeFactoryNeo4j = getNodeFactory();
         StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
@@ -75,8 +78,8 @@ public class IndexInteractionsNeo4jTest extends GraphDBTestCase {
 
         try (Transaction tx = getGraphDb().beginTx()) {
             someStudy = nodeFactoryNeo4j.getOrCreateStudyNode(tx, study1);
-            assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));
-            assertThat(interaction.getTitle(), is(someStudy.getTitle()));
+            assertThat(someStudy.getOriginatingDataset().getNamespace(), is("some/namespace"));
+            assertThat(someStudy.getTitle(), is("some study"));
 
             RelationshipType hasParticipant = NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT);
 
