@@ -25,7 +25,7 @@ public abstract class BatchProcessorAbstract implements IndexerNeo4j {
     protected abstract String getNextBatchQuery(Long batchSize);
 
     public static String getProgressMsg(Long count, long duration) {
-        return String.format("in [%.2f] s at [%.2f] taxon/s ",
+        return String.format("in [%.2f] s at [%.2f] taxon/s",
                 duration / 1000.0,
                 (float) count * 1000.0 / duration
         );
@@ -36,18 +36,19 @@ public abstract class BatchProcessorAbstract implements IndexerNeo4j {
     }
 
     public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
-        long totalToBeProcessed = 0;
+        long expectedBatchesToBeProcessed = 0;
         try (Transaction tx = graphService.beginTx()) {
             Result result = tx.execute(getTotalToBeProcessedQuery());
             if (result.hasNext()) {
-                totalToBeProcessed = Long.parseLong(result.next().get("totalToBeProcessed").toString());
+                expectedBatchesToBeProcessed = (long) Math.ceil(((Long)result.next().get("totalToBeProcessed")).doubleValue() / (double) batchSize);
             }
             tx.commit();
         }
 
-        if (totalToBeProcessed == 0) {
+        if (expectedBatchesToBeProcessed == 0) {
             LOG.info("no unprocessed verbatim taxon names: nothing to do.");
         } else {
+            AtomicLong batchesLeft = new AtomicLong(expectedBatchesToBeProcessed);
             StopWatch watchForEntireRun = new StopWatch();
             watchForEntireRun.start();
             StopWatch watchForBatch = new StopWatch();
@@ -55,18 +56,18 @@ public abstract class BatchProcessorAbstract implements IndexerNeo4j {
             final AtomicLong nameCount = new AtomicLong(0L);
             while (processNextBatch(batchSize, nameCount, graphService)) {
                 // ignore
-                if (totalToBeProcessed < nameCount.get()) {
-                    LOG.info("stop name processing: processed more names (i.e., {}) than expected (i.e., {}).", nameCount.get(), totalToBeProcessed);
+                if (batchesLeft.decrementAndGet() < 0) {
+                    LOG.info("stop name processing: processed more names (i.e., {}) than expected (i.e., {}).", nameCount.get(), expectedBatchesToBeProcessed);
                     break;
                 }
                 watchForBatch.stop();
                 final long duration = watchForBatch.getTime();
                 if (duration > 0) {
-                    LOG.info("resolved batch of [{}] names {} ({} names resolved so far or {}%)",
+                    LOG.info("resolved batch of [{}] names {} with {} batches left ({}% done)",
                             batchSize,
                             BatchProcessorAbstract.getProgressMsg(batchSize, duration),
-                            nameCount.get(),
-                            String.format("%.1f", 100 * nameCount.get() / (float) totalToBeProcessed));
+                            batchesLeft.get(),
+                            String.format("%.1f", 100 * (1 - batchesLeft.get() / (float) expectedBatchesToBeProcessed)));
                 }
                 watchForBatch.reset();
                 watchForBatch.start();
@@ -82,11 +83,11 @@ public abstract class BatchProcessorAbstract implements IndexerNeo4j {
     private boolean processNextBatch(Long batchSize,
                                      AtomicLong nameCount,
                                      GraphDatabaseService graphService) {
-        long numberOfNamesProcessed = 0;
+        long numberOfBatchesProcessed = 0;
         try (Transaction tx = graphService.beginTx()) {
             Result execute = tx.execute(getNextBatchQuery(batchSize));
             while (execute.hasNext()) {
-                numberOfNamesProcessed += 1;
+                numberOfBatchesProcessed += 1;
                 Map<String, Object> next = execute.next();
                 boolean handled = handleResultRow(next, tx);
                 if (handled) {
@@ -95,7 +96,7 @@ public abstract class BatchProcessorAbstract implements IndexerNeo4j {
             }
             tx.commit();
         }
-        return numberOfNamesProcessed == batchSize;
+        return numberOfBatchesProcessed == batchSize;
     }
 
     protected abstract boolean handleResultRow(Map<String, Object> next, Transaction tx);
