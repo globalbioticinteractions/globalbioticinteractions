@@ -56,9 +56,8 @@ public abstract class BatchProcessorAbstract implements IndexerNeo4j {
             final AtomicLong nameCount = new AtomicLong(0L);
             while (processNextBatch(batchSize, nameCount, graphService)) {
                 // ignore
-                if (batchesLeft.decrementAndGet() < 0) {
-                    LOG.info("stop name processing: processed more names (i.e., {}) than expected (i.e., {}).", nameCount.get(), expectedBatchesToBeProcessed);
-                    break;
+                if (batchesLeft.getAndDecrement() < 0) {
+                    LOG.warn("processed {} more batches than expected total of {}.", -1*batchesLeft.get(), expectedBatchesToBeProcessed);
                 }
                 watchForBatch.stop();
                 final long duration = watchForBatch.getTime();

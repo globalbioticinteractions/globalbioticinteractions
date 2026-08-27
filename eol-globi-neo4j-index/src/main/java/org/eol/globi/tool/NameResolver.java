@@ -57,11 +57,10 @@ public class NameResolver extends BatchProcessorAbstract {
                         new SpecimenNode(specimenNodeId).classifyAs(resolvedTaxon);
                     }
                 }
-                describedAsTaxonNode.removeLabel(NodeLabel.Taxon_Unprocessed);
-            } catch (UnlikelyTaxonNameException e) {
-                // ignore
             } catch (NodeFactoryException e) {
                 LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
+            } finally {
+                describedAsTaxonNode.removeLabel(NodeLabel.Taxon_Unprocessed);
             }
         }
         return handled;
