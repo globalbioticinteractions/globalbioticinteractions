@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class KnownBadNameFilter implements TaxonFilter {
-    private static final List<String> KNOWN_BAD_NAMES = Arrays.asList("sp", "G.", "NA", "IV", "AV");
+    private static final List<String> KNOWN_BAD_NAMES = Arrays.asList("sp", "G.", "NA", "IV", "AV", "NULL");
 
     @Override
     public boolean shouldInclude(Taxon taxon) {
