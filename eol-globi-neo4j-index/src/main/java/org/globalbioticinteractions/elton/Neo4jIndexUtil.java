@@ -35,6 +35,10 @@ public class Neo4jIndexUtil {
     }
 
     public static void createIndexIfNotExists(Transaction tx, NodeLabel nodeLabel, String propertyName) {
+        createIndexIfNotExists(tx, nodeLabel, propertyName, IndexType.RANGE);
+    }
+
+    public static void createIndexIfNotExists(Transaction tx, NodeLabel nodeLabel, String propertyName, IndexType indexType) {
         List<String> indexNames = new ArrayList<>();
         Iterable<IndexDefinition> taxonIndexes = tx.schema().getIndexes(nodeLabel);
         taxonIndexes.forEach(i -> indexNames.add(i.getName()));
@@ -46,7 +50,7 @@ public class Neo4jIndexUtil {
                     .schema()
                     .indexFor(nodeLabel)
                     .on(propertyName)
-                    .withIndexType(IndexType.RANGE)
+                    .withIndexType(indexType)
                     .withName(indexName)
                     .create();
             LOG.info("created index [{}]", indexName);

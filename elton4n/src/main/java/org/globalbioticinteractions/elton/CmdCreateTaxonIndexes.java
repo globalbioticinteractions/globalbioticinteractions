@@ -5,6 +5,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.tool.CmdNeo4J;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.IndexType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ public class CmdCreateTaxonIndexes extends CmdNeo4J {
         try (Transaction tx = graphService.beginTx()) {
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Taxon, PropertyAndValueDictionary.EXTERNAL_ID);
             Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Taxon, PropertyAndValueDictionary.NAME);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Taxon, PropertyAndValueDictionary.EXTERNAL_IDS, IndexType.TEXT);
             tx.commit();
         }
     }
