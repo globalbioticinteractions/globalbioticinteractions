@@ -48,7 +48,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.values.storable.CoordinateReferenceSystem;
 import org.neo4j.values.storable.PointValue;
 import org.neo4j.values.storable.Values;
@@ -59,7 +58,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -118,8 +116,7 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public SeasonNode createSeason(String seasonNameLower) throws NodeFactoryException {
         Node node = createSeasonNode();
-        SeasonNode season = new SeasonNode(node, seasonNameLower);
-        return season;
+        return new SeasonNode(node, seasonNameLower);
     }
 
     protected Node createSeasonNode() {
@@ -273,7 +270,6 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public Study createStudy(Study study) throws NodeFactoryException {
         try (Transaction transaction = getGraphDb().beginTx()) {
             StudyNode studyNode = createStudyNode(transaction, study);
-            indexStudyNode(studyNode);
             Study copyOf = copyOf(studyNode);
             transaction.commit();
             return copyOf;
@@ -363,14 +359,12 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         datasetNode.setProperty(DatasetConstant.CITATION, StringUtils.defaultIfBlank(dataset.getCitation(), "no citation"));
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
         datasetNode.setProperty(DatasetConstant.LAST_SEEN_AT, dataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, Long.toString(System.currentTimeMillis())));
-        indexDatasetNode(dataset, datasetNode);
         return datasetNode;
     }
 
     Node createExternalId(Transaction transaction, String externalId) throws NodeFactoryException {
         Node externalIdNode = createExternalIdNode(transaction);
         externalIdNode.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-        indexExternalIdNode(externalId, externalIdNode);
         return externalIdNode;
     }
 
@@ -580,56 +574,12 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         Node node = transaction.createNode();
         StudyNode studyNode = getOrCreateStudyNode(transaction, study);
         interactionNode = new InteractionNode(node);
-        interactionNode.createRelationshipTo(RelTypes.DERIVED_FROM, (NodeBacked) studyNode);
+        interactionNode.createRelationshipTo(RelTypes.DERIVED_FROM, studyNode);
         DatasetNode dataset = getOrCreateDatasetNode(getGraphDb().beginTx(), study.getOriginatingDataset());
         if (dataset != null) {
-            interactionNode.createRelationshipTo(RelTypes.ACCESSED_AT, (NodeBacked) dataset);
+            interactionNode.createRelationshipTo(RelTypes.ACCESSED_AT, dataset);
         }
         return interactionNode;
-    }
-
-    private static void createConstraintIfNeeded(Transaction transaction,
-                                                 NodeLabel label,
-                                                 String propertyName) {
-        if (!transaction
-                .schema()
-                .getConstraints(label)
-                .iterator()
-                .hasNext()) {
-
-            transaction
-                    .schema()
-                    .constraintFor(label)
-                    .assertPropertyIsUnique(propertyName)
-                    .create();
-        }
-    }
-
-    private static void createIndexIfNeeded(Transaction tx, NodeLabel label,
-                                            String propertyName) {
-
-        Iterable<IndexDefinition> indexes = tx
-                .schema()
-                .getIndexes(label);
-
-        IndexDefinition indexMatching = null;
-        for (IndexDefinition index : indexes) {
-            Iterator<String> keyIterator = index.getPropertyKeys().iterator();
-            if (keyIterator.hasNext()) {
-                if (StringUtils.equals(keyIterator.next(), propertyName)) {
-                    indexMatching = index;
-                    break;
-                }
-            }
-
-        }
-        if (indexMatching == null) {
-            tx
-                    .schema()
-                    .indexFor(label)
-                    .on(propertyName)
-                    .create();
-        }
     }
 
     protected void validate(Location location) throws NodeFactoryException {
@@ -643,20 +593,8 @@ public class NodeFactoryNeo4j extends NodeFactoryAbstract {
         }
     }
 
-    void indexStudyNode(StudyNode studyNode) {
-        // indexing already done via constraint: do nothing
-    }
-
     protected Node createDatasetNode(Transaction tx) {
         return tx.createNode(NodeLabel.Dataset);
-    }
-
-    protected void indexDatasetNode(Dataset dataset, Node datasetNode) {
-        // indexing already done via constraint; do nothing
-    }
-
-    protected void indexExternalIdNode(String externalId, Node externalIdNode) {
-        // external ids already indexed through constraint, do nothing.
     }
 
     protected Node createExternalIdNode(Transaction transaction) {
