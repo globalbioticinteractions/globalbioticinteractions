@@ -298,8 +298,8 @@ public class TaxonUtil {
         if (hasPath(taxonA) && hasPath(taxonB)) {
             Map<String, String> pathMapA = toPathNameMap(taxonA, taxonA.getPath());
             Map<String, String> pathMapB = toPathNameMap(taxonB, taxonB.getPath());
-            return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
-                    || taxonPathLengthMismatch(pathMapA, pathMapB);
+            return taxonPathLengthMismatch(pathMapA, pathMapB)
+                    || hasHigherOrderTaxaMismatch(pathMapA, pathMapB);
         } else {
             return false;
         }

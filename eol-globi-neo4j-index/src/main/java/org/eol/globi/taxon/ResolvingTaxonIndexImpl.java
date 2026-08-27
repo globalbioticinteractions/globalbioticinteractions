@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+
 public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
     private final PropertyEnricher enricher;
@@ -61,7 +63,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
     public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
         return TaxonUtil.isEmptyValue(name)
                 ? null
-                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.NAME, name, taxonContext, getTransaction());
+                : TaxonFinderUtil.findTaxonOrRelated(NAME, name, getTransaction(), taxonContext);
     }
 
     @Override
@@ -71,10 +73,11 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
     @Override
     public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
+        // needs no homonym matching, so taxon context omitted
         Transaction tx = getTransaction();
         return TaxonUtil.isEmptyValue(externalId)
                 ? null
-                : TaxonFinderUtil.findTaxonOrRelated(PropertyAndValueDictionary.EXTERNAL_ID, externalId, taxonContext, tx);
+                : TaxonFinderUtil.findTaxonOrRelated(EXTERNAL_ID, externalId, tx);
     }
 
     private Transaction getTransaction() {
@@ -175,10 +178,10 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
         }
         taxonPathIdsAndNames.addAll(taxonIds);
         String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
-        node.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, completeList(aggregateIds));
+        node.setProperty(EXTERNAL_IDS, completeList(aggregateIds));
 
         String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
-        node.setProperty(PropertyAndValueDictionary.NAME_IDS, completeList(aggregateTaxonIds));
+        node.setProperty(NAME_IDS, completeList(aggregateTaxonIds));
     }
 
     private static String completeList(String aggregateIds) {
