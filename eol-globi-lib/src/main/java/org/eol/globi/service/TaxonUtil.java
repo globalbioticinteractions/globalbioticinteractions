@@ -298,8 +298,7 @@ public class TaxonUtil {
         if (hasPath(taxonA) && hasPath(taxonB)) {
             Map<String, String> pathMapA = toPathNameMap(taxonA, taxonA.getPath());
             Map<String, String> pathMapB = toPathNameMap(taxonB, taxonB.getPath());
-            return taxonPathLengthMismatch(pathMapA, pathMapB)
-                    || hasHigherOrderTaxaMismatch(pathMapA, pathMapB);
+            return hasHigherOrderTaxaMismatch(pathMapA, pathMapB);
         } else {
             return false;
         }
@@ -349,21 +348,21 @@ public class TaxonUtil {
 
 
     private static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
-        boolean hasAtLeastOneMatchingRank = false;
+        boolean hasAtLeastOneMatchingRankValue = false;
         boolean hasAtLeastOneSharedRank = false;
-        String[] ranks = new String[]{"phylum", "class", "order", "family"};
+        String[] ranks = new String[]{"kingdom", "phylum", "class", "order", "family"};
         for (String rank : ranks) {
             if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
+                hasAtLeastOneSharedRank = true;
                 final String rankValueA = pathMapA.get(rank);
                 final String rankValueB = pathMapB.get(rank);
-                hasAtLeastOneSharedRank = true;
                 if (StringUtils.equals(rankValueA, rankValueB)) {
-                    hasAtLeastOneMatchingRank = true;
+                    hasAtLeastOneMatchingRankValue = true;
                     break;
                 }
             }
         }
-        return hasAtLeastOneSharedRank && !hasAtLeastOneMatchingRank;
+        return hasAtLeastOneSharedRank && !hasAtLeastOneMatchingRankValue;
     }
 
     private static boolean higherOrderTaxaMatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {

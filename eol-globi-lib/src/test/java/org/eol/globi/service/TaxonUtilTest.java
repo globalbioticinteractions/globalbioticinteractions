@@ -41,6 +41,23 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void notHomonym2() {
+        TaxonImpl taxon = new TaxonImpl();
+        taxon.setName("Lestes");
+        taxon.setExternalId("some:id");
+        taxon.setPath("Animalia|Insecta| | | | |Lestidae|Lestes");
+        taxon.setPathNames("kingdom|class| | | | |family|genus");
+
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Lestes");
+        otherTaxon.setExternalId("some:otherid");
+        otherTaxon.setPath("Lestidae");
+        otherTaxon.setPathNames("family");
+
+        assertFalse(TaxonUtil.likelyHomonym(taxon, otherTaxon));
+    }
+
+    @Test
     public void resolveSubclassName() {
         Map<String, String> properties = new TreeMap<String, String>() {{
             put("sourceTaxonClassName", "Arachnida");
