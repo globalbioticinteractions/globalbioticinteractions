@@ -5,7 +5,6 @@ import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ResolvingTaxonIndex;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
@@ -36,7 +35,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
     private boolean skipHomonymMatches;
     private boolean indexResolvedOnly;
 
-    public static final Pattern POSSIBLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
+    public static final Pattern ACCEPTABLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
 
     private static final String[] RANKS = new String[]{
             "kingdom",
@@ -91,7 +90,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
 
     private Taxon doGetOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
         if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
-            if (!POSSIBLE_SHORT_NAME_PATTERN.matcher(taxon.getName()).matches()) {
+            if (!ACCEPTABLE_SHORT_NAME_PATTERN.matcher(taxon.getName()).matches()) {
                 throw new UnlikelyTaxonNameException("taxon name [" + taxon.getName() + "] is a short and unlikely taxonomic name, and no externalId is provided");
             }
         }

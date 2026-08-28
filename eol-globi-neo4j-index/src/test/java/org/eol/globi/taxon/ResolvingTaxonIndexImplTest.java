@@ -255,11 +255,6 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
 
     }
 
-    private Object propertyOf(TaxonNode taxon, String kingdomName) {
-        return null;
-//        return NonResolvingTaxonIndexNeo4jTest.propertyOf(taxon, kingdomName);
-    }
-
     private static TaxonIndexFactory createTaxonService() {
         PropertyEnricherSingle enricher = new PropertyEnricherSingle() {
             @Override
