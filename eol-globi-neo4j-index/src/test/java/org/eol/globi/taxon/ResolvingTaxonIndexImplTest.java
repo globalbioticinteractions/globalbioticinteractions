@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -348,7 +349,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         try (Transaction tx = getGraphDb().beginTx()) {
             ResolvingTaxonIndex taxonService = createTaxonService(tx, new PropertyEnricherNoop());
 
-            Taxon taxon2 = new TaxonImpl("some name", "some:id");
+            Taxon taxon2 = new TaxonImpl("some name", null);
             taxon2.setPath("one | two | three | some name");
             taxon2.setPathNames("kingdom | family | genus | species");
 
@@ -357,7 +358,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
             assertThat(first.getName(), is("some name"));
             assertThat(first.getPath(), is("one | two | three | some name"));
 
-            Taxon taxon1 = new TaxonImpl("some name", "some:id");
+            Taxon taxon1 = new TaxonImpl("some name", null);
             taxon1.setPath("four | five | six | some name");
             taxon1.setPathNames("kingdom | family | genus | species");
 
@@ -366,8 +367,33 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
             assertThat(second.getName(), is("some name"));
             assertThat(second.getPath(), is("four | five | six | some name"));
 
+        }
 
-//        assertThat(second.getNodeID(), is(not(first.getNodeID())));
+
+    }
+    @Test
+    public final void doNotMatchHomonymsExceptForMatchingByExternalId() throws NodeFactoryException {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonService = createTaxonService(tx, new PropertyEnricherNoop());
+
+            String uuid = UUID.randomUUID().toString();
+            Taxon taxon2 = new TaxonImpl("some name", uuid);
+            taxon2.setPath("one | two | three | some name");
+            taxon2.setPathNames("kingdom | family | genus | species");
+
+            Taxon first = taxonService.getOrCreateTaxon(taxon2);
+
+            assertThat(first.getName(), is("some name"));
+            assertThat(first.getPath(), is("one | two | three | some name"));
+
+            Taxon taxon1 = new TaxonImpl("some name", uuid);
+            taxon1.setPath("four | five | six | some name");
+            taxon1.setPathNames("kingdom | family | genus | species");
+
+            Taxon second = taxonService.getOrCreateTaxon(taxon1);
+
+            assertThat(second.getName(), is("some name"));
+            assertThat(second.getPath(), is("one | two | three | some name"));
 
         }
 
@@ -637,7 +663,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
 
     @Test
     public final void indexHomonymExplicitly() throws NodeFactoryException {
-        String externalId = "foo:123";
+        String externalId = null;
         Taxon taxon1 = new TaxonImpl("some name", externalId);
         taxon1.setPath("one | two | three | some name");
         taxon1.setPathNames("kingdom | family | genus | species");
@@ -652,6 +678,26 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
             Taxon suspectedHomonym = taxonIndex.getOrCreateTaxon(taxon2);
             assertThat(suspectedHomonym, is(not(CoreMatchers.nullValue())));
             assertThat(suspectedHomonym.getPath(), is("some | other | path | for | some name"));
+        }
+    }
+
+    @Test
+    public final void indexHomonymExplicitlyExceptWhenMatchingOnExternalId() throws NodeFactoryException {
+        String externalId = "some:id";
+        Taxon taxon1 = new TaxonImpl("some name", externalId);
+        taxon1.setPath("one | two | three | some name");
+        taxon1.setPathNames("kingdom | family | genus | species");
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            assertThat(taxonIndex.getOrCreateTaxon(taxon1), is(notNullValue()));
+
+            Taxon taxon2 = new TaxonImpl("some name", externalId);
+            taxon2.setPath("some | other | path | for | some name");
+            taxon2.setPathNames("kingdom | phylum | family | genus | species");
+            Taxon suspectedHomonym = taxonIndex.getOrCreateTaxon(taxon2);
+            assertThat(suspectedHomonym, is(not(CoreMatchers.nullValue())));
+            assertThat(suspectedHomonym.getPath(), is("one | two | three | some name"));
         }
     }
 
