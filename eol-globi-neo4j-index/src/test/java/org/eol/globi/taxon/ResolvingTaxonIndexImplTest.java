@@ -19,6 +19,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.Arrays;
@@ -157,10 +158,10 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
         assertThat(aTaxon.getName(), is("some name" + suffix));
         assertThat(aTaxon.getExternalId(), is("anExternalId" + suffix));
         assertThat(aTaxon, is(instanceOf(TaxonNode.class)));
-        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString(), is("|  | a etc id | a etc name | a kingdom id | a kingdom name | a phylum id | a phylum name | anExternalId | some name |"));
-        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString(), is("| anExternalId |"));
-        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty("kingdomId").toString(), is("a kingdom id"));
-        assertThat(((TaxonNode)aTaxon).getUnderlyingNode().getProperty("kingdomName").toString(), is("a kingdom name"));
+        assertThat(((TaxonNode) aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString(), is("|  | a etc id | a etc name | a kingdom id | a kingdom name | a phylum id | a phylum name | anExternalId | some name |"));
+        assertThat(((TaxonNode) aTaxon).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString(), is("| anExternalId |"));
+        assertThat(((TaxonNode) aTaxon).getUnderlyingNode().getProperty("kingdomId").toString(), is("a kingdom id"));
+        assertThat(((TaxonNode) aTaxon).getUnderlyingNode().getProperty("kingdomName").toString(), is("a kingdom name"));
     }
 
 
@@ -220,6 +221,69 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
             Taxon taxon = new TaxonImpl("no resolving either", null);
             assertFalse(TaxonUtil.isResolved(taxon));
             assertNull(index.getOrCreateTaxon(taxon));
+        }
+    }
+
+    @Test
+    public void indexPrimaryTaxonAndAssociatesOnce() throws NodeFactoryException {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex index = createTaxonService(tx, new PropertyEnricher() {
+                @Override
+                public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                    return enrichAllMatches(properties).get(0);
+                }
+
+                @Override
+                public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
+                    TaxonImpl taxon = new TaxonImpl("Hemiptera", "WD:Q26371");
+                    taxon.setPath("Hemiptera");
+                    taxon.setPathNames("order");
+                    taxon.setRank("order");
+                    TaxonImpl taxon1 = new TaxonImpl("Hemiptera", "WORMS:118089");
+                    taxon1.setPath("Biota | Animalia | Arthropoda | Crustacea | Allotriocarida | Hexapoda | Insecta | Pterygota | Hemiptera");
+                    taxon1.setPathNames("| kingdom | phylum | subphylum | superclass | class | subclass | infraclass | order");
+                    taxon1.setRank("order");
+                    return Arrays.asList(
+                            TaxonUtil.taxonToMap(taxon),
+                            TaxonUtil.taxonToMap(taxon1)
+                    );
+                }
+
+                @Override
+                public void shutdown() {
+
+                }
+            });
+
+            Taxon taxon = new TaxonImpl("Hemiptera", "82680");
+            taxon.setPath("Animalia | Arthropoda | Insecta");
+            taxon.setPathNames("kingdom | phylum | class");
+            taxon.setRank("order");
+
+
+            Taxon someTaxonCreated = index.getOrCreateTaxon(taxon);
+            assertNotNull(someTaxonCreated);
+            assertTwoDistinctTaxaAndOneSameAsTaxa("Hemiptera");
+            Taxon someOtherTaxonCreated = index.getOrCreateTaxon(taxon);
+            assertNotNull(someOtherTaxonCreated);
+
+            assertTwoDistinctTaxaAndOneSameAsTaxa("Hemiptera");
+        }
+    }
+
+    private void assertTwoDistinctTaxaAndOneSameAsTaxa(String taxonName) {
+        try (Transaction tx1 = getGraphDb().beginTx()) {
+            try (Result result = tx1.execute(
+                    "MATCH (t:Taxon {name: '" + taxonName + "'}) " +
+                            "RETURN count(distinct(t)) AS distinctTaxa")) {
+                assertThat(result.next().get("distinctTaxa"), is(2L));
+            }
+            try (Result result = tx1.execute(
+                    "MATCH (t:Taxon {name: '" + taxonName + "'})-[:SAME_AS]->() " +
+                            "RETURN count(distinct(t)) AS distinctTaxaSameAs")) {
+                assertThat(result.next().get("distinctTaxaSameAs"), is(1L));
+            }
+
         }
     }
 
@@ -366,6 +430,7 @@ public class ResolvingTaxonIndexImplTest extends GraphDBTestCase {
 
 
     }
+
     @Test
     public final void doNotMatchHomonymsExceptForMatchingByExternalId() throws NodeFactoryException {
         try (Transaction tx = getGraphDb().beginTx()) {

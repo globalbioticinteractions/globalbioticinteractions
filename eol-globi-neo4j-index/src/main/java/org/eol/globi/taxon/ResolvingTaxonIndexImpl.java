@@ -17,6 +17,8 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
 public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ResolvingTaxonIndexImpl.class);
 
     private final PropertyEnricher enricher;
     private final Transaction tx;
@@ -105,13 +109,12 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
             try {
                 List<Map<String, String>> taxonResolved = enricher.enrichAllMatches(TaxonUtil.taxonToMap(taxon));
 
-                List<TaxonNode> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
+                List<Taxon> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
                         .stream()
                         .filter(t -> !indexResolvedOnly || TaxonUtil.isResolved(t))
                         .map(TaxonUtil::mapToTaxon)
                         .filter(t -> includeAfterHomonymCheck(taxon, t))
                         .filter(t -> !TaxonUtil.hasLiteratureReference(t))
-                        .map(r -> taxonNodeFor(r, NodeLabel.Taxon))
                         .collect(Collectors.toList());
 
                 TaxonNode taxonNodeFound;
@@ -119,12 +122,26 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
                     TaxonNode noMatch = createNoMatch(taxon);
                     taxonNodeFound = indexResolvedOnly ? null : noMatch;
                 } else {
-                    TaxonNode primary = matchCandidates.get(0);
-                    matchCandidates.stream().skip(1)
-                            .forEach(n -> {
-                                n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
-                            });
-                    taxonNodeFound = primary;
+                    Taxon primary = matchCandidates.get(0);
+                    TaxonNode existingPrimaryTaxon = findTaxonById(primary.getExternalId(), null);
+                    if (existingPrimaryTaxon == null) {
+                        TaxonNode primaryTaxon = taxonNodeFor(primary, NodeLabel.Taxon);
+                        matchCandidates.stream().skip(1)
+                                .forEach(n -> {
+                                    TaxonNode existingSameAsTaxon = findTaxonById(n.getExternalId(), null);
+                                    TaxonNode sameAsTaxon = existingSameAsTaxon == null
+                                            ? taxonNodeFor(n, NodeLabel.Taxon)
+                                            : existingSameAsTaxon;
+
+                                    sameAsTaxon.getUnderlyingNode().createRelationshipTo(
+                                            primaryTaxon.getUnderlyingNode(),
+                                            NodeUtil.asNeo4j(RelTypes.SAME_AS)
+                                    );
+                                });
+                        taxonNodeFound = primaryTaxon;
+                    } else {
+                        taxonNodeFound = existingPrimaryTaxon;
+                    }
                 }
                 if (taxonNodeFound != null) {
                     onTaxonNode(taxonNodeFound);
@@ -214,7 +231,8 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
     }
 
     private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {
-        TaxonNode t = new TaxonNode(getTransaction().createNode(nodeLabel));
+        Node node = getTransaction().createNode(nodeLabel);
+        TaxonNode t = new TaxonNode(node);
         TaxonUtil.copy(r, t);
         return t;
     }
