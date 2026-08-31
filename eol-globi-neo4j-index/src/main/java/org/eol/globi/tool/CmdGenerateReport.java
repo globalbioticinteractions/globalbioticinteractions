@@ -41,7 +41,7 @@ public class CmdGenerateReport extends CmdNeo4J {
         );
 
         String taxonMetricsQuery2 = taxonMetricsQuery(collectionReportMatcher,
-                "| " + PropertyAndValueDictionary.NO_MATCH + " |",
+                "NULL",
                 "nTaxaNoMatch");
         log.info("running [{}]", taxonMetricsQuery);
         getGraphDb().executeTransactionally(
