@@ -1,5 +1,6 @@
 package org.eol.globi.tool;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class CmdGenerateReport extends CmdNeo4J {
         );
 
         String taxonMetricsQuery2 = taxonMetricsQuery(collectionReportMatcher,
-                "NULL",
+                "| " + PropertyAndValueDictionary.NO_MATCH + " |",
                 "nTaxaNoMatch");
         log.info("running [{}]", taxonMetricsQuery);
         getGraphDb().executeTransactionally(

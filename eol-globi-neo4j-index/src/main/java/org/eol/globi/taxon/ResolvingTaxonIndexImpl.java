@@ -230,7 +230,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
         return !skipHomonymMatches || !TaxonUtil.likelyHomonym(t, taxon);
     }
 
-    private TaxonNode taxonNodeFor(Taxon r, NodeLabel nodeLabel) {
+    private TaxonNode taxonNodeFor(Taxon r, NodeLabel... nodeLabel) {
         Node node = getTransaction().createNode(nodeLabel);
         TaxonNode t = new TaxonNode(node);
         TaxonUtil.copy(r, t);
@@ -238,7 +238,7 @@ public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
     }
 
     private TaxonNode createNoMatch(Taxon taxon) {
-        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon), NodeLabel.Taxon_Resolved);
+        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon), NodeLabel.Taxon, NodeLabel.Taxon_Resolved);
     }
 
 
