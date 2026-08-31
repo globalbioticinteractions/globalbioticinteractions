@@ -48,7 +48,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
                 if ("Homo sapiens".equals(TaxonUtil.mapToTaxon(properties).getName())) {
                     TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
                     taxon1.setPathIds("BARZ:111 | FOOZ:777");
-                    TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
+                    TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:445");
                     taxon1.setPathIds("BARZ:111 | FOOZ:777");
                     return Arrays.asList(properties, TaxonUtil.taxonToMap(taxon1), TaxonUtil.taxonToMap(taxon2));
                 } else {
@@ -95,9 +95,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
             assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_IDS));
 
             assertThat(taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                    , is("| Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia |"));
+                    , is("| Animalia | BARZ:111 | Bar:123 | FOO:444 | FOO:445 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia |"));
             assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
-                    , is("| Bar:123 | FOO:444 |"));
+                    , is("| Bar:123 | FOO:444 | FOO:445 |"));
         }
 
         try (Transaction tx1 = getGraphDb().beginTx()) {
