@@ -57,12 +57,12 @@ public class InteractionController {
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 
-    @RequestMapping(value = "/interaction.csv", method = {RequestMethod.GET})
+    @RequestMapping(value = "/interaction.{extension}", method = {RequestMethod.GET})
     @ResponseBody
-    protected CypherQuery findInteractionsAsCSV(HttpServletRequest request) {
+    protected CypherQuery findInteractionsAsCSV(HttpServletRequest request, @PathVariable("extension") String extension) {
         TreeMap<String, String[]> modifiedParameters = new TreeMap<String, String[]>() {{
             putAll(getParamMap(request));
-            put("type", new String[]{"csv"});
+            put("type", new String[]{extension});
         }};
         return findInteractions(request, modifiedParameters);
     }
