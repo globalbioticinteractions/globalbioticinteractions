@@ -36,14 +36,14 @@
         <jetty.ee.version.package>.ee8</jetty.ee.version.package>
         <jetty.ee.version.name>-${jetty.ee.version}-</jetty.ee.version.name>
         <jetty.groupId>org.eclipse.jetty.${jetty.ee.version}</jetty.groupId>
-        <jetty.version>12.1.11</jetty.version>
+        <jetty.version>12.1.12</jetty.version>
 <!--        <jetty.groupId>org.eclipse.jetty</jetty.groupId>-->
 <!--        <jetty.version>9.4.58.v20250814</jetty.version>-->
 <!--        <jetty.ee.version.name>-</jetty.ee.version.name>-->
 
 
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
-        <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
+        <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
