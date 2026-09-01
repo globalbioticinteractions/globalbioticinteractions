@@ -1,10 +1,12 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandLine.Command(
         name = "report",
@@ -32,8 +34,7 @@ public class CmdGenerateReport extends CmdNeo4J {
 
         String taxonMetricsQuery = taxonMetricsQuery(
                 collectionReportMatcher,
-                "NOT NULL",
-                "nTaxa"
+                "nTaxa", "NOT NULL", "NULL"
         );
         log.info("running [{}]", taxonMetricsQuery);
         getGraphDb().executeTransactionally(
@@ -41,8 +42,8 @@ public class CmdGenerateReport extends CmdNeo4J {
         );
 
         String taxonMetricsQuery2 = taxonMetricsQuery(collectionReportMatcher,
-                "NULL",
-                "nTaxaNoMatch");
+                "nTaxaNoMatch", "NULL"
+        );
         log.info("running [{}]", taxonMetricsQuery);
         getGraphDb().executeTransactionally(
                 taxonMetricsQuery2
@@ -60,16 +61,16 @@ public class CmdGenerateReport extends CmdNeo4J {
         );
 
         String datasetTaxonResolvedQuery = wrapWithDatasetContext(taxonMetricsQuery(datasetReportMatcher,
-                "NOT NULL",
-                "nTaxa"));
+                "nTaxa", "NOT NULL"
+        ));
         log.info("running [{}]", datasetTaxonResolvedQuery);
         getGraphDb().executeTransactionally(
                 datasetTaxonResolvedQuery
         );
 
         String datasetTaxonUnresolvedQuery = wrapWithDatasetContext(taxonMetricsQuery(datasetReportMatcher,
-                "NULL",
-                "nTaxaNoMatch"));
+                "nTaxaNoMatch", "NULL"
+        ));
         log.info("running [{}]", datasetTaxonUnresolvedQuery);
         getGraphDb().executeTransactionally(
                 datasetTaxonUnresolvedQuery
@@ -85,9 +86,13 @@ public class CmdGenerateReport extends CmdNeo4J {
     }
 
 
-    private static String taxonMetricsQuery(String collectionReportMatcher, String pathNullOrNotNull, String taxonMetrixName) {
+    private static String taxonMetricsQuery(String collectionReportMatcher, String taxonMetrixName, String... pathNullOrNotNull) {
+        String whereClause = Stream.of(pathNullOrNotNull)
+                .map( where -> "taxon.path IS " + where)
+                .collect(Collectors.joining(" OR "));
         return "MATCH " +
-                taxonMatchers(pathNullOrNotNull) +
+                "  (taxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen)<-[:COLLECTED]-(:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
+                        "WHERE " + whereClause + " " +
                 "WITH " +
                 "  COUNT(DISTINCT(taxon)) as " + taxonMetrixName + " " +
                 "MERGE " +
@@ -107,11 +112,6 @@ public class CmdGenerateReport extends CmdNeo4J {
                 collectionReportMatcher +
                 setReportMetrics2() +
                 "RETURN r ";
-    }
-
-    private static String taxonMatchers(String PathNullOrNotNull) {
-        return "  (taxon:Taxon)<-[:CLASSIFIED_AS]-(:Specimen)<-[:COLLECTED]-(:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
-                "WHERE taxon.path IS " + PathNullOrNotNull + " ";
     }
 
     private static String interactionMatchers() {
