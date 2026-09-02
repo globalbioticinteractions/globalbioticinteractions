@@ -141,7 +141,9 @@ public class ResultFormatterCSVTest {
         try {
             new ResultFormatterCSV().format(getClass().getResourceAsStream("cypherResponseWithErrors.json"), os);
         } catch (ResultFormattingException ex) {
-            assertThat(ex.getMessage(), is("failed to format incoming stream"));
+            assertThat(ex.getMessage(), containsString("failed to format incoming stream"));
+            assertThat(ex.getCause().getMessage(), containsString("Invalid input"));
+            assertThat(ex.getCause().getMessage(), is("Neo.ClientError.Statement.SyntaxError | Invalid input 'this': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH' (line 1, column 10 (offset: 9))\n\"CYPHER 5 this aint no cypher query\"\n          ^"));
             throw ex;
         }
     }

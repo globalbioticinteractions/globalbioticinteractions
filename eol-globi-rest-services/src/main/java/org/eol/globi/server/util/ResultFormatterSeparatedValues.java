@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.CharsetConstant;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -97,7 +98,6 @@ public abstract class ResultFormatterSeparatedValues extends ResultFormatterStre
     @Override
     protected void handleErrors(OutputStream os, JsonParser jsonParser) throws IOException {
         throwOnError(jsonParser);
-
     }
 
     public static void throwOnError(JsonParser jsonParser) throws IOException {
@@ -106,15 +106,22 @@ public abstract class ResultFormatterSeparatedValues extends ResultFormatterStre
         if (START_ARRAY.equals(token)) {
             boolean isFirst = true;
             boolean isEmptyArray = false;
+            List<String> errorMsgs = new ArrayList<>();
             ByteArrayOutputStream lineBuffer = new ByteArrayOutputStream();
             while ((token = jsonParser.nextToken()) != null) {
                 if (isFirst && END_ARRAY.equals(token)) {
                     isEmptyArray = true;
+                } else if (VALUE_STRING.equals(token)){
+                    errorMsgs.add(jsonParser.getText());
                 }
                 isFirst = false;
             }
             if (!isEmptyArray) {
-                throw new ResultFormattingException("encountered errors in retrieving results");
+                throw new ResultFormattingException(
+                        errorMsgs.isEmpty()
+                                ? "encountered errors in retrieving results"
+                                : StringUtils.join(errorMsgs, CharsetConstant.SEPARATOR)
+                );
             }
         }
     }
