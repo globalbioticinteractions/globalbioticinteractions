@@ -1,8 +1,9 @@
 package org.eol.globi.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
@@ -218,19 +219,19 @@ public class TaxonSearchImpl implements TaxonSearch {
         });
     }
 
-    private String buildLuceneQuery(String taxonName, String name) {
+    static String buildLuceneQuery(String taxonName, String propertyName) {
         StringBuilder builder = new StringBuilder();
         String[] split = StringUtils.split(taxonName, " ");
         for (int i = 0; i < split.length; i++) {
             builder.append("(");
-            builder.append(name);
+            builder.append(QueryParser.escape(propertyName));
             builder.append(":");
             String part = split[i];
-            builder.append(part.toLowerCase());
+            builder.append(QueryParser.escape(part.toLowerCase()));
             builder.append("* OR ");
-            builder.append(name);
+            builder.append(QueryParser.escape(propertyName));
             builder.append(":");
-            builder.append(part.toLowerCase());
+            builder.append(QueryParser.escape(part.toLowerCase()));
             builder.append("~)");
             if (i < (split.length - 1)) {
                 builder.append(" AND ");

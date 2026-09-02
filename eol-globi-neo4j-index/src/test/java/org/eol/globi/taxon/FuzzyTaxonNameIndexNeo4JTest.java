@@ -14,6 +14,7 @@ import org.eol.globi.util.NodeUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.QueryExecutionException;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
@@ -92,6 +93,26 @@ public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
     @Test
     public void findByFuzzyANDClause() throws StudyImporterException {
         assertQueryHits("name:hmo~ AND name:SApiens~", 1L);
+    }
+
+    @Test(expected = QueryExecutionException.class)
+    public void unescapedParenthesis() throws StudyImporterException {
+        initIndex();
+        ResolvingTaxonIndex taxonService;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            taxonService = taxonIndexFactory.create(tx);
+            taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
+        }
+
+        resolveNames();
+        resolveNames();
+        createIndexer().index();
+
+
+        TaxonFuzzySearchIndex fuzzySearch = getFuzzySearch();
+
+
+        fuzzySearch.query("(name:sphagnum* OR name:sphagnum~) AND (name:fallax)sphagnum* OR name:fallax)sphagnum~) AND (name:fallax)* OR name:fallax)~)");
     }
 
     @Ignore
