@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.eol.globi.server.util.ResultField.EVENT_DATE;
@@ -293,17 +294,20 @@ public class CypherQueryBuilder {
 
     private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, boolean exactNameMatchesOnly, Map parameterMap) {
         Map<String, String> paramMap = new HashMap<String, String>();
-        if (sourceTaxonNames != null && sourceTaxonNames.size() > 0) {
-            paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames, exactNameMatchesOnly));
-        }
+        if (sourceTaxonNames != null && !sourceTaxonNames.isEmpty()) {
 
-        if (targetTaxonNames != null && targetTaxonNames.size() > 0) {
-            paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames, exactNameMatchesOnly));
+            for (int i = 0; i < sourceTaxonNames.size(); i++) {
+                paramMap.put(SOURCE_TAXON_NAME.getLabel() + "_" + i, sourceTaxonNames.get(i));
+            }
         }
-
+        if (targetTaxonNames != null && !targetTaxonNames.isEmpty()) {
+            for (int i = 0; i < targetTaxonNames.size(); i++) {
+                paramMap.put(TARGET_TAXON_NAME.getLabel() + "_" + i, targetTaxonNames.get(i));
+            }
+        }
         List<String> accordingTo = collectAccordingTo(parameterMap);
 
-        if (accordingTo != null && accordingTo.size() > 0) {
+        if (accordingTo != null && !accordingTo.isEmpty()) {
             List<DOI> dois = extractDOIs(accordingTo);
             if (!dois.isEmpty()) {
                 List<String> DOIs = dois.stream().map(DOI::toString).collect(Collectors.toList());
@@ -476,7 +480,9 @@ public class CypherQueryBuilder {
                 .append(INTERACTION_TYPE);
         return new CypherQuery(query.toString(), new HashMap<String, String>() {
             {
-                put(TAXON_NAME.getLabel(), lucenePathQuery(taxa, false));
+                for (int i = 0; i < taxa.size(); i++) {
+                    put("source_taxon_name_" + i, taxa.get(i));
+                }
             }
         });
     }
@@ -677,32 +683,50 @@ public class CypherQueryBuilder {
             if (exactNameMatchesOnly) {
                 List<String> ids = new ArrayList<String>();
                 List<String> names = new ArrayList<String>();
-                for (String taxonName : taxonNames) {
-                    if (isExternalId(taxonName)) {
-                        ids.add(taxonName);
+                for (int i = 0; i < taxonNames.size(); i++) {
+                    if (isExternalId(taxonNames.get(i))) {
+                        ids.add(getTaxonVariableName(taxonLabel, i));
                     } else {
-                        names.add(taxonName);
+                        names.add(getTaxonVariableName(taxonLabel, i));
                     }
                 }
                 if (!names.isEmpty()) {
-                    appendNameWhereClause(query, taxonLabel, names, "name");
+                    appendNameWhereClause(query, taxonLabel, "name", names.stream());
                 }
                 if (!ids.isEmpty()) {
                     if (!names.isEmpty()) {
                         query.append(" OR ");
                     }
-                    appendNameWhereClause(query, taxonLabel, ids, "externalId");
+                    appendNameWhereClause(query, taxonLabel, "externalId", ids.stream());
                 }
             } else {
                 query.append("(").append(taxonLabel).append(".externalIds IS NOT NULL AND (");
-                query.append(StringUtils.join(taxonNames.stream().map(x -> taxonLabel + ".externalIds CONTAINS '| ' + '" + StringUtils.replace(x, "'", "\\'") + "' + ' |'").collect(Collectors.toList()), " OR "));
+                Stream<String> clauses = IntStream.range(0, taxonNames.size()).mapToObj(x -> taxonLabel + ".externalIds CONTAINS '| ' + $" + StringUtils.replace(taxonLabel, "Taxon", "") + "_taxon_name_" + x + " + ' |'");
+                query.append(StringUtils.join(clauses.collect(Collectors.toList()), " OR "));
                 query.append(")) ");
             }
         }
     }
 
+    private static String getTaxonVariableName(String taxonLabel, int i) {
+        return "$" + StringUtils.replace(taxonLabel, "Taxon", "") + "_taxon_name_" + i;
+    }
+
     private static void appendNameWhereClause(StringBuilder query, String taxonLabel, List<String> taxonNames, String property) {
-        query.append("(").append(taxonLabel).append(".").append(property).append(" IS NOT NULL AND ").append(taxonLabel).append(".").append(property).append(" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
+        Stream<String> taxonNameVariables = IntStream.range(0, taxonNames.size())
+                .mapToObj(i -> getTaxonVariableName(taxonLabel, i));
+        appendNameWhereClause(query, taxonLabel, property, taxonNameVariables);
+    }
+
+    private static void appendNameWhereClause(StringBuilder query, String taxonLabel, String property, Stream<String> taxonNameVariables) {
+        query.append("(")
+                .append(taxonLabel)
+                .append(".")
+                .append(property).append(" IS NOT NULL AND ")
+                .append(taxonLabel).append(".")
+                .append(property).append(" IN [")
+                .append(taxonNameVariables.collect(Collectors.joining(",")))
+                .append("]) ");
     }
 
     public static boolean isExternalId(String taxonName) {
