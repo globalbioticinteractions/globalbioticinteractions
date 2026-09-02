@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelType;
@@ -694,7 +695,7 @@ public class CypherQueryBuilder {
                 }
             } else {
                 query.append("(").append(taxonLabel).append(".externalIds IS NOT NULL AND (");
-                query.append(StringUtils.join(taxonNames.stream().map(x -> taxonLabel + ".externalIds CONTAINS '| ' + '" + x + "' + ' |'").collect(Collectors.toList()), " OR "));
+                query.append(StringUtils.join(taxonNames.stream().map(x -> taxonLabel + ".externalIds CONTAINS '| ' + '" + StringUtils.replace(x, "'", "\\'") + "' + ' |'").collect(Collectors.toList()), " OR "));
                 query.append(")) ");
             }
         }

@@ -180,6 +180,28 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
     }
 
     @Test
+    public void findInteractionForSourceAndTargetTaxaLocationsWithSingleQuote() {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Rocky Mounatain juniper (Juniperus scopulorum Sarg.)- forming witches' brooms with juvensecent foliage on 2 trees.", "Chordata"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+            }
+        };
+
+        query = buildInteractionQuery(params, MULTI_TAXON_ALL);
+        assertThat(query.getVersionedQuery(), is(EXPECTED_CYPHER_VERSION +
+                EXPECTED_MATCH_CLAUSE_SPATIAL +
+                "WHERE loc.lnglat IS NOT NULL AND point.withinBBox(loc.lnglat, POINT({longitude: -67.87, latitude: 12.79}), POINT({longitude: -57.08, latitude: 23.32})) " +
+                "AND " + hasTargetTaxon("Arthropoda") +
+                "AND (sourceTaxon.externalIds IS NOT NULL AND " +
+                "(sourceTaxon.externalIds CONTAINS '| ' + 'Rocky Mounatain juniper (Juniperus scopulorum Sarg.)- forming witches\\' brooms with juvensecent foliage on 2 trees.' + ' |' " +
+                "OR sourceTaxon.externalIds CONTAINS '| ' + 'Chordata' + ' |')) " +
+                EXPECTED_RETURN_CLAUSE));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=Rocky Mounatain juniper (Juniperus scopulorum Sarg.)- forming witches' brooms with juvensecent foliage on 2 trees. OR Chordata, target_taxon_name=Arthropoda}")));
+    }
+
+    @Test
     public void findInteractionTypesForTaxon() {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
