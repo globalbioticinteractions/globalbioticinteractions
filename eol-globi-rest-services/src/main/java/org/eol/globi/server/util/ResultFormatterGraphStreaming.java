@@ -31,6 +31,7 @@ import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
 import static org.eol.globi.domain.PropertyAndValueDictionary.NO_NAME;
 import static org.eol.globi.server.util.ResultFormatterSeparatedValues.isValue;
+import static org.eol.globi.server.util.ResultFormatterSeparatedValues.throwOnError;
 
 public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl {
 
@@ -42,6 +43,7 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
 
     private RandomLong randomLong = new RandomLong() {
         private Random random = new Random();
+
         @Override
         public long randomLong() {
             return (long) (random.nextFloat() * 1000.0);
@@ -53,6 +55,11 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         format(IOUtils.toInputStream(s, StandardCharsets.UTF_8), os);
         return StringUtils.toEncodedString(os.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    protected void handleErrors(OutputStream os, JsonParser jsonParser) throws IOException {
+        throwOnError(jsonParser);
     }
 
     @Override
@@ -233,9 +240,6 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
     interface RandomLong {
         long randomLong();
     }
-
-
-
 
 
 }

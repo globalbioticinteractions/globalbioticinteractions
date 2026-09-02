@@ -49,9 +49,9 @@ public abstract class ResultFormatterSeparatedValues extends ResultFormatterStre
             boolean inRowArray = false;
             String currentFieldName = null;
             ByteArrayOutputStream lineBuffer = new ByteArrayOutputStream();
-            while ((token = jsonParser.nextToken()) != null) {
+            while ((token = jsonParser.nextToken()) != null && !StringUtils.equals("notifications", currentFieldName)) {
                 if (FIELD_NAME.equals(token)) {
-                    currentFieldName = jsonParser.getCurrentName();
+                    currentFieldName = jsonParser.currentName();
                 }
                 if (START_ARRAY.equals(token)) {
                     if (inRowArray && !StringUtils.equals("meta", currentFieldName)) {
@@ -91,6 +91,30 @@ public abstract class ResultFormatterSeparatedValues extends ResultFormatterStre
 
 
                 }
+            }
+        }
+    }
+    @Override
+    protected void handleErrors(OutputStream os, JsonParser jsonParser) throws IOException {
+        throwOnError(jsonParser);
+
+    }
+
+    public static void throwOnError(JsonParser jsonParser) throws IOException {
+        JsonToken token;
+        token = jsonParser.nextToken();
+        if (START_ARRAY.equals(token)) {
+            boolean isFirst = true;
+            boolean isEmptyArray = false;
+            ByteArrayOutputStream lineBuffer = new ByteArrayOutputStream();
+            while ((token = jsonParser.nextToken()) != null) {
+                if (isFirst && END_ARRAY.equals(token)) {
+                    isEmptyArray = true;
+                }
+                isFirst = false;
+            }
+            if (!isEmptyArray) {
+                throw new ResultFormattingException("encountered errors in retrieving results");
             }
         }
     }
