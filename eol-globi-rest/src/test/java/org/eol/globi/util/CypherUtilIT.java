@@ -3,6 +3,7 @@ package org.eol.globi.util;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.ProxyOutputStream;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpResponse;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultFormatterJSON;
@@ -13,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static junit.framework.TestCase.assertTrue;
@@ -103,6 +105,34 @@ public class CypherUtilIT {
         new ResultFormatterJSON().format(body);
         assertThat(RequestHelper.emptyData(body), Is.is(true));
     }
+    @Test
+    public void withFunnyCharacters() throws IOException {
+        query("Coquillétt", new TreeMap<String, String>() {{
+            put("sourceTaxonName", "Coquillétt");
+        }});
+    }
 
+    @Test
+    public void withFunnyCharactersAsParamName() throws IOException {
+        query("Coquillétt", new TreeMap<String, String>() {{
+            put("Coquillétt", "Coquillétt");
+        }});
+    }
+
+    private static void query(String wordWithFunnyCharacter, TreeMap<String, String> sourceTaxonName) throws IOException {
+        String query =
+                "CYPHER 5 MATCH (sourceTaxon:Taxon)<-[:CLASSIFIED_AS]-(sourceSpecimen:Specimen)-[interaction:HAS_ECTOPARASITE]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon)," +
+                        "(sourceSpecimen:Specimen)<-[collected_rel:COLLECTED]-(study:Reference)-[:IN_DATASET]->(dataset:Dataset) " +
+                        "WHERE " +
+                        "(targetTaxon.name IS NOT NULL AND targetTaxon.name IN ['Megistopoda aranea (" + wordWithFunnyCharacter + ", 1899)']) " +
+                        "AND (sourceTaxon.externalId IS NOT NULL AND sourceTaxon.externalId IN ['COL:852KK']) " +
+                        "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
+                        "RETURN study.title";
+        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, sourceTaxonName));
+
+        String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
+        new ResultFormatterJSON().format(body);
+        assertThat(RequestHelper.emptyData(body), Is.is(true));
+    }
 
 }
