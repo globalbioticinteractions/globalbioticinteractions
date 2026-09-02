@@ -67,7 +67,7 @@ public class InteractionController {
         return findInteractions(request, modifiedParameters);
     }
 
-    private static Map getParamMap(HttpServletRequest request) {
+    public static Map getParamMap(HttpServletRequest request) {
         return request.getParameterMap();
     }
 

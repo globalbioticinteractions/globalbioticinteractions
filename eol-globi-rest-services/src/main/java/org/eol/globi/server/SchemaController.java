@@ -8,6 +8,7 @@ import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
+import static org.eol.globi.server.InteractionController.getParamMap;
 import static org.eol.globi.util.ExternalIdUtil.getURLPrefixMap;
 import static org.eol.globi.util.ExternalIdUtil.getURLSuffixMap;
 
@@ -25,6 +27,24 @@ public class SchemaController {
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET)
     @ResponseBody
     public String getInteractionTypes(HttpServletRequest request) throws IOException {
+        Collection<InteractionTypeExternal> availableTypes = getAvailableTypes(request);
+        return "csv".equals(getRequestType(request))
+                ? interactionMapCsv(availableTypes)
+                : interactionMapJson(availableTypes);
+    }
+
+    @RequestMapping(value = "/interactionTypes.{extension}", method = {RequestMethod.GET})
+    @ResponseBody
+    protected String getInteractionTypes(HttpServletRequest request, @PathVariable("extension") String extension) throws IOException {
+        Collection<InteractionTypeExternal> availableTypes = getAvailableTypes(request);
+
+        return "csv".equals(extension)
+                ? interactionMapCsv(availableTypes)
+                : interactionMapJson(availableTypes);
+    }
+
+
+    private static Collection<InteractionTypeExternal> getAvailableTypes(HttpServletRequest request) throws IOException {
         Collection<InteractionTypeExternal> availableTypes = Arrays.asList(InteractionTypeExternal.values());
         if (request != null) {
             if (StringUtils.isNotBlank(request.getParameter(ParamName.TAXON.getName()))) {
@@ -40,8 +60,9 @@ public class SchemaController {
                 }
             }
         }
-        return "csv".equals(getRequestType(request)) ? interactionMapCsv(availableTypes) : interactionMapJson(availableTypes);
+        return availableTypes;
     }
+
 
     protected String getRequestType(HttpServletRequest request) {
         return request == null ? "json" : request.getParameter("type");
