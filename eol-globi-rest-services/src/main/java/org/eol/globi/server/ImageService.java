@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 @Controller
 public class ImageService {
 
-    private final static Logger LOG = LoggerFactory.getLogger(WikiDataImageSearch.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ImageService.class);
 
     private ImageSearch imageSearch = new WikiDataImageSearch();
 

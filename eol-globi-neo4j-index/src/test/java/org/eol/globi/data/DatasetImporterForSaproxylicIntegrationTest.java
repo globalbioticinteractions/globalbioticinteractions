@@ -1,15 +1,14 @@
 package org.eol.globi.data;
 
-import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 
 import static org.junit.Assert.assertNotNull;
 
-public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
@@ -22,8 +21,11 @@ public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBNeo4jTes
         );
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Fagus sylvatica"));
-        assertNotNull(taxonIndex.findTaxonByName("Epuraea variegata"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Fagus sylvatica"));
+            assertNotNull(taxonIndex.findTaxonByName("Epuraea variegata"));
+        }
     }
 
 }

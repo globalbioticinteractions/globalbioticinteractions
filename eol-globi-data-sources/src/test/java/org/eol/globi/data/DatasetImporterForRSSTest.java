@@ -20,7 +20,6 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractionListenerIndexing;
 import org.eol.globi.util.InteractionListenerResolving;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -38,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -445,6 +445,11 @@ public class DatasetImporterForRSSTest {
         }
 
         @Override
+        public void startNextBatchUpdate() {
+
+        }
+
+        @Override
         public Season createSeason(String seasonNameLower) {
             return null;
         }
@@ -536,6 +541,11 @@ public class DatasetImporterForRSSTest {
 
         @Override
         public Interaction createInteraction(Study study) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Specimen createSpecimen(Study study, Taxon taxon, Consumer<Specimen> initializer, RelTypes[] types) throws NodeFactoryException {
             return null;
         }
     }

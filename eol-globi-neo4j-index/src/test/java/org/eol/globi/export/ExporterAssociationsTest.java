@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterAssociationsTest extends GraphDBNeo4jTestCase {
+public class ExporterAssociationsTest extends GraphDBTestCase {
 
     @Test
     public void exportWithoutHeader() throws IOException, NodeFactoryException {
@@ -31,7 +31,7 @@ public class ExporterAssociationsTest extends GraphDBNeo4jTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterAssociations().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterAssociations(getGraphDb()).exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
@@ -67,7 +67,7 @@ public class ExporterAssociationsTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterAssociations());
+        ExportTestUtil.assertFileInMeta(new ExporterAssociations(getGraphDb()));
     }
 
 }

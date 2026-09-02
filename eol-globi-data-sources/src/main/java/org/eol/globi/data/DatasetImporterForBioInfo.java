@@ -282,6 +282,7 @@ public class DatasetImporterForBioInfo extends NodeBasedImporter implements Data
             addLifeStage(parser, recipientSpecimen, "stage of active taxon", study);
             addBodyPart(parser, donorSpecimen, "part of active taxon", study);
             recipientSpecimen.interactsWith(donorSpecimen, interactType);
+            this.notifyInteractionRecordIndexed();
         }
     }
 

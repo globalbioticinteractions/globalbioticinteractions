@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eol-globi-parent</artifactId>
         <groupId>org.eol</groupId>
-        <version>0.29.1-SNAPSHOT</version>
+        <version>0.30.0-SNAPSHOT</version>
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
@@ -46,36 +46,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${maven-dependency-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${jetty.groupId}</groupId>
-                                    <artifactId>jetty${jetty.ee.version.name}runner</artifactId>
-                                    <version>${jetty.version}</version>
-                                    <destFileName>jetty-runner.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>${jetty.groupId}</groupId>
                 <artifactId>jetty${jetty.ee.version.name}maven-plugin</artifactId>

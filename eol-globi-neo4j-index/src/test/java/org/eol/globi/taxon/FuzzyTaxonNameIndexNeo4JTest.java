@@ -1,0 +1,179 @@
+package org.eol.globi.taxon;
+
+import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.ResolvingTaxonIndex;
+import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.tool.LinkerTaxonIndexNeo4j;
+import org.eol.globi.util.NodeUtil;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.QueryExecutionException;
+import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
+public class FuzzyTaxonNameIndexNeo4JTest extends GraphDBTestCase {
+
+    private TaxonFuzzySearchIndex index;
+
+    public void initIndex() {
+        getNodeFactory().startNextBatchUpdate();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
+        index = getFuzzySearch();
+        getNodeFactory().startNextBatchUpdate();
+    }
+
+
+    @Test
+    public void alreadyExists() {
+        initIndex();
+        initIndex();
+    }
+
+
+    @Ignore
+    @Test
+    public void fuzzyMatch() throws StudyImporterException {
+        Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
+        taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
+            TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
+            taxon1.setPathIds("BARZ:111 | FOOZ:777");
+            TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
+            taxon1.setPathIds("BARZ:111 | FOOZ:777");
+            NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+            tx.commit();
+        }
+        getNodeFactory().startNextBatchUpdate();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
+
+        resolveNames();
+
+        initIndex();
+
+        createIndexer().index();
+
+
+
+        assertThat(index.query("Hom~").stream().count(), is(3L));
+        assertThat(index.query("sapienz~").stream().count(), is(3L));
+        assertThat(index.query("name:sapienz").stream().count(), is(0L));
+
+    }
+
+    private LinkerTaxonIndexNeo4j createIndexer() {
+        return new LinkerTaxonIndexNeo4j(
+                new GraphServiceFactoryProxy(getGraphDb())
+        );
+    }
+
+    @Test
+    public void findByName() throws StudyImporterException {
+        assertQueryHits("name:name", 1L);
+
+    }
+
+    @Test
+    public void findByFuzzyANDClause() throws StudyImporterException {
+        assertQueryHits("name:hmo~ AND name:SApiens~", 1L);
+    }
+
+    @Test(expected = QueryExecutionException.class)
+    public void unescapedParenthesis() throws StudyImporterException {
+        initIndex();
+        ResolvingTaxonIndex taxonService;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            taxonService = taxonIndexFactory.create(tx);
+            taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
+        }
+
+        resolveNames();
+        resolveNames();
+        createIndexer().index();
+
+
+        TaxonFuzzySearchIndex fuzzySearch = getFuzzySearch();
+
+
+        fuzzySearch.query("(name:sphagnum* OR name:sphagnum~) AND (name:fallax)sphagnum* OR name:fallax)sphagnum~) AND (name:fallax)* OR name:fallax)~)");
+    }
+
+    @Ignore
+    @Test
+    public void findByClauseWithEscapedWhitespace() throws StudyImporterException {
+        assertQueryHits("name:s\\ nme~", 1L);
+    }
+
+    @Ignore
+    @Test
+    public void findByFuzzyCapitalization() throws StudyImporterException {
+        assertQueryHits("name:geRman~", 1L);
+    }
+
+    @Ignore
+    @Test
+    public void findByFuzzyAndClause() throws StudyImporterException {
+        assertQueryHits("name:geRman~ AND name:som~", 1L);
+    }
+
+    @Test
+    public void findByFuzzyAndClause2() throws StudyImporterException {
+        assertQueryHits("name:hmo~ AND name:sapiens~", 1L);
+    }
+
+    @Ignore
+    @Test
+    public void findByFuzzyAndClause3() throws StudyImporterException {
+        // queries are case sensitive . . . should all be lower cased.
+        assertQueryHits("name:HMO~ AND name:saPIENS~", 0L);
+    }
+
+    private void assertQueryHits(String query, long expectedNumberOfHits) throws StudyImporterException {
+        initIndex();
+        ResolvingTaxonIndex taxonService;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            taxonService = taxonIndexFactory.create(tx);
+            taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
+        }
+
+        resolveNames();
+        resolveNames();
+        createIndexer().index();
+
+
+        TaxonFuzzySearchIndex fuzzySearch = getFuzzySearch();
+
+
+        ResourceIterator<Node> hits = fuzzySearch.query(query);
+        assertThat(hits.stream().count(), is(expectedNumberOfHits));
+    }
+
+    private TaxonFuzzySearchIndex getFuzzySearch() {
+        return new FuzzyTaxonNameIndexNeo4j(getGraphDb());
+    }
+
+    public static Taxon setTaxonProps(Taxon taxon) {
+        taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
+        taxon.setExternalId("anExternalId");
+        taxon.setCommonNames(ResolvingTaxonIndexImplTest.EXPECTED_COMMON_NAMES);
+        taxon.setName("this is the actual name");
+        return taxon;
+    }
+}

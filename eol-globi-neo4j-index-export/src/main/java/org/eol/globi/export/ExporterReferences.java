@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -16,6 +17,10 @@ public class ExporterReferences extends ExporterBase {
     public static final String FULL_REFERENCE = "http://eol.org/schema/reference/full_reference";
     public static final String DOI = "http://purl.org/ontology/bibo/doi";
     public static final String URI = "http://purl.org/ontology/bibo/uri";
+
+    public ExporterReferences(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     @Override
     protected String[] getFields() {

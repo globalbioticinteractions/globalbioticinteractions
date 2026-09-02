@@ -1,13 +1,11 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -15,8 +13,10 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.CSVTSVUtil;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,7 +85,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
                 throw new StudyImporterException("failed to find expected [references.csv] resource in [" + archiveURL + "]");
             }
 
-            if (networkTempFileMap.size() == 0) {
+            if (networkTempFileMap.isEmpty()) {
                 throw new StudyImporterException("failed to find expected network csv files");
             }
 
@@ -146,7 +146,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
         return networkLocation;
     }
 
-    public void importNetwork(InteractType interactType1, Location networkLocation, Study study, File file) throws IOException, NodeFactoryException {
+    public void importNetwork(InteractType interactType1, Location networkLocation, Study study, File file) throws IOException, StudyImporterException {
         LabeledCSVParser interactions = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(file));
         final String[] targetLabels = interactions.getLabels();
         List<String> targetTaxonNames = new ArrayList<String>();
@@ -169,6 +169,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
                     final Specimen targetSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(targetTaxonName, null));
                     targetSpecimen.caughtIn(networkLocation);
                     sourceSpecimen.interactsWith(targetSpecimen, interactType1);
+                    notifyInteractionRecordIndexed();
                 }
             }
         }

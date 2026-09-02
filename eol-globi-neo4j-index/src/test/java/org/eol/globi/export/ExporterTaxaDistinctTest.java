@@ -1,13 +1,15 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,17 +20,22 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class ExporterTaxaDistinctTest extends GraphDBNeo4jTestCase {
+public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         ExportTestUtil.createTestData(null, nodeFactory);
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", "EOL:123"));
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis", "EOL:126"));
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", "EOL:123"));
+            taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis", "EOL:126"));
+            taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
+            tx.commit();
+        }
+
         resolveNames();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
 
         String actual = exportStudy(myStudy1);
         assertThat(actual, containsString("EOL:123\tCanis lupus\t\t\t\t\t\t\t\t\thttp://eol.org/pages/123\t\t\t\t"));
@@ -40,29 +47,30 @@ public class ExporterTaxaDistinctTest extends GraphDBNeo4jTestCase {
 
     protected String exportStudy(StudyNode myStudy1) throws IOException {
         StringWriter row = new StringWriter();
-        new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
+        new ExporterTaxaDistinct(getGraphDb()).exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
         return row.getBuffer().toString();
     }
 
     @Test
     public void excludeNoMatchNames() throws NodeFactoryException, IOException {
-        StudyNode study = (StudyNode) nodeFactory.createStudy(new StudyImpl("bla", null, null));
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("bla", null, null));
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);
-        getTaxonIndex().findTaxonByName("bla");
-
-        assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            getTaxonIndexFactory().create(tx).findTaxonByName("bla");
+            assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
+        }
     }
 
     private void assertThatNoTaxaAreExportedOnMissingHeader(StudyNode myStudy1, StringWriter row) throws IOException {
-        new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterTaxaDistinct(getGraphDb()).exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), is(""));
     }
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterTaxaDistinct());
+        ExportTestUtil.assertFileInMeta(new ExporterTaxaDistinct(getGraphDb()));
     }
 
 }

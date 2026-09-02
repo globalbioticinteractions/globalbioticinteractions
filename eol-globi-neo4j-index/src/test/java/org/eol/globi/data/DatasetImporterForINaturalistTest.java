@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -44,7 +45,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class DatasetImporterForINaturalistTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
 
     protected DatasetImporterForINaturalist importer;
 
@@ -130,31 +131,35 @@ public class DatasetImporterForINaturalistTest extends GraphDBNeo4jTestCase {
         assertThat(anotherStudy.getCitation(), containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/97380"));
 
-        Taxon sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        assertThat(sourceTaxonNode, is(not(nullValue())));
+            Taxon sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
 
-        Iterable<Relationship> relationships = ((NodeBacked) sourceTaxonNode).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-        for (Relationship relationship : relationships) {
-            Node sourceSpecimen = relationship.getStartNode();
+            assertThat(sourceTaxonNode, is(not(nullValue())));
 
-            assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
-            assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
-            assertThat(new SpecimenNode(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
-            Relationship ateRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-            Node preySpecimen = ateRel.getEndNode();
-            assertThat(preySpecimen, is(not(nullValue())));
-            Relationship preyClassification = preySpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-            String actualPreyName = (String) preyClassification.getEndNode().getProperty("name");
-            assertThat(actualPreyName, is("Crepidula fornicata"));
+            Iterable<Relationship> relationships = ((NodeBacked) sourceTaxonNode).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship relationship : relationships) {
+                Node sourceSpecimen = relationship.getStartNode();
 
-            Relationship locationRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
-            assertThat(locationRel.getEndNode().getProperty("latitude"), is(41.249813));
-            assertThat(locationRel.getEndNode().getProperty("longitude"), is(-72.542556));
+                assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
+                assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
+                assertThat(new SpecimenNode(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
+                Relationship ateRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Node preySpecimen = ateRel.getEndNode();
+                assertThat(preySpecimen, is(not(nullValue())));
+                Relationship preyClassification = preySpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
+                String actualPreyName = (String) preyClassification.getEndNode().getProperty("name");
+                assertThat(actualPreyName, is("Crepidula fornicata"));
 
-            Relationship collectedRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
-            assertThat((String) collectedRel.getProperty(SpecimenConstant.EVENT_DATE), is(any(String.class)));
+                Relationship locationRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
+                assertThat(locationRel.getEndNode().getProperty("latitude"), is(41.249813));
+                assertThat(locationRel.getEndNode().getProperty("longitude"), is(-72.542556));
 
+                Relationship collectedRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
+                assertThat((String) collectedRel.getProperty(SpecimenConstant.EVENT_DATE), is(any(String.class)));
+
+            }
         }
     }
 
@@ -196,10 +201,13 @@ public class DatasetImporterForINaturalistTest extends GraphDBNeo4jTestCase {
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/2366807"));
 
-        assertThat(taxonIndex.findTaxonById("GBIF:2959023"), is(nullValue()));
-        assertThat(taxonIndex.findTaxonById("GBIF:7246356"), is(nullValue()));
-        assertThat(taxonIndex.findTaxonById("INAT_TAXON:406089"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonById("INAT_TAXON:480390"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonById("GBIF:2959023"), is(nullValue()));
+            assertThat(taxonIndex.findTaxonById("GBIF:7246356"), is(nullValue()));
+            assertThat(taxonIndex.findTaxonById("INAT_TAXON:406089"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonById("INAT_TAXON:480390"), is(notNullValue()));
+        }
     }
 
     @Ignore

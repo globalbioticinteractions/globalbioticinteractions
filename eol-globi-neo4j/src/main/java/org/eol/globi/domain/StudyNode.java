@@ -16,7 +16,6 @@ public class StudyNode extends NodeBacked implements Study {
 
     public StudyNode(Node node, String title) {
         this(node);
-        node.addLabel(NodeLabel.Reference);
         setPropertyIfNotNull(StudyConstant.TITLE, title);
         setPropertyIfNotNull(PropertyAndValueDictionary.TYPE, StudyNode.class.getSimpleName());
     }

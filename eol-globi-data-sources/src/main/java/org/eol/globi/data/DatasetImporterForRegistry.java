@@ -59,7 +59,9 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
                 LOG.info("[" + namespace + "] is active, importing...");
                 getNodeFactory().getOrCreateDataset(dataset);
                 importData(dataset);
+                getNodeFactory().startNextBatchUpdate();
                 stopWatch.stop();
+                getNodeFactory().getOrCreateDataset(dataset);
                 LOG.info("[" + namespace + "] imported in " + stopWatch.getTime(TimeUnit.SECONDS) + "s");
             } else {
                 LOG.info("[" + namespace + "] is deprecated, not importing.");
@@ -91,4 +93,5 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
     public void setDatasetFilter(Predicate<Dataset> datasetFilter) {
         this.datasetFilter = datasetFilter;
     }
+
 }

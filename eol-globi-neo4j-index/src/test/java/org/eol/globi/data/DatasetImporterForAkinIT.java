@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForAkinIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForAkinIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
@@ -18,10 +19,13 @@ public class DatasetImporterForAkinIT extends GraphDBNeo4jTestCase {
                 .instantiateImporter(DatasetImporterForAkin.class);
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
-        assertNotNull(taxonIndex.findTaxonByName("Paralichthys lethostigma"));
-        assertNotNull(taxonIndex.findTaxonByName("Adinia xenica"));
-        assertNotNull(taxonIndex.findTaxonByName("Citharichthys spilopterus"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
+            assertNotNull(taxonIndex.findTaxonByName("Paralichthys lethostigma"));
+            assertNotNull(taxonIndex.findTaxonByName("Adinia xenica"));
+            assertNotNull(taxonIndex.findTaxonByName("Citharichthys spilopterus"));
+        }
     }
 
 }

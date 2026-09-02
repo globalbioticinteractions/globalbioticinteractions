@@ -8,7 +8,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 
@@ -121,6 +124,28 @@ public class ResultFormatterCSVTest {
         assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
                 startsWith(expectedValue));
 
+    }
+
+    @Test
+    public void withNotificationsButNoErrors() throws ResultFormattingException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new ResultFormatterCSV().format(getClass().getResourceAsStream("cypherResponseWithNotification.json"), os);
+        assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
+                not(containsString("HAS_RESERVOIR_HOST")));
+
+    }
+
+    @Test(expected = ResultFormattingException.class)
+    public void withErrors() throws ResultFormattingException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            new ResultFormatterCSV().format(getClass().getResourceAsStream("cypherResponseWithErrors.json"), os);
+        } catch (ResultFormattingException ex) {
+            assertThat(ex.getMessage(), containsString("failed to format incoming stream"));
+            assertThat(ex.getCause().getMessage(), containsString("Invalid input"));
+            assertThat(ex.getCause().getMessage(), is("Neo.ClientError.Statement.SyntaxError | Invalid input 'this': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH' (line 1, column 10 (offset: 9))\n\"CYPHER 5 this aint no cypher query\"\n          ^"));
+            throw ex;
+        }
     }
 
 }

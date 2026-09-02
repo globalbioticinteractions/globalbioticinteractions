@@ -9,6 +9,7 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,7 +19,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForJSONLDTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
 
     @Test
     public void importStatic() throws StudyImporterException, URISyntaxException {
@@ -33,11 +34,16 @@ public class DatasetImporterForJSONLDTest extends GraphDBNeo4jTestCase {
 
         importStudy(importer);
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.isEmpty(), is(false));
         for (Study study : allStudies) {
-            assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(study.getCitation(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
+            assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
         }
-        assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
+        }
     }
 
     @Test(expected = StudyImporterException.class)

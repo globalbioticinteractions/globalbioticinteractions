@@ -2,14 +2,14 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,14 +30,14 @@ public class DatasetImporterForLifeWatchGreece extends NodeBasedImporter {
     public void importStudy() throws StudyImporterException {
         try {
             InteractionListener interactionListener = new InteractionListener();
-            interactionListener.setListener(new ParsedInteractionListener(getNodeFactory()));
+            interactionListener.setListener(new ParsedInteractionListener(getNodeFactory(), this));
             handleTable(interactionListener, "pub_tax_trait.csv.gz");
         } catch (IOException e) {
             throw new StudyImporterException("failed to import study", e);
         }
     }
 
-    protected void handleTable(RowListener listener, String tableName) throws IOException {
+    protected void handleTable(RowListener listener, String tableName) throws IOException, StudyImporterException {
         try (InputStream is = getDataset().retrieve(URI.create("polytraits.lifewatchgreece.eu/" + tableName))) {
             CSVParse parser = CSVTSVUtil.createCSVParser(is);
             String[] line;
@@ -77,7 +77,7 @@ public class DatasetImporterForLifeWatchGreece extends NodeBasedImporter {
         protected ParsedInteractionListener listener;
 
         @Override
-        public void nextLine(String[] line) {
+        public void nextLine(String[] line) throws StudyImporterException {
             String reference_id = line[0];
             String reference = line[1];
             String taxonName = line[2];
@@ -140,18 +140,21 @@ public class DatasetImporterForLifeWatchGreece extends NodeBasedImporter {
 
     private static class ParsedInteractionListener {
         private final Logger LOG = LoggerFactory.getLogger(ParsedInteractionListener.class);
+        private final DatasetImporterForLifeWatchGreece datasetImporter;
         private NodeFactory nodeFactory;
 
-        public ParsedInteractionListener(NodeFactory factory) {
+        public ParsedInteractionListener(NodeFactory factory, DatasetImporterForLifeWatchGreece datasetImporterForLifeWatchGreece) {
             this.nodeFactory = factory;
+            this.datasetImporter = datasetImporterForLifeWatchGreece;
         }
 
 
-        public void foundInteraction(String predatorTaxonName, String preyTaxonName, String studyId, String studyReference) {
+        public void foundInteraction(String predatorTaxonName, String preyTaxonName, String studyId, String studyReference) throws StudyImporterException {
             try {
                 Study study = nodeFactory.getOrCreateStudy(new StudyImpl("http://polytraits.lifewatchgreece.eu/publication/" + studyId, null, ExternalIdUtil.toCitation(null, studyReference, null)));
                 Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(predatorTaxonName, null));
                 predator.ate(nodeFactory.createSpecimen(study, new TaxonImpl(preyTaxonName, null)));
+                datasetImporter.notifyInteractionRecordIndexed();
             } catch (NodeFactoryException e) {
                 LOG.warn("failed to create specimen with name [" + predatorTaxonName + "]", e);
             }

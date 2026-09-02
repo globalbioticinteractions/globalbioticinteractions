@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
@@ -25,6 +27,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -43,7 +46,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForBlewettTest extends GraphDBTestCase {
 
     static String dateToString(Date time) {
         DateTime dateTime = new DateTime(time);
@@ -75,10 +78,14 @@ public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
 
         assertThat(getSpecimenCount(study), is(1824));
 
-        assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
-        Taxon taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
-        assertThat(taxonOfType.getName(), is("Cal sapidus"));
-        assertNotNull(taxonIndex.findTaxonByName("Ort chrysoptera"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
+            Taxon taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
+            assertThat(taxonOfType.getName(), is("Cal sapidus"));
+            assertNotNull(taxonIndex.findTaxonByName("Ort chrysoptera"));
+        }
     }
 
     @Test
@@ -134,23 +141,23 @@ public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
             Node predatorNode = collectedRel.getEndNode();
             if (StringUtils.equals(actual, "2000-03-01T10:55:00.000-06:00")
                     && predatorNode.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL)
-                    && predatorNode.hasRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING)) {
+                    && predatorNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE))) {
 
                 assertThat(predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
                 assertThat(predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
 
-                Node predatorTaxonNode = predatorNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                Node predatorTaxonNode = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                 assertThat(predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
 
                 Set<String> preyNames = new HashSet<>();
-                Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Iterable<Relationship> ate = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 for (Relationship preyRels : ate) {
                     Node preyNode = preyRels.getEndNode();
                     assertThat(preyNode, is(not(nullValue())));
 
-                    Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                    Node taxonNode = preyNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                     assertThat(taxonNode, is(not(nullValue())));
-                    preyNames.add((String)taxonNode.getProperty(PropertyAndValueDictionary.NAME));
+                    preyNames.add((String) taxonNode.getProperty(PropertyAndValueDictionary.NAME));
                 }
 
                 assertThat(preyNames, hasItem("Lag rhomboides"));
@@ -168,26 +175,32 @@ public class DatasetImporterForBlewettTest extends GraphDBNeo4jTestCase {
             Node predatorNode = collectedRel.getEndNode();
             if (predatorNode.hasProperty(SpecimenConstant.LENGTH_IN_MM)
                     && (Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM) == 548.0) {
-                Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Iterable<Relationship> ate = predatorNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 assertThat(ate.iterator().hasNext(), is(false));
 
-                Location location = null;
-                try {
-                    location = nodeFactory.findLocation(new LocationImpl(26.651833, -82.103833, 0.0, null));
-                } catch (NodeFactoryException e) {
-                    fail(e.getMessage());
+                try (Transaction tx = getGraphDb().beginTx()) {
+
+                    LocationNode location = null;
+                    try {
+                        location = nodeFactory.findLocationNode(tx, new LocationImpl(26.651833, -82.103833, 0.0, null));
+                    } catch (NodeFactoryException e) {
+                        fail(e.getMessage());
+                    }
+                    assertThat(location, is(not(nullValue())));
+
+                    Iterable<Relationship> specimenCaughtHere = location
+                            .getUnderlyingNode()
+                            .getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
+                    Iterator<Relationship> iterator = specimenCaughtHere.iterator();
+                    assertThat(iterator.hasNext(), is(true));
+                    iterator.next();
+                    assertThat(iterator.hasNext(), is(true));
+                    iterator.next();
+                    assertThat(iterator.hasNext(), is(true));
+                    iterator.next();
+                    assertThat(iterator.hasNext(), is(false));
+                    success.set(true);
                 }
-                assertThat(location, is(not(nullValue())));
-                Iterable<Relationship> specimenCaughtHere = NodeUtil.getSpecimenCaughtHere(location);
-                Iterator<Relationship> iterator = specimenCaughtHere.iterator();
-                assertThat(iterator.hasNext(), is(true));
-                iterator.next();
-                assertThat(iterator.hasNext(), is(true));
-                iterator.next();
-                assertThat(iterator.hasNext(), is(true));
-                iterator.next();
-                assertThat(iterator.hasNext(), is(false));
-                success.set(true);
             }
 
         };

@@ -11,6 +11,7 @@ import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,7 +21,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForPlanqueIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForPlanqueIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, IOException {
@@ -63,8 +64,11 @@ public class DatasetImporterForPlanqueIT extends GraphDBNeo4jTestCase {
 
         // note that the +1 is for all links that had no reference associated to it
         assertThat(studies.size(), is(uniqueReference + 1));
-        assertThat(taxonIndex.findTaxonByName("Trisopterus esmarkii"), is(notNullValue()));
-        assertThat(errorMessages.size(), is(0));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Trisopterus esmarkii"), is(notNullValue()));
+            assertThat(errorMessages.size(), is(0));
+        }
     }
 
 

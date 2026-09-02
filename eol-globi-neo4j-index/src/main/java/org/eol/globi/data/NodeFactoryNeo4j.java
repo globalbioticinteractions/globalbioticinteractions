@@ -10,6 +10,8 @@ import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.InteractionNode;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -20,6 +22,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
@@ -36,6 +39,7 @@ import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.joda.time.DateTime;
 import org.neo4j.graphdb.Direction;
@@ -43,32 +47,39 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.values.storable.CoordinateReferenceSystem;
+import org.neo4j.values.storable.PointValue;
+import org.neo4j.values.storable.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
-public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
+public class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeFactoryNeo4j.class);
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
-    private GraphDatabaseService graphDb;
+    private final GraphDatabaseService graphDb;
 
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
     private final TermLookupService lifeStageLookupService;
     private final TermLookupService bodyPartLookupService;
+    private AtomicBoolean shouldStartNextBatch = new AtomicBoolean(false);
 
-    public NodeFactoryNeo4j(GraphDatabaseService graphDb, File cacheDir) {
-        this.graphDb = graphDb;
+    public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
+        this.graphDb = new GraphDatabaseServiceProxy(graphDb, shouldStartNextBatch);
 
         InputStreamFactory inputStreamFactory = new InputStreamFactoryNoop();
         this.termLookupService = new UberonLookupService(
@@ -83,7 +94,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         this.bodyPartLookupService
                 = new TermLookupServiceWithResource(
-                        "body-part-mapping.csv",
+                "body-part-mapping.csv",
                 new ResourceServiceLocal(inputStreamFactory)
         );
 
@@ -93,6 +104,11 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     }
 
+    @Override
+    public void startNextBatchUpdate() {
+        shouldStartNextBatch.set(true);
+    }
+
     public GraphDatabaseService getGraphDb() {
         return graphDb;
     }
@@ -100,22 +116,47 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public SeasonNode createSeason(String seasonNameLower) throws NodeFactoryException {
         Node node = createSeasonNode();
-        SeasonNode season = new SeasonNode(node, seasonNameLower);
-        return season;
+        return new SeasonNode(node, seasonNameLower);
     }
 
-    protected abstract Node createSeasonNode();
-
-    private LocationNode createLocation(final Location location) throws NodeFactoryException {
-        Node node = createLocationNode();
-        LocationNode locationNode = new LocationNode(node, fromLocation(location));
-        indexLocation(location, node);
-        return locationNode;
+    protected Node createSeasonNode() {
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            Node node = transaction.createNode(NodeLabel.Season);
+            transaction.commit();
+            return node;
+        }
     }
 
-    abstract protected void indexLocation(Location location, Node node) throws NodeFactoryException;
+    private LocationNode createLocationNode(Transaction transaction, final Location location) throws NodeFactoryException {
+        Node node = createLocationNode(transaction);
+        return new LocationNode(node, fromLocation(location));
 
-    protected abstract Node createLocationNode();
+    }
+
+    public StudyNode findStudyNode(Transaction tx, Study study) {
+        Node node = tx.findNode(
+                NodeLabel.Reference,
+                StudyConstant.TITLE_IN_NAMESPACE,
+                getIdInNamespace(study)
+        );
+        return node == null
+                ? null
+                : new StudyNode(node);
+
+    }
+
+
+    public StudyNode getOrCreateStudyNode(Transaction tx, Study study) throws NodeFactoryException {
+        StudyNode studyNode;
+        studyNode = findStudyNode(tx, study);
+        return studyNode == null
+                ? createStudyNode(tx, study)
+                : studyNode;
+    }
+
+    protected Node createLocationNode(Transaction transaction1) {
+        return transaction1.createNode(NodeLabel.Location);
+    }
 
     protected Node findFirstMatchingLocationIfAvailable(Location location, ResourceIterator<Node> matchingLocations) {
         Node matching = null;
@@ -133,7 +174,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     @Override
     public SpecimenNode createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
         SpecimenNode specimen = createSpecimen(interaction.getStudy(), taxon);
-        ((InteractionNode) interaction).createRelationshipTo(specimen, RelTypes.HAS_PARTICIPANT);
+        ((InteractionNode) interaction).createRelationshipTo(RelTypes.HAS_PARTICIPANT, (NodeBacked) specimen);
         return specimen;
     }
 
@@ -142,8 +183,17 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return createSpecimen(study, taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
     }
 
+    public SpecimenNode createSpecimenNode(Transaction tx, Study study, Taxon taxon) throws NodeFactoryException {
+        return createSpecimenNode(tx, getOrCreateStudyNode(tx, study), taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
+    }
+
     @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
+        return createSpecimen(study, taxon, specimen -> {}, types);
+    }
+
+    @Override
+    public SpecimenNode createSpecimen(Study study, Taxon taxon, Consumer<Specimen> initializer, RelTypes[] types) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
@@ -152,12 +202,22 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             throw new NodeFactoryException("specimen needs at least one study relationship type, but none is specified");
         }
 
-        SpecimenNode specimen = createSpecimen();
+        try (Transaction tx = graphDb.beginTx()) {
+            StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            SpecimenNode specimen = createSpecimenNode(tx, studyNode, taxon, types);
+            initializer.accept(specimen);
+            tx.commit();
+            return specimen;
+        }
+    }
+
+    protected SpecimenNode createSpecimenNode(Transaction tx, StudyNode study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
+        SpecimenNode specimen = createSpecimenNode(tx);
         for (RelTypes type : types) {
-            ((StudyNode) study).createRelationshipTo(specimen, type);
+            study.createRelationshipTo(type, specimen);
         }
 
-        specimen.setOriginalTaxonDescription(taxon);
+        specimen.setOriginalTaxonNodeDescription(taxon, tx);
         if (StringUtils.isNotBlank(taxon.getName())) {
             extractTerms(taxon.getName(), specimen);
         }
@@ -202,26 +262,33 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
 
-    private SpecimenNode createSpecimen() {
-        return new SpecimenNode(graphDb.createNode(), null);
+    private SpecimenNode createSpecimenNode(Transaction transaction) {
+        return new SpecimenNode(transaction.createNode(NodeLabel.Specimen));
     }
-
-
-    abstract Node createStudyNode();
-
-    abstract void indexStudyNode(StudyNode studyNode) throws NodeFactoryException;
 
     @Override
-    public StudyNode createStudy(Study study) throws NodeFactoryException {
-        Node node = createStudyNode();
-        StudyNode studyNode = createStudyNode(study, node);
-        indexStudyNode(studyNode);
-        return studyNode;
+    public Study createStudy(Study study) throws NodeFactoryException {
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            StudyNode studyNode = createStudyNode(transaction, study);
+            Study copyOf = copyOf(studyNode);
+            transaction.commit();
+            return copyOf;
+        }
     }
 
-    private StudyNode createStudyNode(Study study, Node node) throws NodeFactoryException {
-        StudyNode studyNode;
-        studyNode = new StudyNode(node, study.getTitle());
+    protected static StudyImpl copyOf(StudyNode studyNode) {
+        StudyImpl copyOf = new StudyImpl(studyNode.getTitle(), studyNode.getDOI(), studyNode.getCitation());
+        copyOf.setExternalId(studyNode.getExternalId());
+        Dataset originatingDataset = studyNode.getOriginatingDataset();
+        if (originatingDataset != null) {
+            copyOf.setOriginatingDataset(copyOf(studyNode.getOriginatingDataset()));
+        }
+        return copyOf;
+    }
+
+    protected StudyNode createStudyNode(Transaction transaction, Study study) throws NodeFactoryException {
+        Node node = transaction.createNode(NodeLabel.Reference);
+        StudyNode studyNode = new StudyNode(node, study.getTitle());
         studyNode.setCitation(study.getCitation());
         studyNode.setDOI(study.getDOI());
         if (study.getDOI() != null) {
@@ -234,12 +301,15 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
         createExternalIdRelationIfExists(node, externalId, RelTypes.HAS_EXTERNAL_ID);
 
-        Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-        if (dataset instanceof DatasetNode) {
-            studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
+        DatasetNode dataset = getOrCreateDatasetNode(transaction, study.getOriginatingDataset());
+        if (dataset != null) {
+            studyNode.createRelationshipTo(RelTypes.IN_DATASET, dataset);
         }
 
-        studyNode.getUnderlyingNode().setProperty(StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(study));
+        studyNode.getUnderlyingNode().setProperty(
+                StudyConstant.TITLE_IN_NAMESPACE,
+                getIdInNamespace(study)
+        );
         return studyNode;
     }
 
@@ -258,12 +328,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return externalId;
     }
 
-    protected abstract Node createDatasetNode();
-
-    protected abstract void indexDatasetNode(Dataset dataset, Node datasetNode) throws NodeFactoryException;
-
-    Node createDatasetNode(Dataset dataset) throws NodeFactoryException {
-        Node datasetNode = createDatasetNode();
+    Node createDatasetNode(Transaction tx, Dataset dataset) throws NodeFactoryException {
+        Node datasetNode = createDatasetNode(tx);
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
         if (archiveURI != null) {
@@ -293,35 +359,28 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         datasetNode.setProperty(DatasetConstant.CITATION, StringUtils.defaultIfBlank(dataset.getCitation(), "no citation"));
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
         datasetNode.setProperty(DatasetConstant.LAST_SEEN_AT, dataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, Long.toString(System.currentTimeMillis())));
-        indexDatasetNode(dataset, datasetNode);
         return datasetNode;
     }
 
-    Node createExternalId(String externalId) throws NodeFactoryException {
-        Node externalIdNode = createExternalIdNode();
+    Node createExternalId(Transaction transaction, String externalId) throws NodeFactoryException {
+        Node externalIdNode = createExternalIdNode(transaction);
         externalIdNode.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-        indexExternalIdNode(externalId, externalIdNode);
         return externalIdNode;
     }
 
-
-    protected abstract void indexExternalIdNode(String externalId, Node externalIdNode) throws NodeFactoryException;
-
-    protected abstract Node createExternalIdNode();
-
     @Override
-    public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
+    public Study getOrCreateStudy(Study study) throws NodeFactoryException {
         if (StringUtils.isBlank(study.getTitle())) {
             throw new NodeFactoryException("null or empty study title");
         }
 
-        StudyNode studyNode = findStudy(study);
-
-        if (studyNode == null) {
-            studyNode = createStudy(study);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            StudyNode studyNode = getOrCreateStudyNode(tx, study);
+            tx.commit();
+            return studyNode;
         }
 
-        return studyNode;
+
     }
 
     private String namespaceOrNull(Study study) {
@@ -331,7 +390,15 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public abstract StudyNode findStudy(Study study);
+    public Study findStudy(Study study) {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            StudyNode studyNode = findStudyNode(tx, study);
+            Study copyOfStudy = studyNode == null ? null : copyOf(studyNode);
+            tx.commit();
+            return copyOfStudy;
+        }
+    }
+
 
     String getIdInNamespace(Study study) {
         String namespace = namespaceOrNull(study);
@@ -347,12 +414,28 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
 
     @Override
-    public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
-        Location location1 = findLocation(location);
-        if (!(location1 instanceof LocationNode)) {
-            location1 = createLocation(location);
+    public Location getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            return getOrCreateLocationNode(transaction, location);
+
         }
-        return (LocationNode) location1;
+    }
+
+    public static Location copyOf(LocationNode location1) {
+        LocationImpl location = new LocationImpl(
+                location1.getLatitude(),
+                location1.getLongitude(),
+                location1.getAltitude(),
+                location1.getFootprintWKT()
+        );
+        location.setLocality(location1.getLocality());
+        location.setLocalityId(location1.getLocalityId());
+        return location;
+    }
+
+    protected LocationNode getOrCreateLocationNode(Transaction transaction, Location location) throws NodeFactoryException {
+        validate(location);
+        return createLocationNode(transaction, location);
     }
 
 
@@ -392,34 +475,31 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return date == null ? null : date.toDate();
     }
 
-    @Override
-    public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
+    public List<EnvironmentNode> getOrCreateEnvironmentNodes(Transaction tx, Location location, String externalId, String name) throws NodeFactoryException {
         List<Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
-            if (terms.size() == 0) {
+            if (terms.isEmpty()) {
                 terms.add(new TermImpl(externalId, name));
             }
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup environment [" + name + "]", e);
         }
 
-        return addEnvironmentToLocation(location, terms);
+        return addEnvironmentNodesToLocationNodes(tx, location, terms);
     }
 
-    @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException {
-        List<Environment> normalizedEnvironments = new ArrayList<Environment>();
+    public List<EnvironmentNode> addEnvironmentNodesToLocationNodes(
+            Transaction tx, Location location, List<Term> terms) throws NodeFactoryException {
+        List<EnvironmentNode> normalizedEnvironments = new ArrayList<>();
         for (Term term : terms) {
-            Node node = createEnvironmentNode();
-            Environment environment = new EnvironmentNode(node, term.getId(), term.getName());
+            Node node = createEnvironmentNode(tx);
+            EnvironmentNode environment = new EnvironmentNode(node, term.getId(), term.getName());
             location.addEnvironment(environment);
             normalizedEnvironments.add(environment);
         }
         return normalizedEnvironments;
     }
-
-    abstract public Node createEnvironmentNode();
 
     @Override
     public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
@@ -439,7 +519,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     private Term matchTerm(String externalId, String name) throws NodeFactoryException {
         try {
             List<Term> terms = getTermLookupService().lookupTermByName(name);
-            return terms.size() == 0 ? NO_MATCH_TERM : terms.get(0);
+            return terms.isEmpty() ? NO_MATCH_TERM : terms.get(0);
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup term [" + externalId + "]:[" + name + "]");
         }
@@ -465,26 +545,42 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     @Override
     public Dataset getOrCreateDataset(Dataset originatingDataset) throws NodeFactoryException {
-        return getOrCreateDatasetNoTx(originatingDataset);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            DatasetNode orCreateDatasetNode = getOrCreateDatasetNode(tx, originatingDataset);
+            Dataset dataset = copyOf(orCreateDatasetNode);
+            tx.commit();
+            return dataset;
+        }
+    }
+
+    private static Dataset copyOf(Dataset src) {
+        DatasetImpl dst = new DatasetImpl(src.getNamespace(), null, src.getArchiveURI());
+        dst.setConfig(src.getConfig());
+        return dst;
     }
 
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
         InteractionNode interactionNode;
-        Node node = graphDb.createNode();
-        StudyNode studyNode = getOrCreateStudy(study);
+        try (Transaction transaction = graphDb.beginTx()) {
+            interactionNode = createInteractionNode(transaction, study);
+            transaction.commit();
+            return interactionNode;
+        }
+    }
+
+    protected InteractionNode createInteractionNode(Transaction transaction, Study study) throws NodeFactoryException {
+        InteractionNode interactionNode;
+        Node node = transaction.createNode();
+        StudyNode studyNode = getOrCreateStudyNode(transaction, study);
         interactionNode = new InteractionNode(node);
-        interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
-        Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-        if (dataset instanceof DatasetNode) {
-            interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+        interactionNode.createRelationshipTo(RelTypes.DERIVED_FROM, studyNode);
+        DatasetNode dataset = getOrCreateDatasetNode(getGraphDb().beginTx(), study.getOriginatingDataset());
+        if (dataset != null) {
+            interactionNode.createRelationshipTo(RelTypes.ACCESSED_AT, dataset);
         }
         return interactionNode;
     }
-
-    protected abstract Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException;
-
-    abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) throws NodeFactoryException;
 
     protected void validate(Location location) throws NodeFactoryException {
         if (location.getLatitude() != null
@@ -496,6 +592,133 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             throw new NodeFactoryException("found invalid longitude [" + location.getLongitude() + "]");
         }
     }
+
+    protected Node createDatasetNode(Transaction tx) {
+        return tx.createNode(NodeLabel.Dataset);
+    }
+
+    protected Node createExternalIdNode(Transaction transaction) {
+        return transaction.createNode(NodeLabel.ExternalId);
+    }
+
+    public LocationNode findLocationNode(Transaction tx, Location location) throws NodeFactoryException {
+        validate(location);
+
+        Node matchingLocation = null;
+        if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+            PointValue pointValue = Values.pointValue(CoordinateReferenceSystem.WGS_84, location.getLongitude(), location.getLatitude());
+            ResourceIterator<Node> nodes = tx.findNodes(
+                    NodeLabel.Location,
+                    LocationConstant.LNGLAT,
+                    pointValue
+            );
+            matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+        }
+        if (matchingLocation == null) {
+            String locality = location.getLocality();
+            if (StringUtils.isNotBlank(locality)) {
+                ResourceIterator<Node> nodes = tx.findNodes(
+                        NodeLabel.Location,
+                        LocationConstant.LOCALITY, locality
+                );
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+        }
+        if (matchingLocation == null) {
+            String localityId = location.getLocalityId();
+            if (StringUtils.isNotBlank(location.getLocalityId())) {
+                ResourceIterator<Node> nodes = tx.findNodes(
+                        NodeLabel.Location,
+                        LocationConstant.LOCALITY_ID, localityId
+                );
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+        }
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
+    }
+
+    @Override
+    public Location findLocation(Location location) throws NodeFactoryException {
+        LocationNode locationNode;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            locationNode = findLocationNode(tx, location);
+            Location copyOf = copyOf(locationNode);
+            tx.commit();
+            return copyOf;
+        }
+    }
+
+
+    @Override
+    public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            List<EnvironmentNode> orCreateEnvironmentNodes = getOrCreateEnvironmentNodes(tx, location, externalId, name);
+            List<Environment> collect = orCreateEnvironmentNodes.stream().map(nodes -> {
+                EnvironmentImpl environment = new EnvironmentImpl(nodes.getExternalId());
+                environment.setName(nodes.getName());
+                return environment;
+            }).collect(Collectors.toList());
+            tx.commit();
+            return collect;
+        }
+
+    }
+
+    @Override
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException {
+        List<EnvironmentNode> environmentNodes = addEnvironmentNodesToLocationNodes(getGraphDb().beginTx(), location, terms);
+        return environmentNodes.stream().map(environ -> {
+            EnvironmentImpl environment = new EnvironmentImpl(environ.getExternalId());
+            environment.setName(environ.getName());
+            return environment;
+        }).collect(Collectors.toList());
+    }
+
+
+    protected DatasetNode getOrCreateDatasetNode(Transaction tx, Dataset originatingDataset) throws NodeFactoryException {
+        DatasetNode datasetCreated = null;
+        if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
+            Node node = tx
+                    .findNode(NodeLabel.Dataset,
+                            DatasetConstant.NAMESPACE,
+                            originatingDataset.getNamespace());
+
+            Node datasetNode = node == null
+                    ? createDatasetNode(tx, originatingDataset)
+                    : node;
+
+            datasetCreated = new DatasetNode(datasetNode);
+        }
+        return datasetCreated;
+    }
+
+    protected Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException {
+        Node externalIdNode = null;
+        if (StringUtils.isNotBlank(externalId)) {
+
+            try (Transaction transaction = getGraphDb().beginTx()) {
+                Node node = transaction.findNode(NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+                externalIdNode = node == null
+                        ? createExternalId(transaction, externalId)
+                        : node;
+                transaction.commit();
+            }
+        }
+        return externalIdNode;
+    }
+
+    public Node createEnvironmentNode(Transaction tx) {
+        return tx.createNode(NodeLabel.Environment);
+    }
+
+    @Override
+    public void close() {
+        startNextBatchUpdate();
+        try (Transaction tx = getGraphDb().beginTx()) {
+            tx.commit();
+        }
+    }
+
 
 }
 

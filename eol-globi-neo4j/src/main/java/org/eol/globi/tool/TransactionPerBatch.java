@@ -6,6 +6,11 @@ import org.neo4j.graphdb.Transaction;
 
 public class TransactionPerBatch implements BatchListener {
     private final GraphDatabaseService graphDb;
+
+    public Transaction getTx() {
+        return tx;
+    }
+
     private Transaction tx;
 
     public TransactionPerBatch(GraphDatabaseService graphDb) {
@@ -21,7 +26,7 @@ public class TransactionPerBatch implements BatchListener {
     @Override
     public void onFinish() {
         if (tx != null) {
-            tx.success();
+            tx.commit();
             tx.close();
         }
     }

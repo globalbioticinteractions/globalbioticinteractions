@@ -1,28 +1,33 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 public class ExportTaxonMap implements StudyExporter {
 
+    private final GraphDatabaseService graphService;
+
+    public ExportTaxonMap(GraphDatabaseService graphService) {
+        this.graphService = graphService;
+    }
+
     @Override
     public void exportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
-            doExport(study, writer);
+            doExport(writer);
         }
     }
 
-    protected void doExport(StudyNode study, ExportUtil.Appender writer) throws IOException {
-        String query = "CYPHER 2.3 START study = node:studies('*:*')\n" +
-                "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, " +
-                "specimen-[:CLASSIFIED_AS]->taxon " +
+    protected void doExport(ExportUtil.Appender writer) throws IOException {
+        String query =
+                "MATCH (study:Reference)-[:COLLECTED|REFUTES|SUPPORTS]->(specimen)-[:ORIGINALLY_DESCRIBED_AS]->(origTaxon), " +
+                "(specimen)-[:CLASSIFIED_AS]->(taxon) " +
                 "WITH distinct(origTaxon.name) as origName, origTaxon.externalId as origId, origTaxon.path as origPath, taxon " +
-                "MATCH taxon-[:SAME_AS*0..1]->linkedTaxon " +
-                "WHERE has(linkedTaxon.path) " +
+                "MATCH (taxon)-[:SAME_AS*0..1]->(linkedTaxon) " +
+                "WHERE linkedTaxon.path IS NOT NULL " +
                 "RETURN origId as providedTaxonId" +
                 ", origName as providedTaxonName" +
                 ", origPath as providedTaxonPath" +
@@ -30,8 +35,9 @@ public class ExportTaxonMap implements StudyExporter {
                 ", linkedTaxon.name as resolvedTaxonName" +
                 ", linkedTaxon.path as resolvedTaxonPath";
 
-        ExportUtil.writeResults(writer,
-                study.getUnderlyingNode().getGraphDatabase(),
+        ExportUtil.writeResults(
+                writer,
+                graphService,
                 query,
                 new HashMap<>(),
                 true

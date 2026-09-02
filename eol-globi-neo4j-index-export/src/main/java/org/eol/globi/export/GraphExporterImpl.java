@@ -21,32 +21,31 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPOutputStream;
 
 public class GraphExporterImpl extends GraphExporterBase {
     private static final Logger LOG = LoggerFactory.getLogger(GraphExporterImpl.class);
 
     @Override
-    public void doExport(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
+    public void doExport(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         LOG.info("site maps generating... ");
         File siteMapDir = new File(baseDir, "sitemap");
 
         final File citationsDir = new File(siteMapDir, "citations");
         LOG.info("site maps at [" + citationsDir.getAbsolutePath() + "] generating... ");
-        new ExporterSiteMapForCitations().export(graphService, citationsDir, neo4jVersion);
+        new ExporterSiteMapForCitations().export(graphService, citationsDir);
         LOG.info("site maps at [" + citationsDir.getAbsolutePath() + "] generated.");
 
         final File namesDir = new File(siteMapDir, "names");
         LOG.info("site maps at [" + namesDir.getAbsolutePath() + "] generating... ");
         final GraphExporter exporter = new ExporterSiteMapForNames();
-        exporter.export(graphService, namesDir, neo4jVersion);
+        exporter.export(graphService, namesDir);
         LOG.info("site maps at [" + namesDir.getAbsolutePath() + "] generated.");
 
         LOG.info("site maps generated... ");
 
         LOG.info("ncbi linkout files generating... ");
-        exportNCBILinkOut(graphService, baseDir, neo4jVersion);
+        exportNCBILinkOut(graphService, baseDir);
         LOG.info("ncbi linkout files generated. ");
 
         exportNames(graphService, baseDir);
@@ -55,18 +54,17 @@ public class GraphExporterImpl extends GraphExporterBase {
                 graphService,
                 baseDir,
                 "csv",
-                new ExportUtil.CsvValueJoiner(),
-                neo4jVersion);
+                new ExportUtil.CsvValueJoiner());
 
         exportDataOntology(graphService, baseDir);
         exportDarwinCoreAggregatedByStudy(graphService, baseDir);
         exportDarwinCoreAll(graphService, baseDir);
     }
 
-    private void exportNCBILinkOut(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
+    private void exportNCBILinkOut(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         final File ncbiDir = new File(baseDir, "ncbi-link-out/");
         mkdir(ncbiDir);
-        new ExportNCBIIdentityFile().export(graphService, ncbiDir, neo4jVersion);
+        new ExportNCBIIdentityFile().export(graphService, ncbiDir);
 
         new ExportNCBIResourceFile().export(graphService, new ExportNCBIResourceFile.OutputStreamFactory() {
             @Override
@@ -79,8 +77,8 @@ public class GraphExporterImpl extends GraphExporterBase {
     private void exportNames(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         File taxaDir = new File(baseDir, "taxa");
         mkdir(taxaDir);
-        exportNames(graphService, taxaDir, new ExportTaxonMap(), "taxonMap.tsv.gz");
-        exportNames(graphService, taxaDir, new ExportTaxonCache(), "taxonCache.tsv.gz");
+        exportNames(graphService, taxaDir, new ExportTaxonMap(graphService), "taxonMap.tsv.gz");
+        exportNames(graphService, taxaDir, new ExportTaxonCache(graphService), "taxonCache.tsv.gz");
         //exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
     }
 
@@ -120,10 +118,10 @@ public class GraphExporterImpl extends GraphExporterBase {
         exportDarwinCoreArchive(graphService,
                 new File(baseDir, "aggregatedByStudy"), new HashMap<String, DarwinCoreExporter>() {
                     {
-                        put("association.tsv", new ExporterAssociationAggregates());
-                        put("occurrence.tsv", new ExporterOccurrenceAggregates());
-                        put("references.tsv", new ExporterReferences());
-                        put("taxa.tsv", new ExporterTaxaDistinct());
+                        put("association.tsv", new ExporterAssociationAggregates(graphService));
+                        put("occurrence.tsv", new ExporterOccurrenceAggregates(graphService));
+                        put("references.tsv", new ExporterReferences(graphService));
+                        put("taxa.tsv", new ExporterTaxaDistinct(graphService));
                     }
                 }
         );
@@ -132,11 +130,11 @@ public class GraphExporterImpl extends GraphExporterBase {
     private void exportDarwinCoreAll(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         exportDarwinCoreArchive(graphService, new File(baseDir, "all"), new HashMap<String, DarwinCoreExporter>() {
             {
-                put("association.tsv", new ExporterAssociations());
-                put("occurrence.tsv", new ExporterOccurrences());
-                put("references.tsv", new ExporterReferences());
-                put("taxa.tsv", new ExporterTaxaDistinct());
-                put("measurementOrFact.tsv", new ExporterMeasurementOrFact());
+                put("association.tsv", new ExporterAssociations(graphService));
+                put("occurrence.tsv", new ExporterOccurrences(graphService));
+                put("references.tsv", new ExporterReferences(graphService));
+                put("taxa.tsv", new ExporterTaxaDistinct(graphService));
+                put("measurementOrFact.tsv", new ExporterMeasurementOrFact(graphService));
             }
         });
     }

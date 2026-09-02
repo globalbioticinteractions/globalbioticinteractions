@@ -102,6 +102,7 @@ public class InteractionListenerImpl implements InteractionListener {
                     processor.on(incomingInteractions);
                 }
                 inbox.clear();
+
             }
         } catch (StudyImporterException e) {
             throw new StudyImporterException("failed to import: " + interaction, e);

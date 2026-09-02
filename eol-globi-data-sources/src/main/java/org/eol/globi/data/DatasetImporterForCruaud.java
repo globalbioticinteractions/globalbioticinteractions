@@ -62,6 +62,7 @@ public class DatasetImporterForCruaud extends NodeBasedImporter {
                                 LOG.warn("no location associated with locality [" + samplingLocation + "]");
                             }
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
+                            notifyInteractionRecordIndexed();
                         }
                     } catch (NodeFactoryException | NumberFormatException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);

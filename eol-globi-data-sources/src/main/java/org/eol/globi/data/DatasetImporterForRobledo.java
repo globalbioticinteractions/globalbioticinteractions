@@ -56,6 +56,7 @@ public class DatasetImporterForRobledo extends NodeBasedImporter {
                             Specimen plant = getNodeFactory().createSpecimen(study, new TaxonImpl(plantScientificName, null));
                             plant.caughtIn(location);
                             predator.ate(plant);
+                            notifyInteractionRecordIndexed();
                         }
                     } catch (NumberFormatException ex) {
                         getLogger().warn(study, "malformed or no value [" + valueByLabel + "] found for [" + plantScientificName + "(" + plantAbbreviation + ")" + "] and beetle [" + beetleScientificName + "] could be found in [" + studyResource + ":" + parser.lastLineNumber() + "]");

@@ -13,6 +13,7 @@ import static java.lang.System.exit;
                 CmdLink.class,
                 CmdSummarize.class,
                 CmdPackage.class,
+                CmdQuery.class,
                 ManPageGenerator.class,
                 CommandLine.HelpCommand.class
         },

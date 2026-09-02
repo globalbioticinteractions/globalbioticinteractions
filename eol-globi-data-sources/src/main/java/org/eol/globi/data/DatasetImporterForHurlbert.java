@@ -23,7 +23,6 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
-import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.util.SpecimenUtil;
 import org.joda.time.DateTime;
 
@@ -73,7 +72,8 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
                 if (StringUtils.isBlank(sourceCitation)) {
                     LOG.warn(createMsg("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "]"));
                 } else {
-                    importRecords(regions, locales, habitats, record, sourceCitation);
+                    importRecord(regions, locales, habitats, record, sourceCitation);
+                    this.notifyInteractionRecordIndexed();
                 }
             }
         } catch (IOException e) {
@@ -82,7 +82,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
 
     }
 
-    private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
+    private void importRecord(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
         String namespace = getDataset() == null ? "" : getDataset().getNamespace();
         StudyImpl study1 = new StudyImpl(namespace + sourceCitation, null, sourceCitation);
         study1.setOriginatingDataset(getDataset());

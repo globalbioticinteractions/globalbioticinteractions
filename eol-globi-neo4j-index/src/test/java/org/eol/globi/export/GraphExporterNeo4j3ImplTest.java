@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.Neo4jIndexType;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -22,15 +21,10 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
-public class GraphExporterNeo4j3ImplTest extends GraphDBNeo4jTestCase {
+public class GraphExporterNeo4j3ImplTest extends GraphDBTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    @Override
-    protected Neo4jIndexType getSchemaType() {
-        return Neo4jIndexType.schema;
-    }
 
 
     @Test
@@ -45,7 +39,7 @@ public class GraphExporterNeo4j3ImplTest extends GraphDBNeo4jTestCase {
         resolveNames();
 
         String neo4jVersion = "3";
-        new GraphExporterInteractionsTSVImpl(neo4jVersion).export(getGraphDb(), tmpDir, neo4jVersion);
+        new GraphExporterInteractionsTSVImpl().export(getGraphDb(), tmpDir);
 
 
         File tsvDir = new File(tmpDir, "tsv");

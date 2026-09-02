@@ -6,6 +6,7 @@ import org.eol.globi.util.NodeUtil;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,12 +15,13 @@ import java.util.Set;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForByrnesTest extends GraphDBNeo4jTestCase {
+
+public class DatasetImporterForByrnesTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
@@ -42,17 +44,26 @@ public class DatasetImporterForByrnesTest extends GraphDBNeo4jTestCase {
 
         assertThat("found duplicates in citation list", citationList.size(), is(citations.size()));
 
-        assertNotNull(taxonIndex.findTaxonByName("Anisotremus davidsonii"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        assertThat(citations, hasItem("Pennings, S. C. 1990. Size-related shifts in herbivory: specialization in the sea hare Aplysia californica Cooper. Journal of Experimental Marine Biology and Ecology 142:43-61."));
-        assertThat(citations, hasItem("Barry, J. and M. Ehret. 1993. Diet, food preference, and algal availability for fishes and crabs on intertidal reef communities in southern California. Environmental Biology of Fishes 37:75-95."));
-        assertThat(citations, hasItem("Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: https://doi.org/10.1111/j.1365-2486.2011.02409.x."));
+            assertNotNull(taxonIndex.findTaxonByName("Anisotremus davidsonii"));
 
-        assertThat(citations, not(hasItem("17(8)")));
+            assertThat(citations, hasItem("Pennings, S. C. 1990. Size-related shifts in herbivory: specialization in the sea hare Aplysia californica Cooper. Journal of Experimental Marine Biology and Ecology 142:43-61."));
+            assertThat(citations, hasItem("Barry, J. and M. Ehret. 1993. Diet, food preference, and algal availability for fishes and crabs on intertidal reef communities in southern California. Environmental Biology of Fishes 37:75-95."));
+            assertThat(citations, hasItem("Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: https://doi.org/10.1111/j.1365-2486.2011.02409.x."));
 
-        Result result = getGraphDb().execute("CYPHER 2.3 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
-                " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
-                " RETURN collect(distinct(preyTaxon.name))");
+            assertThat(citations, not(hasItem("17(8)")));
+            tx.commit();
+        }
+
+        Result result;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute(
+                    " MATCH (taxon:Taxon {name: 'Strongylocentrotus purpuratus'})<-[:CLASSIFIED_AS]-(specimen)-[:ATE]->(prey)-[:CLASSIFIED_AS]->(preyTaxon) " +
+                            " RETURN collect(distinct(preyTaxon.name))");
+            transaction.commit();
+        }
         assertThat(result.resultAsString(), CoreMatchers.containsString("Bossiella orbigiana"));
     }
 }

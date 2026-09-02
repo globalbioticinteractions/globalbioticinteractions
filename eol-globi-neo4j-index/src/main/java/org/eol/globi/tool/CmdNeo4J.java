@@ -1,6 +1,5 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
 import picocli.CommandLine;
@@ -14,44 +13,30 @@ import java.io.File;
 )
 public abstract class CmdNeo4J implements Cmd {
 
-
     private NodeFactoryFactory nodeFactoryFactory = null;
 
     private static GraphServiceFactory graphServiceFactory = null;
 
     @CommandLine.Option(
             names = {"-graphDbDir"},
-            defaultValue = "./graph.db",
+            defaultValue = ".neo4j/graph.db",
             description = "location of neo4j graph.db"
     )
     private String graphDbDir;
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_DATASET_DIR},
-            defaultValue = "./datasets",
+            defaultValue = "datasets",
             description = "location of Elton tracked data content"
     )
     private String datasetDir;
 
     @CommandLine.Option(
             names = {"-provDir"},
-            defaultValue = "./datasets",
+            defaultValue = "datasets",
             description = "location of Elton tracked data provenance"
     )
     private String provenanceDir;
-
-
-    public void setNeo4jVersion(String neo4jVersion) {
-        this.neo4jVersion = neo4jVersion;
-    }
-
-    @CommandLine.Option(
-            names = {"-neo4jVersion"},
-            description = "version neo4j index to use (NOTE: only v2 indexes are fully implemented currently, v2 indexes work with neo4j v3.5.x)",
-            defaultValue = "2",
-            hidden = true
-    )
-    private String neo4jVersion;
 
     @CommandLine.Option(
             names = {"-taxonCache"},
@@ -77,8 +62,8 @@ public abstract class CmdNeo4J implements Cmd {
 
     @CommandLine.Option(
             names = {"-exportDir"},
-            defaultValue = ".",
-            description = "location of neo4j graph.db"
+            defaultValue = "export",
+            description = "directory to save elton4n data export products into"
     )
     private String baseDir;
 
@@ -91,10 +76,8 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
 
-    private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
-        return StringUtils.equals("2", neo4jVersion)
-                ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(graphServiceFactory)
-                : new NodeFactoryFactoryTransactingOnDatasetNeo4j3(graphServiceFactory);
+    private static NodeFactoryFactory getNodeFactoryFactory(GraphServiceFactory graphServiceFactory) {
+        return new NodeFactoryFactoryTransactingOnDataset(graphServiceFactory);
     }
 
     private static GraphServiceFactoryImpl getGraphServiceFactory(String graphDbDir) {
@@ -104,7 +87,7 @@ public abstract class CmdNeo4J implements Cmd {
 
     protected NodeFactoryFactory getNodeFactoryFactory() {
         if (this.nodeFactoryFactory == null) {
-            this.nodeFactoryFactory = getNodeFactoryFactory(neo4jVersion, getGraphServiceFactory());
+            this.nodeFactoryFactory = getNodeFactoryFactory(getGraphServiceFactory());
         }
         return nodeFactoryFactory;
     }
@@ -128,25 +111,30 @@ public abstract class CmdNeo4J implements Cmd {
     @Override
     public void destroy() {
         try {
-            CmdNeo4J.graphServiceFactory.close();
-            CmdNeo4J.graphServiceFactory = null;
+            if (CmdNeo4J.graphServiceFactory != null) {
+                CmdNeo4J.graphServiceFactory.close();
+                CmdNeo4J.graphServiceFactory = null;
+            }
         } catch (Exception e) {
             // ignore
         }
     }
 
-    protected void configureAndRun(CmdNeo4J cmd) {
+    protected void configureRunAndDestroy(CmdNeo4J cmd) {
         try {
-            cmd.setTaxonCachePath(getTaxonCachePath());
-            cmd.setTaxonMapPath(getTaxonMapPath());
-            cmd.setGraphServiceFactory(getGraphServiceFactory());
-            cmd.setNodeFactoryFactory(getNodeFactoryFactory());
-            cmd.setCacheDir(getCacheDir());
-            cmd.setNeo4jVersion(getNeo4jVersion());
-            cmd.run();
+            configureAndRun(cmd);
         } finally {
-            cmd.destroy();
+            //cmd.destroy();
         }
+    }
+
+    protected void configureAndRun(CmdNeo4J cmd) {
+        cmd.setTaxonCachePath(getTaxonCachePath());
+        cmd.setTaxonMapPath(getTaxonMapPath());
+        cmd.setGraphServiceFactory(getGraphServiceFactory());
+        cmd.setNodeFactoryFactory(getNodeFactoryFactory());
+        cmd.setCacheDir(getCacheDir());
+        cmd.run();
     }
 
     public String getTaxonCachePath() {
@@ -165,7 +153,6 @@ public abstract class CmdNeo4J implements Cmd {
         this.taxonMapPath = taxonMapPath;
     }
 
-
     public String getDatasetDir() {
         return datasetDir;
     }
@@ -182,8 +169,7 @@ public abstract class CmdNeo4J implements Cmd {
         this.cacheDir = cacheDir;
     }
 
-    public String getNeo4jVersion() {
-        return neo4jVersion;
+    public void setGraphDbDir(String graphDbDir) {
+        this.graphDbDir = graphDbDir;
     }
-
 }

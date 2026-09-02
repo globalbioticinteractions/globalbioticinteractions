@@ -20,8 +20,7 @@ public class GraphExporterUtil {
     public static void exportInteractionsAndCitations(GraphDatabaseService graphService,
                                                       File baseDir,
                                                       String extension,
-                                                      ExportUtil.ValueJoiner joiner,
-                                                      String neo4jVersion) throws StudyImporterException {
+                                                      ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         File formatBaseDir = new File(baseDir, extension);
         try {
             FileUtils.forceMkdir(formatBaseDir);
@@ -34,83 +33,82 @@ public class GraphExporterUtil {
                     formatBaseDir,
                     "interactions." + extension + ".gz",
                     joiner,
-                    RelTypes.CLASSIFIED_AS,
-                    neo4jVersion);
+                    RelTypes.CLASSIFIED_AS
+            );
 
             exportSupportingInteractions(
                     graphService,
                     formatBaseDir,
                     "verbatim-interactions." + extension + ".gz",
                     joiner,
-                    RelTypes.ORIGINALLY_DESCRIBED_AS,
-                    neo4jVersion);
+                    RelTypes.ORIGINALLY_DESCRIBED_AS
+            );
 
             exportRefutedInteractions(
                     graphService,
                     formatBaseDir,
                     "refuted-interactions." + extension + ".gz",
                     joiner,
-                    RelTypes.CLASSIFIED_AS,
-                    neo4jVersion);
+                    RelTypes.CLASSIFIED_AS
+            );
 
             exportRefutedInteractions(
                     graphService,
                     formatBaseDir,
                     "refuted-verbatim-interactions." + extension + ".gz",
                     joiner,
-                    RelTypes.ORIGINALLY_DESCRIBED_AS,
-                    neo4jVersion);
+                    RelTypes.ORIGINALLY_DESCRIBED_AS
+            );
 
             exportCitations(
                     graphService,
                     formatBaseDir,
                     "citations." + extension + ".gz",
-                    joiner,
-                    neo4jVersion);
+                    joiner
+            );
 
             exportDatasetNamespaces(
                     graphService,
                     formatBaseDir,
                     "datasets." + extension + ".gz",
-                    joiner,
-                    neo4jVersion);
+                    joiner
+            );
         } catch (StudyImporterException ex) {
             LOG.error("issues while exporting", ex);
             throw ex;
         }
     }
 
-    private static void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner, RelTypes taxonRelation, String neo4jVersion) throws StudyImporterException {
+    private static void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner, RelTypes taxonRelation) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename, taxonRelation, neo4jVersion)
-                .export(graphService, baseDir, neo4jVersion);
+        new ExportFlatInteractions(joiner, filename, taxonRelation)
+                .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
     private static void exportCitations(GraphDatabaseService graphService,
                                         File baseDir, String filename,
-                                        ExportUtil.ValueJoiner joiner,
-                                        String neo4jVersion) throws StudyImporterException {
+                                        ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportCitations(joiner, filename, neo4jVersion)
-                .export(graphService, baseDir, neo4jVersion);
+        new ExportCitations(joiner, filename)
+                .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
     private static void exportDatasetNamespaces(GraphDatabaseService graphService,
                                                 File baseDir, String filename,
-                                                ExportUtil.ValueJoiner joiner, String neo4jVersion) throws StudyImporterException {
+                                                ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportNamespaces(joiner, filename, neo4jVersion)
-                .export(graphService, baseDir, neo4jVersion);
+        new ExportNamespaces(joiner, filename)
+                .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
@@ -119,15 +117,14 @@ public class GraphExporterUtil {
             GraphDatabaseService graphService,
             File baseDir, String filename,
             ExportUtil.ValueJoiner joiner,
-            RelTypes taxonRelation,
-            String neo4jVersion) throws StudyImporterException {
+            RelTypes taxonRelation) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename, taxonRelation, neo4jVersion)
+        new ExportFlatInteractions(joiner, filename, taxonRelation)
                 .setArgumentType(RelTypes.REFUTES)
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
-                .export(graphService, baseDir, neo4jVersion);
+                .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForPlanqueTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForPlanqueTest extends GraphDBTestCase {
 
     @Test
     public void taxonNameParser() {

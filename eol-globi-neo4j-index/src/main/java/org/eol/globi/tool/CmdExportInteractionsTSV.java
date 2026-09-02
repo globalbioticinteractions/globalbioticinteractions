@@ -11,16 +11,15 @@ import java.io.File;
         aliases = {"package-interactions-tsv"},
         description = "Exports indexed interactions into tsv."
 )
-public class CmdExportInteractionsTSV extends CmdExportNeo4J {
+public class CmdExportInteractionsTSV extends CmdNeo4J {
 
     @Override
     public void run() {
         try {
-            new GraphExporterInteractionsTSVImpl(getNeo4jVersion())
+            new GraphExporterInteractionsTSVImpl()
                     .export(
                             getGraphServiceFactory().getGraphService(),
-                            new File(getBaseDir()),
-                            getNeo4jVersion()
+                            new File(getBaseDir())
                     );
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);

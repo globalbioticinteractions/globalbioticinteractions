@@ -5,6 +5,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetImporterForCruaudTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForCruaudTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
@@ -35,9 +36,11 @@ public class DatasetImporterForCruaudTest extends GraphDBNeo4jTestCase {
         assertThat(allStudies.size(), is(1));
 
 
-        assertThat(taxonIndex.findTaxonByName("Agaon sp."), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonByName("Ficus chapaensis"), is(notNullValue()));
-
-        assertThat(allStudies.get(0).getCitation(), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Agaon sp."), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonByName("Ficus chapaensis"), is(notNullValue()));
+            assertThat(allStudies.get(0).getCitation(), is(notNullValue()));
+        }
     }
 }

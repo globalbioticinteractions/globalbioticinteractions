@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForRoopnarineTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForRoopnarineTest extends GraphDBTestCase {
 
     @Test
     public void importLine() throws StudyImporterException, NodeFactoryException {
@@ -70,13 +71,17 @@ public class DatasetImporterForRoopnarineTest extends GraphDBNeo4jTestCase {
 
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Negaprion brevirostris"));
-        assertNotNull(taxonIndex.findTaxonByName("Carcharhinus perezi"));
-        assertNotNull(taxonIndex.findTaxonByName("Galeocerdo cuvieri"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        int totalRels = validateSpecimen();
+            assertNotNull(taxonIndex.findTaxonByName("Negaprion brevirostris"));
+            assertNotNull(taxonIndex.findTaxonByName("Carcharhinus perezi"));
+            assertNotNull(taxonIndex.findTaxonByName("Galeocerdo cuvieri"));
 
-        assertThat(totalRels, Is.is(51));
+            int totalRels = validateSpecimen();
+
+            assertThat(totalRels, Is.is(51));
+        }
     }
 
     @Ignore("roopnarine imports eats more memory that other study imports")
@@ -91,8 +96,12 @@ public class DatasetImporterForRoopnarineTest extends GraphDBNeo4jTestCase {
         int totalRels = validateSpecimen();
         assertThat(totalRels, Is.is(1939));
 
-        assertNotNull(taxonIndex.findTaxonByName("Lestrigonus bengalensis"));
-        assertNotNull(taxonIndex.findTaxonByName("Bracyscelus crusculum"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+
+            assertNotNull(taxonIndex.findTaxonByName("Lestrigonus bengalensis"));
+            assertNotNull(taxonIndex.findTaxonByName("Bracyscelus crusculum"));
+        }
     }
 
     private int validateSpecimen() {

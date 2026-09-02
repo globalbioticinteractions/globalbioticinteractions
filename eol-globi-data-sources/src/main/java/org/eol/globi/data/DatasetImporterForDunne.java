@@ -86,7 +86,7 @@ public class DatasetImporterForDunne extends DatasetImporterNodesAndLinks {
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);
         consumer.interactsWith(resource, InteractType.ATE);
+        this.notifyInteractionRecordIndexed();
     }
-
 
 }

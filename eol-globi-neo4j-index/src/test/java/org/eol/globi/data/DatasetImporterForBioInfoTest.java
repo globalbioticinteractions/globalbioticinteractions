@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
@@ -21,8 +20,8 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
 
     public static final String RELATIONS_STRING = "my relation id,relationship,active relation,passive relation,my active taxon id,active NBN Code,active url,is identity of active taxon uncertain,state of active taxon,part of active taxon,stage of active taxon,where stage of active taxon is recorded,importance of stage of active taxon,state of passive taxon,part of passive taxon,stage of passive taxon,where part of passive taxon is recorded,importance of part of passive taxon,season (numeric),season (alpha),indoors etc,relation recorded in GB/Ireland,importance of relationship,is nature of relationship uncertain,constructed sentence for active,constructed sentence for passive,my passive taxon id,passive NBN Code,passive url,is identity of passive taxon uncertain,list of reference ids\n" +
             "\"1534\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34737\",\"NBNSYS0000024889\",\"www.bioinfo.org.uk/html/Abdera_biflexuosa.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"537\",\"NBNSYS0000003949\",\"www.bioinfo.org.uk/html/Fraxinus_excelsior.htm\",\"\",\"60527\"\n" +
@@ -56,25 +55,10 @@ public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void importAbout600Records() throws StudyImporterException {
-        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory, getClass())
+        DatasetImporter importer = new StudyImporterTestFactory(getNodeFactory(), getClass())
                 .instantiateImporter(DatasetImporterForBioInfo.class);
         final List<String> msgs = new ArrayList<String>();
-        importer.setLogger(new ImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-        });
+        importer.setLogger(new ImportLoggerCapture(msgs));
         // limit the number of line to be imported to make test runs reasonably fast
         importer.setFilter(recordNumber -> recordNumber < 1000
                 || recordNumber == 4585
@@ -89,7 +73,7 @@ public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
 
         StudyImpl study2 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527");
         study2.setExternalId("http://bioinfo.org.uk/html/b60527.htm");
-        StudyNode study = (StudyNode) nodeFactory.findStudy(study2);
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(study2);
 
         AtomicBoolean success = new AtomicBoolean(false);
         NodeUtil.handleCollectedRelationships(
@@ -104,28 +88,39 @@ public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
 
         assertTrue(success.get());
 
-        Result result = getGraphDb().execute("CYPHER 2.3 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
-        List<String> interactions = new ArrayList<String>();
-        while (((ResourceIterator<Map<String, Object>>) result).hasNext()) {
-            Map<String, Object> next = ((ResourceIterator<Map<String, Object>>) result).next();
-            interactions.add((String) next.get("interaction"));
+        Result result;
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            result = transaction.execute(
+                    "MATCH (taxon:Taxon)<-[:CLASSIFIED_AS]-(specimen:Specimen)-[r]->(targetSpecimen:Specimen)-[:CLASSIFIED_AS]->(targetTaxon:Taxon) " +
+                            "RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
+            List<String> interactions = new ArrayList<String>();
+            while (result.hasNext()) {
+                Map<String, Object> next = result.next();
+                interactions.add((String) next.get("interaction"));
+            }
+
+            assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
+            assertThat(interactions, CoreMatchers.hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
+            assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
+            assertThat(interactions, CoreMatchers.hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
+
+            assertThat(study.getTitle(), is("bioinfo:ref:60527"));
+
+            assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
+            assertThat(msgs.get(0), is("empty/no taxon name for bioinfo taxon id [149359] on line [4171]"));
+            transaction.commit();
         }
-        assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
-        assertThat(interactions, CoreMatchers.hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
-        assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
-        assertThat(interactions, CoreMatchers.hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
-
-        assertThat(study.getTitle(), is("bioinfo:ref:60527"));
-
-        assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
-        assertThat(msgs.get(0), is("empty/no taxon name for bioinfo taxon id [149359] on line [4171]"));
     }
 
 
     @Test
     public void parseSomeRelations() throws IOException, StudyImporterException {
 
-        assertThat(taxonIndex.findTaxonByName("Homo sapiens"), is(nullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Homo sapiens"), is(nullValue()));
+            tx.commit();
+        }
 
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
@@ -147,7 +142,7 @@ public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
         assertNull(nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:bla")));
         StudyImpl study3 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527");
         study3.setExternalId("http://bioinfo.org.uk/html/b60527.htm");
-        StudyNode study1 = (StudyNode) nodeFactory.findStudy(study3);
+        StudyNode study1 = (StudyNode) nodeFactory.getOrCreateStudy(study3);
         assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
         List<Node> specimenList = new ArrayList<Node>();
@@ -167,8 +162,12 @@ public class DatasetImporterForBioInfoTest extends GraphDBNeo4jTestCase {
         assertThat(classifiedAs, is(notNullValue()));
         assertThat((String) classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), startsWith("NBN:NBNSYS"));
         assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
+            assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
+        }
     }
 
     private LabeledCSVParser createParser(String csvString) throws IOException {

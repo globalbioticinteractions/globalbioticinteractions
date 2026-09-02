@@ -422,7 +422,9 @@ public class CypherReturnClauseBuilder {
             }
 
         }
-        return returnFields.size() == 0 ? Collections.unmodifiableList(defaultReturnFields) : Collections.unmodifiableList(returnFields);
+        return returnFields.isEmpty()
+                ? Collections.unmodifiableList(defaultReturnFields)
+                : Collections.unmodifiableList(returnFields);
     }
 
     private static void appendReturnClause(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
@@ -504,10 +506,10 @@ public class CypherReturnClauseBuilder {
     }
 
     private static String taxonIdPrefixWithMatch(String sourceTaxonLabel, String targetTaxonLabel) {
-        return "MATCH " + sourceTaxonLabel + "-[:SAME_AS*0..1]->" + sameAsLabel(sourceTaxonLabel) +
-                ", " + targetTaxonLabel + "-[:SAME_AS*0..1]->" + sameAsLabel(targetTaxonLabel) + " " +
-                "WHERE " + sameAsLabel(sourceTaxonLabel) + ".externalId =~ {source_taxon_prefix} " +
-                "AND " + sameAsLabel(targetTaxonLabel) + ".externalId =~ {target_taxon_prefix} ";
+        return "MATCH (" + sourceTaxonLabel + ":Taxon)-[:SAME_AS*0..1]->(" + sameAsLabel(sourceTaxonLabel) +
+                ":Taxon), (" + targetTaxonLabel + ":Taxon)-[:SAME_AS*0..1]->(" + sameAsLabel(targetTaxonLabel) + ":Taxon) " +
+                "WHERE " + sameAsLabel(sourceTaxonLabel) + ".externalId =~ $source_taxon_prefix " +
+                "AND " + sameAsLabel(targetTaxonLabel) + ".externalId =~ $target_taxon_prefix ";
     }
 
 }

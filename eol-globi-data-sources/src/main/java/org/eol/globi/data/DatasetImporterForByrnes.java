@@ -95,6 +95,8 @@ public class DatasetImporterForByrnes extends NodeBasedImporter {
             } else {
                 predator.interactsWith(prey, InteractType.INTERACTS_WITH);
             }
+            notifyInteractionRecordIndexed();
         }
     }
+
 }

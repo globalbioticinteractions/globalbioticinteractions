@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
@@ -13,7 +13,7 @@ import java.io.StringWriter;
 import java.text.ParseException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterReferencesTest extends GraphDBNeo4jTestCase {
+public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
@@ -22,31 +22,31 @@ public class ExporterReferencesTest extends GraphDBNeo4jTestCase {
         StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(myStudy1);
         StringWriter row = new StringWriter();
 
-        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), true);
+        new ExporterReferences(getGraphDb()).exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), true);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\n"), getExpectedData());
 
         row = new StringWriter();
 
-        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterReferences(getGraphDb()).exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), getExpectedRow());
     }
 
     @Test
-    public void exportReferenceNoDescription() throws IOException, NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
+    public void exportReferenceNoDescription() throws IOException, NodeFactoryException {
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         StringWriter row = new StringWriter();
-        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterReferences(getGraphDb()).exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
         String expected = "globi:ref:X\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\n"), expected.split("\n"));
     }
 
     @Test
-    public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", new DOI("some", "doi"), "bla \"one\""));
+    public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException {
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", new DOI("some", "doi"), "bla \"one\""));
         StringWriter row = new StringWriter();
-        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterReferences(getGraphDb()).exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), "globi:ref:X\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t\n");
     }
 
@@ -62,7 +62,7 @@ public class ExporterReferencesTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterReferences());
+        ExportTestUtil.assertFileInMeta(new ExporterReferences(getGraphDb()));
     }
 
 }

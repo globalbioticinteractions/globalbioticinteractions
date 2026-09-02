@@ -7,8 +7,6 @@ import org.globalbioticinteractions.dataset.Dataset;
 
 public abstract class DatasetImporterWithListener extends NodeBasedImporter {
 
-    private InteractionListener interactionListener = null;
-
     public DatasetImporterWithListener(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -19,22 +17,22 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
     }
 
     private InteractionListener initListener(NodeFactory nodeFactory, Dataset dataset) {
-        return new InteractionListenerImpl(
+        return new InteractionListenerBatching(
                 nodeFactory,
-                getGeoNamesService(),
-                getLogger(),
-                dataset);
+                new InteractionListenerImpl(
+                        nodeFactory,
+                        getGeoNamesService(),
+                        getLogger(),
+                        dataset
+                ));
     }
 
+    @Override
     public InteractionListener getInteractionListener() {
-        if (interactionListener == null) {
+        if (super.getInteractionListener() == null) {
             interactionListener = initListener(getNodeFactory());
         }
         return interactionListener;
-    }
-    
-    public void setInteractionListener(InteractionListener interactionListener) {
-        this.interactionListener = interactionListener;
     }
 
     @Override
@@ -60,4 +58,10 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
         super.setDataset(dataset);
         reinitializeListenerIfNeeded();
     }
+
+    @Override
+    public void notifyInteractionRecordIndexed() {
+        // nothing to do: already using interaction listener mechanism
+    }
+
 }

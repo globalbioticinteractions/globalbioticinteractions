@@ -5,10 +5,15 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.globalbioticinteractions.dataset.Dataset;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Map;
 
 public abstract class ExporterAssociationsBase extends ExporterBase {
+    public ExporterAssociationsBase(GraphDatabaseService graphService) {
+        super(graphService);
+    }
+
     protected String[] getFields() {
         return new String[]{
                 EOLDictionary.ASSOCIATION_ID,

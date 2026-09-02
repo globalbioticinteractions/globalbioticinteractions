@@ -31,7 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForWoodTest extends GraphDBTestCase {
 
     static DatasetImporterForWood createImporter(NodeFactory nodeFactory, ResourceService resourceService) throws IOException {
 

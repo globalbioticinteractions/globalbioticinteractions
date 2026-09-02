@@ -14,7 +14,7 @@ public class LinkerTestUtil {
 
     public static Set<String> sameAsCountForNode(RelTypes relType, NodeBacked taxon1) {
         Set<String> externalIds = new HashSet<>();
-        Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(relType), Direction.OUTGOING);
+        Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(relType));
         for (Relationship rel : rels) {
             externalIds.add(new TaxonNode(rel.getEndNode()).getExternalId());
         }

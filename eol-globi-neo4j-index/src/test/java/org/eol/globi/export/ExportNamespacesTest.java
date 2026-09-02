@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
@@ -12,14 +12,14 @@ import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ExportNamespacesTest extends GraphDBNeo4jTestCase {
+public class ExportNamespacesTest extends GraphDBTestCase {
 
     @Test
     public void export() throws IOException, NodeFactoryException {
         StringWriter writer = new StringWriter();
         createDataset("namespace1");
         createDataset("namespace2");
-        ExportUtil.export(ExportUtil.AppenderWriter.of(writer), getGraphDb(), ExportNamespaces.CYPHER_QUERY);
+        ExportUtil.export(ExportUtil.AppenderWriter.of(writer), getGraphDb(), ExportNamespaces.QUERY);
 
         assertThat(writer.toString(), Is.is("namespace\nnamespace1\nnamespace2\n"
         ));

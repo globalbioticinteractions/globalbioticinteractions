@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class DatasetImporterForGeminaTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForGeminaTest extends GraphDBTestCase {
 
     private static final String firstFewLines = "ID\tPathogen\tPathogen Taxonomy\tSource\tTaxonomy ID\tTransmission Method\tHost/Reservoir\tTaxonomy ID\tDisease\tAnatomy\tSymptoms/Documentation/Attributes\n" +
             "TI:0001671\t71D1252 virus\t177895\tundocumented\t\tundocumented\tCulex\t7174\tno disease\tundocumented\tPMID:11581380,PMID:613619\n" +
@@ -39,29 +40,36 @@ public class DatasetImporterForGeminaTest extends GraphDBNeo4jTestCase {
 
         assertHuman();
 
-        Taxon taxon = taxonIndex.findTaxonByName("Bacillus anthracis");
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getExternalId(), is("NCBI:1392"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName("Bacillus anthracis");
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
-        List<String> antraxHosts = new ArrayList<String>();
-        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
-        for (Relationship rel : relationships) {
-            Node specimen = rel.getStartNode();
-            Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
-            for (Relationship pathogenRel : pathogenRels) {
-                Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-                antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
+            List<String> antraxHosts = new ArrayList<String>();
+            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship rel : relationships) {
+                Node specimen = rel.getStartNode();
+                Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
+                for (Relationship pathogenRel : pathogenRels) {
+                    Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
+                    antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
+                }
+
             }
 
+            assertThat(antraxHosts, hasItem("Equus caballus"));
         }
-
-        assertThat(antraxHosts, hasItem("Equus caballus"));
     }
 
     private void assertHuman() throws NodeFactoryException {
-        Taxon taxon = taxonIndex.findTaxonByName("Homo sapiens");
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getExternalId(), is("NCBI:9606"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon taxon = taxonIndex.findTaxonByName("Homo sapiens");
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getExternalId(), is("NCBI:9606"));
+            tx.commit();
+        }
     }
 
 }

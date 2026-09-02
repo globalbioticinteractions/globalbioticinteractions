@@ -15,22 +15,23 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TreeMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForWrastTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForWrastTest extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException {
@@ -75,11 +76,13 @@ public class DatasetImporterForWrastTest extends GraphDBNeo4jTestCase {
         assertThat(getSpecimenCount(getStudySingleton(getGraphDb())), is(5));
 
 
-        assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
-        assertNotNull(taxonIndex.findTaxonByName("Arius felis"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
+            assertNotNull(taxonIndex.findTaxonByName("Arius felis"));
+            assertNotNull(taxonIndex.findTaxonByName("Aegathoa oculata"));
 
-        assertNotNull(taxonIndex.findTaxonByName("Aegathoa oculata"));
-
+        }
         AtomicReference<StudyNode> foundStudyRef = new AtomicReference<>();
         NodeUtil.findStudies(getGraphDb(), new NodeListener() {
             @Override

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ResultFormatterJSON implements ResultFormatterStreaming {
+
+    private static Logger LOG = LoggerFactory.getLogger(ResultFormatterJSON.class);
 
     @Override
     public String format(String s) throws ResultFormattingException {
@@ -64,7 +68,9 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
             IOUtils.copy(IOUtils.toInputStream(jsonNode.toString(), StandardCharsets.UTF_8), os);
             os.flush();
         } catch (IOException e) {
-            throw new ResultFormattingException("failed to format incoming stream", e);
+            String failedToFormatIncomingStream = "failed to format incoming stream";
+            LOG.warn(failedToFormatIncomingStream, e);
+            throw new ResultFormattingException(failedToFormatIncomingStream, e);
         }
     }
 

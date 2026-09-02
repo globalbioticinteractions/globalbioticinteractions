@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Location;
@@ -348,6 +349,7 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
                                 getNodeFactory().setUnixEpochProperty(predatorSpecimen, eventDate.toDate());
                             }
                             predatorSpecimen.ate(prey);
+                            this.notifyInteractionRecordIndexed();
                         } catch (NodeFactoryException e) {
                             getLogger().warn(study, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" + e.getMessage() + "]");
                         }

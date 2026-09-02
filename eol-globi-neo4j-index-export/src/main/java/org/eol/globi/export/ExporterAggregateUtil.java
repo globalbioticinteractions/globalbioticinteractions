@@ -15,6 +15,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 public class ExporterAggregateUtil {
-    public static void exportDistinctInteractionsByStudy(ExportUtil.Appender writer, GraphDatabaseService graphDatabase, RowWriter rowWriter) throws IOException {
+    private static Object tx;
+
+    public static void exportDistinctInteractionsByStudy(ExportUtil.Appender writer,
+                                                         GraphDatabaseService graphDatabase,
+                                                         RowWriter rowWriter) throws IOException {
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
@@ -33,13 +38,17 @@ public class ExporterAggregateUtil {
         NodeUtil.findStudies(graphDatabase, node -> collectDistinctInteractions(studyOccAggregate, node));
 
         for (Map.Entry<Fun.Tuple3<Long, String, String>, List<String>> distinctInteractions : studyOccAggregate.entrySet()) {
-            rowWriter.writeRow(
-                    writer,
-                    new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
-                    distinctInteractions.getKey().b,
-                    distinctInteractions.getKey().c,
-                    distinctInteractions.getValue()
-            );
+            try(Transaction transaction = graphDatabase.beginTx()) {
+                StudyNode studyNode = new StudyNode(transaction.getNodeById(distinctInteractions.getKey().a));
+                rowWriter.writeRow(
+                        writer,
+                        studyNode,
+                        distinctInteractions.getKey().b,
+                        distinctInteractions.getKey().c,
+                        distinctInteractions.getValue()
+                );
+                transaction.commit();
+            }
 
         }
         db.close();
@@ -95,6 +104,10 @@ public class ExporterAggregateUtil {
     }
 
     public interface RowWriter {
-        void writeRow(ExportUtil.Appender writer, StudyNode studyId, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException;
+        void writeRow(ExportUtil.Appender writer,
+                      StudyNode studyId,
+                      String sourceTaxonId,
+                      String relationshipType,
+                      List<String> targetTaxonIds) throws IOException;
     }
 }

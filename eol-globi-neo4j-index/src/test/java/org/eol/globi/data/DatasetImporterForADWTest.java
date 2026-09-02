@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.
  */
 
-public class DatasetImporterForADWTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForADWTest extends GraphDBTestCase {
 
     @Test
     public void readMDB() throws URISyntaxException, IOException {

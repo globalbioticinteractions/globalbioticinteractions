@@ -21,6 +21,7 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForSPIRETest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void parseIllegalTitle() {
@@ -101,27 +102,30 @@ public class DatasetImporterForSPIRETest extends GraphDBNeo4jTestCase {
         studyImporterForSPIRE.importTrophicLink(properties);
         resolveNames();
 
-        Taxon dog = taxonIndex.findTaxonByName("dog");
-        assertThat(dog, is(notNullValue()));
-        Taxon man = taxonIndex.findTaxonByName("man");
-        assertThat(man, is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            Taxon dog = taxonIndex.findTaxonByName("dog");
+            assertThat(dog, is(notNullValue()));
+            Taxon man = taxonIndex.findTaxonByName("man");
+            assertThat(man, is(notNullValue()));
+            int count = 0;
+            Iterable<Relationship> specimenRels = ((NodeBacked) man).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
 
-        int count = 0;
-        Iterable<Relationship> specimenRels = ((NodeBacked) man).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship specimenRel : specimenRels) {
+                count++;
+                Specimen specimen = new SpecimenNode(specimenRel.getStartNode());
+                assertThat(specimen.getSampleLocation().getLatitude(), is(1.0));
+                assertThat(specimen.getSampleLocation().getLongitude(), is(2.0));
 
-        for (Relationship specimenRel : specimenRels) {
-            count++;
-            Specimen specimen = new SpecimenNode(specimenRel.getStartNode());
-            assertThat(specimen.getSampleLocation().getLatitude(), is(1.0));
-            assertThat(specimen.getSampleLocation().getLongitude(), is(2.0));
-
-            List<Environment> environments = specimen.getSampleLocation().getEnvironments();
-            assertThat(environments.size(), is(1));
-            Environment environment = environments.get(0);
-            assertThat(environment.getExternalId(), is(envoId));
-            assertThat(environment.getName(), is(envoLabel));
+                List<Environment> environments = specimen.getSampleLocation().getEnvironments();
+                assertThat(environments.size(), is(1));
+                Environment environment = environments.get(0);
+                assertThat(environment.getExternalId(), is(envoId));
+                assertThat(environment.getName(), is(envoLabel));
+            }
+            assertThat(count, is(1));
         }
-        assertThat(count, is(1));
+
     }
 
     private DatasetImporterForSPIRE createImporter() {

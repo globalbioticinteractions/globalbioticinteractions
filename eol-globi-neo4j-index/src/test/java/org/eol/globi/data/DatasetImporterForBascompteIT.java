@@ -5,9 +5,9 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForBascompteIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
@@ -39,7 +39,10 @@ public class DatasetImporterForBascompteIT extends GraphDBNeo4jTestCase {
 
         assertThat(references.size(), is(referenceSet.size()));
         assertThat(references, hasItem("Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
-        assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
+        }
     }
 
     @Test

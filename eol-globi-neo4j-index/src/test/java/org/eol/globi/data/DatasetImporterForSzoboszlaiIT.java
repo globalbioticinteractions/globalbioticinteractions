@@ -6,13 +6,12 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +20,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForSzoboszlaiIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForSzoboszlaiIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, IOException {
@@ -52,8 +51,11 @@ public class DatasetImporterForSzoboszlaiIT extends GraphDBNeo4jTestCase {
                     assertThat(sampleLocation.getLongitude(), is(notNullValue()));
                 });
 
-        assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
-        assertThat(nodeFactory.findLocation(new LocationImpl(34.00824202376044, -120.72716166720323, null, null)), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
+            assertThat(nodeFactory.findLocation(new LocationImpl(34.00824202376044, -120.72716166720323, null, null)), is(notNullValue()));
+        }
     }
 
 }

@@ -1,19 +1,30 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.data.NodeLabel;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 public class NodeBacked {
 
     public static final boolean CHECK_EXISTING_REL_DEFAULT = false;
     private final Node underlyingNode;
+    private final Transaction tx;
 
     public NodeBacked(Node node) {
+        this(node, null);
+    }
+
+    public NodeBacked(Node node, Transaction tx) {
+        Objects.requireNonNull(node);
         this.underlyingNode = node;
+        this.tx = tx;
     }
 
     public Node getUnderlyingNode() {
@@ -32,8 +43,8 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public Relationship createRelationshipTo(Object endNode, RelType relType) {
-        return createRelationshipToNoTx((NodeBacked) endNode, relType, CHECK_EXISTING_REL_DEFAULT);
+    public Relationship createRelationshipTo(RelType relType, NodeBacked endNode1) {
+        return createRelationshipToNoTx(endNode1, relType, CHECK_EXISTING_REL_DEFAULT);
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType, boolean checkExisting) {
@@ -41,7 +52,7 @@ public class NodeBacked {
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
-        return createRelationshipToNoTx(endNode, relType, CHECK_EXISTING_REL_DEFAULT);
+        return createRelationshipTo(relType, endNode);
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType, boolean checkExisting) {
@@ -117,6 +128,17 @@ public class NodeBacked {
         if (value != null) {
             getUnderlyingNode().setProperty(name, value);
         }
+    }
+
+    public void setOriginalTaxonDescription(Taxon taxon) {
+        setOriginalTaxonNodeDescription(taxon, tx);
+    }
+
+    public void setOriginalTaxonNodeDescription(Taxon taxon, Transaction tx) {
+        TaxonNode taxonNode = new TaxonNode(tx.createNode(NodeLabel.Taxon_Verbatim, NodeLabel.Taxon_Unprocessed));
+        taxonNode.setName(taxon.getName());
+        TaxonUtil.copy(taxon, taxonNode);
+        createRelationshipTo(RelTypes.ORIGINALLY_DESCRIBED_AS, taxonNode);
     }
 
     protected String getProperty(String propertyName) {

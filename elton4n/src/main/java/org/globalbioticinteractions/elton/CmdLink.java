@@ -1,19 +1,19 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdGenerateReportNeo4j2;
-import org.eol.globi.tool.CmdIndexTaxa;
-import org.eol.globi.tool.CmdIndexTaxonStrings;
+import org.eol.globi.tool.CmdFullTextTaxonIndex;
 import org.eol.globi.tool.CmdInterpretTaxa;
 import org.eol.globi.tool.CmdNeo4J;
+import org.eol.globi.tool.CmdTaxonToTaxonInteractionIndex;
 import picocli.CommandLine;
+
+import java.util.stream.Stream;
 
 @CommandLine.Command(
         name = "link",
         description = "link compiled interaction datasets",
         subcommands = {
                 CmdInterpretTaxa.class,
-                CmdIndexTaxa.class,
-                CmdIndexTaxonStrings.class,
+                CmdFullTextTaxonIndex.class,
         }
 )
 public class CmdLink extends CmdNeo4J {
@@ -21,11 +21,20 @@ public class CmdLink extends CmdNeo4J {
 
     @Override
     public void run() {
-        configureAndRun(new CmdInterpretTaxa());
-        configureAndRun(new CmdIndexTaxa());
-        configureAndRun(new CmdIndexTaxonStrings());
-    }
+        try {
+            Stream.of(
+                            new CmdFullTextTaxonIndex(),
+                            new CmdCreateTaxonIndexes(),
+                            new CmdCreateLocationIndexes(),
+                            new CmdInterpretTaxa(),
+                            new CmdTaxonToTaxonInteractionIndex()
 
+                    )
+                    .forEach(this::configureAndRun);
+        } finally {
+            //destroy();
+        }
+    }
 
 
 }

@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -19,7 +19,7 @@ import java.text.ParseException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
+public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
@@ -30,12 +30,10 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
                         "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
                         "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
 
-
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
-
         StringWriter row = new StringWriter();
 
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb())
+                .exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
 
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
@@ -47,22 +45,23 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
         nodeFactory.createSpecimen(myStudy, new TaxonImpl("Some namus", PropertyAndValueDictionary.NO_MATCH));
 
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb())
+                .exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
     protected void assertResult(String targetTaxonName, String sourceTaxonName, String expected) throws NodeFactoryException, ParseException, IOException {
         createTestData(null, targetTaxonName, sourceTaxonName);
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact(getGraphDb())
+                .exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
 
     @Test
     public void noMatchTargetTaxon() throws IOException, NodeFactoryException, ParseException {
         String expected =
-                "globi:occur:stomach_volume:X\tglobi:occur:X\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
-                        "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\nglobi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
+                "globi:occur:stomach_volume:X\tglobi:occur:X\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
         assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", expected);
     }
 
@@ -97,7 +96,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExportTestUtil.assertFileInMeta(new ExporterMeasurementOrFact());
+        ExportTestUtil.assertFileInMeta(new ExporterMeasurementOrFact(getGraphDb()));
     }
 
 }

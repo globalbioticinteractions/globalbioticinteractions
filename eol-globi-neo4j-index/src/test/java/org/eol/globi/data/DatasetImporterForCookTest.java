@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-public class DatasetImporterForCookTest extends GraphDBNeo4jTestCase {
+
+public class DatasetImporterForCookTest extends GraphDBTestCase {
 
     @Test
     public void importFirstFewLines() throws StudyImporterException {
@@ -38,38 +40,42 @@ public class DatasetImporterForCookTest extends GraphDBNeo4jTestCase {
         importStudy(importer);
         StudyNode study = getStudySingleton(getGraphDb());
 
-        Taxon hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
-        assertThat(hostTaxon, is(notNullValue()));
-        Taxon parasiteTaxon = taxonIndex.findTaxonByName("Cymothoa excisa");
-        assertThat(parasiteTaxon, is(notNullValue()));
-        assertThat("missing location", nodeFactory.findLocation(new LocationImpl(27.85, -(97.0 + 8.0 / 60.0), -3.0, null)), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        AtomicInteger count = new AtomicInteger(0);
-        AtomicBoolean foundFirstHost = new AtomicBoolean(false);
+            Taxon hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
+            assertThat(hostTaxon, is(notNullValue()));
+            Taxon parasiteTaxon = taxonIndex.findTaxonByName("Cymothoa excisa");
+            assertThat(parasiteTaxon, is(notNullValue()));
+            assertThat("missing location", nodeFactory.findLocation(new LocationImpl(27.85, -(97.0 + 8.0 / 60.0), -3.0, null)), is(notNullValue()));
 
-        RelationshipListener handler = relationship -> {
-            assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is(notNullValue()));
-            Node specimen = relationship.getEndNode();
-            if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
-                Object property = specimen.getProperty(SpecimenConstant.LENGTH_IN_MM);
-                if (new Double(156.0).equals(property)) {
-                    assertTaxonClassification(specimen, ((NodeBacked) hostTaxon).getUnderlyingNode());
-                    foundFirstHost.set(true);
-                    Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(InteractType.PARASITE_OF));
-                    for (Relationship rel : parasiteRel) {
-                        Node parasite = rel.getStartNode();
-                        assertThat(parasite.hasProperty(SpecimenConstant.LENGTH_IN_MM), is(false));
-                        assertTaxonClassification(parasite, ((NodeBacked) parasiteTaxon).getUnderlyingNode());
+            AtomicInteger count = new AtomicInteger(0);
+            AtomicBoolean foundFirstHost = new AtomicBoolean(false);
+
+            RelationshipListener handler = relationship -> {
+                assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is(notNullValue()));
+                Node specimen = relationship.getEndNode();
+                if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
+                    Object property = specimen.getProperty(SpecimenConstant.LENGTH_IN_MM);
+                    if (new Double(156.0).equals(property)) {
+                        assertTaxonClassification(specimen, ((NodeBacked) hostTaxon).getUnderlyingNode());
+                        foundFirstHost.set(true);
+                        Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(InteractType.PARASITE_OF));
+                        for (Relationship rel : parasiteRel) {
+                            Node parasite = rel.getStartNode();
+                            assertThat(parasite.hasProperty(SpecimenConstant.LENGTH_IN_MM), is(false));
+                            assertTaxonClassification(parasite, ((NodeBacked) parasiteTaxon).getUnderlyingNode());
+                        }
                     }
                 }
-            }
-            count.incrementAndGet();
+                count.incrementAndGet();
 
-        };
+            };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
-        assertThat(count.get(), is(14));
-        assertThat(foundFirstHost.get(), is(true));
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
+            assertThat(count.get(), is(14));
+            assertThat(foundFirstHost.get(), is(true));
+        }
     }
 
     @Test

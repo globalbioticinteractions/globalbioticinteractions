@@ -72,6 +72,7 @@ public class DatasetImporterForBaremore extends NodeBasedImporter {
                         preySpecimen.caughtIn(collectionLocation);
                         getNodeFactory().setUnixEpochProperty(preySpecimen, getNodeFactory().getUnixEpochProperty(predatorSpecimen));
                         predatorSpecimen.ate(preySpecimen);
+                        this.notifyInteractionRecordIndexed();
                     }
                 }
             }
@@ -102,4 +103,5 @@ public class DatasetImporterForBaremore extends NodeBasedImporter {
             throw new NodeFactoryException("failed to parse [" + dateTime + "]");
         }
     }
+
 }

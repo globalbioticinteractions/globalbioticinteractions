@@ -37,6 +37,7 @@ public class DatasetImporterForGemina extends NodeBasedImporter {
                     String hostReservoirExternalId = StringUtils.isBlank(hostId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + hostId;
                     Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId));
                     pathogen.interactsWith(host, InteractType.PATHOGEN_OF);
+                    notifyInteractionRecordIndexed();
                 }
             }
         } catch (IOException | NodeFactoryException e) {

@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -12,9 +12,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.ExternalIdUtil;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,19 +21,14 @@ import java.text.ParseException;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
+import static org.hamcrest.Matchers.startsWith;
+public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     private Taxon setPathAndId(TaxonImpl taxon) {
         taxon.setExternalId(taxon.getName() + "id");
         taxon.setPath(taxon.getName() + "path");
         return taxon;
-    }
-
-    @Before
-    public void setEnricher() {
-        taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
     }
 
     @Test
@@ -49,8 +42,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
 
         nodeFactory.findStudy(new StudyImpl("myStudy1")).setExternalId("some:id");
 
-        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy1"));
+        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates(getGraphDb());
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy1"));
         StringWriter row = new StringWriter();
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
@@ -73,10 +66,10 @@ public class ExporterAssociationAggregatesTest extends GraphDBNeo4jTestCase {
         }
         resolveNames();
 
-        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
+        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates(getGraphDb());
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
-            StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl(studyTitle));
+            StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle));
             exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         }
 

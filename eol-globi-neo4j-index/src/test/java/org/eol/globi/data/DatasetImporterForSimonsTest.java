@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
@@ -32,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.hasItem;
 
-public class DatasetImporterForSimonsTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForSimonsTest extends GraphDBTestCase {
 
     public static final double LONG_1 = -88.56632567024258;
     public static final double LAT_1 = 29.43874564840787;
@@ -61,16 +62,19 @@ public class DatasetImporterForSimonsTest extends GraphDBNeo4jTestCase {
 
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Rhynchoconger flavus"));
-        assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));
-        assertNotNull(taxonIndex.findTaxonByName("Ampelisca sp. (abdita complex)"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertNotNull(taxonIndex.findTaxonByName("Rhynchoconger flavus"));
+            assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));
+            assertNotNull(taxonIndex.findTaxonByName("Ampelisca sp. (abdita complex)"));
+        }
 
         assertNotNull(nodeFactory.findStudy(new StudyImpl("Simons 1997")));
 
         assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_1, LONG_1, -60.0d, null)));
         assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_2, LONG_2, -20.0d, null)));
 
-        StudyNode foundStudy = (StudyNode) nodeFactory.findStudy(new StudyImpl("Simons 1997"));
+        StudyNode foundStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("Simons 1997"));
         assertNotNull(foundStudy);
 
         RelationshipListener handler = rel -> {
@@ -123,7 +127,7 @@ public class DatasetImporterForSimonsTest extends GraphDBNeo4jTestCase {
         assertEquals(alt, locationNode.getProperty(LocationConstant.ALTITUDE));
         assertEquals(lat, locationNode.getProperty(LocationConstant.LATITUDE));
 
-        Iterator<Relationship> prey = firstSpecimen.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING).iterator();
+        Iterator<Relationship> prey = firstSpecimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
         Set<String> preyNames = new HashSet<>();
         while (prey.hasNext()) {
             Relationship stomachContents = prey.next();

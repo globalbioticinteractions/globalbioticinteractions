@@ -1,13 +1,14 @@
 package org.eol.globi.data;
 
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-public class DatasetImporterForGrayIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForGrayIT extends GraphDBTestCase {
 
     @Test
     public void importFirst500() throws StudyImporterException, IOException {
@@ -15,7 +16,10 @@ public class DatasetImporterForGrayIT extends GraphDBNeo4jTestCase {
         gray.setFilter(recordNumber -> recordNumber < 500);
         importStudy(gray);
 
-        assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
+            assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
+        }
     }
 
 }

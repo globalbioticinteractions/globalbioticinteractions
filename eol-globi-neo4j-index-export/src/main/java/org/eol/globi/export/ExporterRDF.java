@@ -96,7 +96,7 @@ public class ExporterRDF implements StudyExporter {
 
     protected List<String> addSameAsTaxaFor(Node taxon) {
         List<String> sameAsTaxaIRIs = new ArrayList<String>();
-        Iterable<Relationship> sameAsRels = taxon.getRelationships(NodeUtil.asNeo4j(RelTypes.SAME_AS), Direction.OUTGOING);
+        Iterable<Relationship> sameAsRels = taxon.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
         for (Relationship sameAsRel : sameAsRels) {
             String taxonIRI = taxonIRI(sameAsRel.getEndNode());
             if (StringUtils.isNotBlank(taxonIRI)) {

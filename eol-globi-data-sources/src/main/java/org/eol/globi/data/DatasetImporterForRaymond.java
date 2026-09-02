@@ -21,7 +21,6 @@ import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -154,6 +153,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
             getNodeFactory().setUnixEpochProperty(prey, date);
             getNodeFactory().setUnixEpochProperty(predator, date);
             predator.ate(prey);
+            this.notifyInteractionRecordIndexed();
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import data", e);
         }
@@ -278,4 +278,5 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
     public Collection<String> getLocations() {
         return locations;
     }
+
 }

@@ -1,21 +1,25 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
 
 public class SpecimenNode extends NodeBacked implements Specimen {
 
     public SpecimenNode(Node node) {
-        super(node);
+        this(node, (Transaction) null);
+    }
+
+    public SpecimenNode(Node node, Transaction tx) {
+        super(node, tx);
     }
 
     public SpecimenNode(Node node, Double lengthInMm) {
-        this(node);
+        this(node, (Transaction) null);
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, SpecimenNode.class.getSimpleName());
         if (null != lengthInMm) {
             getUnderlyingNode().setProperty(SpecimenConstant.LENGTH_IN_MM, lengthInMm);
@@ -26,21 +30,11 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         boolean isFlipped = relType.sourceRole == InteractType.InteractionRole.OBJECT;
 
         final Relationship interactRel = source.createRelationshipToNoTx(target, relType);
-        enrichWithInteractProps(relType, interactRel, isFlipped);
+        NodeUtil.enrichWithInteractProps(relType, interactRel, isFlipped);
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
         Relationship inverseInteractRel = target.createRelationshipToNoTx(source, inverseRelType);
-        enrichWithInteractProps(inverseRelType, inverseInteractRel, !isFlipped);
-    }
-
-    public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {
-        if (interactRel != null && interactType != null) {
-            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.getLabel());
-            interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
-            if (inverted) {
-                interactRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
-            }
-        }
+        NodeUtil.enrichWithInteractProps(inverseRelType, inverseInteractRel, !isFlipped);
     }
 
     @Override
@@ -61,8 +55,9 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void caughtIn(Location sampleLocation) {
+
         if ((sampleLocation instanceof LocationNode)) {
-            createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
+            createRelationshipTo(RelTypes.COLLECTED_AT, (NodeBacked) sampleLocation);
         }
     }
 
@@ -74,7 +69,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void caughtDuring(Season season) {
-        createRelationshipTo(season, RelTypes.CAUGHT_DURING);
+        createRelationshipTo(RelTypes.CAUGHT_DURING, (NodeBacked) season);
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void classifyAs(Taxon taxon) {
-        createRelationshipTo(taxon, RelTypes.CLASSIFIED_AS);
+        createRelationshipTo(RelTypes.CLASSIFIED_AS, (NodeBacked) taxon);
     }
 
     @Override
@@ -117,13 +112,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         if (recipientSpecimen instanceof NodeBacked) {
             createInteraction(this, relType, (NodeBacked) recipientSpecimen);
         }
-    }
-
-    @Override
-    public void setOriginalTaxonDescription(Taxon taxon) {
-        TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
-        TaxonUtil.copy(taxon, taxonNode);
-        createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
     }
 
     @Override
@@ -174,7 +162,10 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public Term getBasisOfRecord() {
-        return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_ID), getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_LABEL));
+        return new TermImpl(
+                getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_ID),
+                getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_LABEL)
+        );
     }
 
     @Override

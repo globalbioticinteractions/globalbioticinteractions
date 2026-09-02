@@ -268,7 +268,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         sourceSpecimen.caughtIn(location);
         targetSpecimen.caughtIn(location);
         sourceSpecimen.interactsWith(targetSpecimen, interactType);
-
+        this.notifyInteractionRecordIndexed();
         return sourceSpecimen;
     }
 

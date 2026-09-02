@@ -5,11 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [8, 21]
+        java: [11,21]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [8]
+        java: [21]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}

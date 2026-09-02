@@ -50,6 +50,7 @@ public class DatasetImporterForJRFerrerParis extends NodeBasedImporter {
         try {
             targetSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(plantName, null));
             instigatorSpecimen.ate(targetSpecimen);
+            this.notifyInteractionRecordIndexed();
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to associate butterfly [" + butterflyName + "] to plant [" + plantName + "] on line [" + parser.lastLineNumber() + "]", e);
         }
@@ -76,4 +77,5 @@ public class DatasetImporterForJRFerrerParis extends NodeBasedImporter {
             return StringUtils.trim(instigatorScientificName);
         }
     }
+
 }

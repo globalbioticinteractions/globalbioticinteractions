@@ -15,6 +15,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
 
@@ -31,6 +32,11 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     @Override
     public Location findLocation(Location location) throws NodeFactoryException {
         return factory.findLocation(location);
+    }
+
+    @Override
+    public void startNextBatchUpdate() {
+        factory.startNextBatchUpdate();
     }
 
     @Override
@@ -138,6 +144,11 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
         return factory.createInteraction(study);
+    }
+
+    @Override
+    public Specimen createSpecimen(Study study, Taxon taxon, Consumer<Specimen> initializer, RelTypes[] types) throws NodeFactoryException {
+        return factory.createSpecimen(study, taxon, initializer, types);
     }
 
     public Dataset getDataset() {

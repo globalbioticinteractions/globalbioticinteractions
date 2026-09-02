@@ -2,10 +2,9 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeLabel;
-import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -14,12 +13,13 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.tool.TransactionPerBatch;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,56 +59,35 @@ public class NodeUtil {
     }
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
-        Node node = graphDb.createNode();
-        TaxonNode sameAsTaxon = new TaxonNode(node);
-        TaxonUtil.copy(taxon, sameAsTaxon);
-        taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
+        try (Transaction transaction = graphDb.beginTx()) {
+            Node node = transaction.createNode(NodeLabel.Taxon_Verbatim);
+            TaxonNode sameAsTaxon = new TaxonNode(node);
+            TaxonUtil.copy(taxon, sameAsTaxon);
+            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
+            transaction.commit();
+        }
     }
 
     public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
         final List<StudyNode> studies = new ArrayList<>();
-        findStudies(graphService, study -> studies.add(new StudyNode(study)));
+        try (Transaction tx = graphService.beginTx()) {
+            ResourceIterator<Node> studyNodes = tx.findNodes(NodeLabel.Reference);
+            while (studyNodes.hasNext()) {
+                Node next = studyNodes.next();
+                studies.add(new StudyNode(next));
+            }
+        }
         return studies;
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener) {
-        findStudies(graphService, listener, "title", "*", new NodeIdCollectorNeo4j2());
-    }
-
-    public static void findStudies(GraphDatabaseService graphService,
-                                   NodeListener listener,
-                                   String queryKey,
-                                   String queryValue,
-                                   NodeIdCollector nodeIdCollector) {
-        processNodes(
-                1000L,
-                graphService,
-                listener,
-                queryKey,
-                queryValue,
-                "studies",
-                new TransactionPerBatch(graphService),
-                nodeIdCollector
-        );
-    }
-
-    public static void findDatasetsByQuery(
-            GraphDatabaseService graphService,
-            DatasetNodeListener listener,
-            String queryKey,
-            String queryValue,
-            NodeIdCollector nodeIdCollector) {
-        new NodeProcessorImpl(
-                graphService,
-                1000L,
-                queryKey,
-                queryValue,
-                "datasets",
-                nodeIdCollector
-        ).process(
-                node -> listener.on(new DatasetNode(node)),
-                new TransactionPerBatch(graphService)
-        );
+        try (Transaction tx = graphService.beginTx()) {
+            ResourceIterator<Node> nodes = tx.findNodes(NodeLabel.Reference);
+            while(nodes.hasNext()) {
+                listener.on(nodes.next());
+            }
+            tx.commit();
+        }
     }
 
     public static RelationshipType asNeo4j(RelType type) {
@@ -145,16 +124,11 @@ public class NodeUtil {
     }
 
     public static Iterable<Relationship> getStomachContents(Specimen specimen) {
-        return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(asNeo4j(InteractType.ATE), Direction.OUTGOING);
-    }
-
-    public static Iterable<Relationship> getSpecimenCaughtHere(Location location) {
-        return ((NodeBacked) location).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
-
+        return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(InteractType.ATE));
     }
 
     public static Node getDataSetForStudy(StudyNode study) {
-        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
+        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.IN_DATASET));
         Iterator<Relationship> iterator = rels.iterator();
         return iterator.hasNext() ? iterator.next().getEndNode() : null;
     }
@@ -177,18 +151,14 @@ public class NodeUtil {
         }
     }
 
-    public static void processNodes(Long batchSize,
-                                    GraphDatabaseService graphService,
-                                    NodeListener listener,
-                                    String queryKey,
-                                    String queryOrQueryObject,
-                                    String indexName,
-                                    BatchListener batchListener,
-                                    NodeIdCollector nodeIdCollector) {
-
-        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject, indexName, nodeIdCollector)
-                .process(listener, batchListener);
+    public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {
+        if (interactRel != null && interactType != null) {
+            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.getLabel());
+            interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
+            if (inverted) {
+                interactRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
+            }
+        }
     }
-
 }
 

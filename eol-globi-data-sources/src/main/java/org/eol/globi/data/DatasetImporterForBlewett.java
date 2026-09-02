@@ -106,7 +106,7 @@ public class DatasetImporterForBlewett extends NodeBasedImporter {
         return dateTimeWithZone.toDate();
     }
 
-    private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
+    private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, StudyImporterException, TermLookupServiceException {
         LabeledCSVParser parser = getParserFactory().createParser(URI.create("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv"), CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
@@ -126,6 +126,7 @@ public class DatasetImporterForBlewett extends NodeBasedImporter {
 
             for (Specimen prey : specimen) {
                 predatorSpecimen.ate(prey);
+                notifyInteractionRecordIndexed();
             }
         }
     }

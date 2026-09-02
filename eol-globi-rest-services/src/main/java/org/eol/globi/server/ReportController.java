@@ -22,8 +22,8 @@ public class ReportController {
     @RequestMapping(value = "/reports/studies", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery studies(@RequestParam(required = false) final String source, final HttpServletRequest request) throws IOException {
-        String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
-            + " WHERE exists(report.title) "
+        String cypherQuery = "MATCH (report:Report" + (StringUtils.isBlank(source) ? "" : " {source: $source}") + ") "
+            + " WHERE report.title IS NOT NULL "
             + " RETURN report.citation as " + ResultField.STUDY_CITATION
             + ", report.externalId as " + ResultField.STUDY_URL
             + ", report.doi as " + ResultField.STUDY_DOI
@@ -37,7 +37,7 @@ public class ReportController {
             put("source", source);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     @RequestMapping(value = "/dataset", method = RequestMethod.GET)
@@ -78,11 +78,11 @@ public class ReportController {
     }
 
     private CypherQuery sourceQuery(HttpServletRequest request, final String sourceId) {
-        String searchMatch = "sourceId" + "={sourceId}";
+        String searchMatch = " {sourceId: $sourceId}";
         if (StringUtils.isBlank(sourceId)) {
-            searchMatch = "'" + "sourceId" + ":*'";
+            searchMatch = "";
         }
-        String cypherQuery = "START report = node:reports(" + searchMatch + ") "
+        String cypherQuery = "MATCH (report:Report" + searchMatch + ") "
             + " RETURN report.citation as " + ResultField.STUDY_CITATION
             + ", report.externalId as " + ResultField.STUDY_URL
             + ", report.doi as " + ResultField.STUDY_DOI
@@ -99,15 +99,15 @@ public class ReportController {
             put("sourceId", sourceIdActual);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     private CypherQuery datasetQuery(HttpServletRequest request, String searchKey, final String searchValue) {
-        String searchMatch = searchKey + "={namespace}";
+        String searchMatch = " {" + searchKey + ": $namespace}";
         if (StringUtils.isBlank(searchValue)) {
-            searchMatch = "'" + searchKey + ":*'";
+            searchMatch = "";
         }
-        String cypherQuery = "START dataset = node:datasets(" + searchMatch + "), report = node:reports('sourceId:*') "
+        String cypherQuery = "MATCH (dataset:Dataset" + searchMatch + "), (report:Report) "
             + " WHERE ('globi:' + dataset.namespace) = report.sourceId "
             + " RETURN report.citation as " + ResultField.STUDY_CITATION
             + ", report.externalId as " + ResultField.STUDY_URL
@@ -129,15 +129,15 @@ public class ReportController {
             put("namespace", searchValue);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     private CypherQuery datasetQuery2(HttpServletRequest request, String searchKey, final String searchValue) {
-        String searchMatch = searchKey + "={namespace}";
+        String searchMatch = "{" + searchKey + ": $namespace }";
         if (StringUtils.isBlank(searchValue)) {
-            searchMatch = "'" + searchKey + ":*'";
+            searchMatch = "";
         }
-        String cypherQuery = "START dataset = node:datasets(" + searchMatch + ") "
+        String cypherQuery = "MATCH (dataset:Dataset" + searchMatch + ") "
             + " RETURN null as " + ResultField.STUDY_CITATION
             + ", null as " + ResultField.STUDY_URL
             + ", null as " + ResultField.STUDY_DOI
@@ -158,15 +158,15 @@ public class ReportController {
             put("namespace", searchValue);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     @RequestMapping(value = "/reports/collections", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery collections() throws IOException {
-        String cypherQuery = "START report = node:reports('collection:*')" +
-            " WHERE not(exists(report.title))"
-            + " RETURN " +
+        String cypherQuery = "MATCH (report:Report) " +
+            "WHERE report.title IS NULL "
+            + "RETURN " +
                 "null as " + ResultField.STUDY_CITATION
             + ", null as " + ResultField.STUDY_URL
             + ", null as " + ResultField.STUDY_DOI
@@ -176,7 +176,7 @@ public class ReportController {
             + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
             + ", report.nSources as " + ResultField.NUMBER_OF_SOURCES
             + ", report.nTaxaNoMatch as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
-        return new CypherQuery(cypherQuery, null, CypherUtil.CYPHER_VERSION_2_3);
+        return new CypherQuery(cypherQuery);
     }
 
 }

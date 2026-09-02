@@ -2,11 +2,16 @@ package org.eol.globi.export;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.ExternalIdUtil;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.TreeMap;
 import java.util.Map;
 
 public abstract class ExporterTaxa extends ExporterBase {
+
+    public ExporterTaxa(GraphDatabaseService graphService) {
+        super(graphService);
+    }
 
     static protected void resultsToRow(Map<String, String> properties, Map<String, Object> result) {
         Map<String, String> rankMap = new TreeMap<String, String>() {

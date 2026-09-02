@@ -151,11 +151,16 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
     }
 
     protected static boolean isValid(Map<String, String> properties) {
-        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/118
-        boolean invalidInteraction = "Enhydra_lutris".equals(properties.get(PREDATOR_NAME)) && "Castor_canadensis".equals(properties.get(PREY_NAME));
-        // phytoplankton are unlikely predators as suggested in https://doi.org/10.6084/m9.figshare.1414253
-        invalidInteraction = invalidInteraction || "phytoplankton".equals(properties.get(PREDATOR_NAME));
-        return properties.containsKey(StudyConstant.TITLE) && !invalidInteraction;
+        boolean invalidInteraction = false;
+        if (properties != null) {
+            // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/118
+            invalidInteraction = "Enhydra_lutris".equals(properties.get(PREDATOR_NAME))
+                    && "Castor_canadensis".equals(properties.get(PREY_NAME));
+            // phytoplankton are unlikely predators as suggested in https://doi.org/10.6084/m9.figshare.1414253
+            invalidInteraction = invalidInteraction || "phytoplankton".equals(properties.get(PREDATOR_NAME));
+            invalidInteraction = properties.containsKey(StudyConstant.TITLE) && !invalidInteraction;
+        }
+        return invalidInteraction;
     }
 
     private void importValidLink(Map<String, String> properties) throws NodeFactoryException {
@@ -177,9 +182,8 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
             }
             Specimen prey = createSpecimen(properties.get(PREY_NAME), study);
             predator.ate(prey);
-        } catch (NodeFactoryException e) {
-            getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
-        } catch (IOException e) {
+            this.notifyInteractionRecordIndexed();
+        } catch (IOException | StudyImporterException e) {
             getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
         }
     }

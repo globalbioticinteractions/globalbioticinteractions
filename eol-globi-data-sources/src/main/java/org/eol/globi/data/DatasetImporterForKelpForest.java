@@ -65,6 +65,7 @@ public class DatasetImporterForKelpForest extends NodeBasedImporter {
                         Specimen sourceSpecimen = createSpecimen(parser, nameToId, "node_1_working_name", "node1_stage", study);
                         Specimen targetSpecimen = createSpecimen(parser, nameToId, "node_2_working_name", "node2_stage", study);
                         sourceSpecimen.interactsWith(targetSpecimen, interactType);
+                        this.notifyInteractionRecordIndexed();
                     }
                 }
             }

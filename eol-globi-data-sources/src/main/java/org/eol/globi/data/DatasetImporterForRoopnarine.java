@@ -135,6 +135,7 @@ public class DatasetImporterForRoopnarine extends NodeBasedImporter {
                         Specimen preySpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(preyTaxonName, null));
                         preySpecimen.caughtIn(location);
                         predatorSpecimen.ate(preySpecimen);
+                        notifyInteractionRecordIndexed();
                     }
                 }
             }
@@ -199,4 +200,5 @@ public class DatasetImporterForRoopnarine extends NodeBasedImporter {
         }
         return guildNumber;
     }
+
 }

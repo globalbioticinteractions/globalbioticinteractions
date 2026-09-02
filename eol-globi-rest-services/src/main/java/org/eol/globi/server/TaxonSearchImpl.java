@@ -1,8 +1,9 @@
 package org.eol.globi.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
@@ -53,7 +54,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         JsonNode rowsAndMetas = RequestHelper.getRowsAndMetas(response);
         Map<String, String> props = NO_PROPERTIES;
 
-        if (rowsAndMetas != null && rowsAndMetas.size() > 0) {
+        if (rowsAndMetas != null && !rowsAndMetas.isEmpty()) {
             props = new HashMap<>();
             JsonNode rowAndMeta = rowsAndMetas.get(0);
             JsonNode row = RequestHelper.getRow(rowAndMeta);
@@ -84,26 +85,35 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery(queryPrefix() +
-                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_2_3);
+        CypherQuery cypherQuery = findTaxonQuery(taxonName);
         return CypherUtil.executeRemote(cypherQuery);
+    }
+
+    public CypherQuery findTaxonQuery(String taxonName) {
+        return new CypherQuery(queryPrefix() +
+                returnClause(), paramForName(taxonName));
     }
 
     public HashMap<String, String> paramForName(@PathVariable("taxonName") final String taxonName) {
         return new HashMap<String, String>() {
             {
-                put("taxonPathQuery", "path:\"" + CypherQueryBuilder.escapeWhitespace(taxonName) + "\"");
+                put("taxonPathQuery", taxonName);
                 put("taxonName", taxonName);
             }
         };
     }
 
     public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery(queryPrefix()
-                + " AND exists(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
-                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0 " +
-                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_2_3);
+        CypherQuery cypherQuery = findTaxonWithImageQuery(taxonName);
         return toMap(CypherUtil.executeRemote(cypherQuery));
+    }
+
+    public CypherQuery findTaxonWithImageQuery(String taxonName) {
+        CypherQuery cypherQuery = new CypherQuery(queryPrefix()
+                + " AND taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + " IS NOT NULL " +
+                "AND NOT isEmpty(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
+                returnClause(), paramForName(taxonName));
+        return cypherQuery;
     }
 
     @Override
@@ -134,9 +144,9 @@ public class TaxonSearchImpl implements TaxonSearch {
     @ResponseBody
     public CypherQuery findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
 
-        StringBuilder exactQuery = new StringBuilder("START taxon = node:taxons(name = {taxonName}) ");
+        StringBuilder exactQuery = new StringBuilder("MATCH (taxon:Taxon {name: $taxonName}) ");
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        StringBuilder fuzzyQuery = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
+        StringBuilder fuzzyQuery = new StringBuilder("CALL db.index.fulltext.queryNodes('taxonNameSuggestions', '" + luceneQuery + "') YIELD node as taxon ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
@@ -174,8 +184,7 @@ public class TaxonSearchImpl implements TaxonSearch {
                 new CypherQuery(exactQuery + " LIMIT 1 UNION " + fuzzyQuery.toString(),
                         new TreeMap<String, String>() {{
                             put("taxonName", taxonName);
-                        }},
-                        CypherUtil.CYPHER_VERSION_2_3), 30);
+                        }}), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/**", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -210,19 +219,19 @@ public class TaxonSearchImpl implements TaxonSearch {
         });
     }
 
-    private String buildLuceneQuery(String taxonName, String name) {
+    static String buildLuceneQuery(String taxonName, String propertyName) {
         StringBuilder builder = new StringBuilder();
         String[] split = StringUtils.split(taxonName, " ");
         for (int i = 0; i < split.length; i++) {
             builder.append("(");
-            builder.append(name);
+            builder.append(QueryParser.escape(propertyName));
             builder.append(":");
             String part = split[i];
-            builder.append(part.toLowerCase());
+            builder.append(QueryParser.escape(part.toLowerCase()));
             builder.append("* OR ");
-            builder.append(name);
+            builder.append(QueryParser.escape(propertyName));
             builder.append(":");
-            builder.append(part.toLowerCase());
+            builder.append(QueryParser.escape(part.toLowerCase()));
             builder.append("~)");
             if (i < (split.length - 1)) {
                 builder.append(" AND ");
@@ -234,10 +243,12 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     private String queryPrefix() {
-        return "START taxon = node:taxonPaths({taxonPathQuery}) " +
-                "MATCH taxon-[:SAME_AS*0..1]->otherTaxon " +
-                "WHERE ((exists(taxon.name) AND taxon.name = {taxonName}) OR (exists(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})) " +
-                "AND (((exists(otherTaxon.name) AND otherTaxon.name = {taxonName}) OR (exists(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})))";
+        return "MATCH (taxon:Taxon)-[:SAME_AS*0..1]-(otherTaxon:Taxon) " +
+                "WHERE (taxon.externalIds IS NOT NULL AND taxon.externalIds CONTAINS '| ' + $taxonPathQuery + ' |') " +
+                "AND ((taxon.name IS NOT NULL AND taxon.name = $taxonName) " +
+                "OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName)) " +
+                "AND (((otherTaxon.name IS NOT NULL AND otherTaxon.name = $taxonName) " +
+                "OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName))) ";
     }
 
     private String returnClause() {

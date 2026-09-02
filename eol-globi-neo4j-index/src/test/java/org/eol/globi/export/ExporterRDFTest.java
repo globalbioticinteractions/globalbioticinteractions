@@ -5,7 +5,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.eol.globi.data.DatasetImporterForSPIRE;
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
@@ -19,9 +20,9 @@ import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +40,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertTrue;
 
-public class ExporterRDFTest extends GraphDBNeo4jTestCase {
+public class ExporterRDFTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
@@ -69,11 +70,16 @@ public class ExporterRDFTest extends GraphDBNeo4jTestCase {
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
-        Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("some taxon", null));
-        Taxon sameAsTaxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("bugus same as taxon", "EOL:123"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            ResolvingTaxonIndex taxonIndex = getTaxonIndexFactory().create(tx);
 
-        assertThat(taxon, is(notNullValue()));
-        ((NodeBacked) taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked) sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+            Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("some taxon", null));
+            Taxon sameAsTaxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("bugus same as taxon", "EOL:123"));
+
+            assertThat(taxon, is(notNullValue()));
+            ((NodeBacked) taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked) sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+            tx.commit();
+        }
 
         File file = File.createTempFile("spire-as-light-globi", ".nq");
         try {

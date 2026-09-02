@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -18,12 +19,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CypherUtil {
-    public static final String CYPHER_VERSION_2_3 = "2.3";
+    public static final String CYPHER_VERSION_5 = "5";
 
     private static final Logger LOG = LoggerFactory.getLogger(CypherUtil.class);
 
     private static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = getCypherRequest(query);
+        LOG.info("sending post request to [{}]", httpPost.getURI());
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
     }
@@ -31,7 +33,7 @@ public class CypherUtil {
     private static HttpPost getCypherRequest(CypherQuery query) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(getCypherURI());
         HttpUtil.addJsonHeaders(httpPost);
-        String queryJson = wrapQuery(query);
+        String queryJson = toJson(query);
         LOG.info(queryJson);
         httpPost.setEntity(new StringEntity(queryJson));
         return httpPost;
@@ -40,11 +42,11 @@ public class CypherUtil {
     private static String getCypherURI() {
         String value = System.getProperty("neo4j.cypher.uri");
         return StringUtils.isBlank(value)
-                ? "https://neo4j.globalbioticinteractions.org/db/data/transaction/commit"
+                ? "http://localhost:7474/db/neo4j/tx/commit"
                 : StringUtils.trim(value);
     }
 
-    private static String wrapQuery(CypherQuery cypherQuery) {
+    public static String toJson(CypherQuery cypherQuery) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode req = objectMapper.createObjectNode();
@@ -53,13 +55,17 @@ public class CypherUtil {
         req.set("statements", statements);
 
         ObjectNode statementObj = objectMapper.createObjectNode();
-        statementObj.put("statement", cypherQuery.getVersionedQuery());
+        statementObj.put("statement", StringEscapeUtils.escapeJava(cypherQuery.getVersionedQuery()));
         statements.add(statementObj);
+
 
         ObjectNode parameters = objectMapper.createObjectNode();
         statementObj.set("parameters", parameters);
         for (Map.Entry<String, String> entry : cypherQuery.getParams().entrySet()) {
-            parameters.put(entry.getKey(), entry.getValue());
+            parameters.put(
+                    StringEscapeUtils.escapeJava(entry.getKey()),
+                    StringEscapeUtils.escapeJava(entry.getValue())
+            );
         }
         return req.toString();
     }

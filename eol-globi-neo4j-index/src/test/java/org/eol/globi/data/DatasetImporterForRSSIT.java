@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForRSSIT extends GraphDBTestCase {
 
     @Test
     public void importVertnet() throws StudyImporterException, IOException {

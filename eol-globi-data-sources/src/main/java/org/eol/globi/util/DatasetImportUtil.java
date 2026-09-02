@@ -7,6 +7,7 @@ import org.eol.globi.data.DatasetImporterForRSS;
 import org.eol.globi.data.DatasetImporterWithListener;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LogUtil;
+import org.eol.globi.data.NodeBasedImporter;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.StudyImporterConfigurator;
@@ -135,15 +136,19 @@ public class DatasetImportUtil {
         }
     }
 
-    public static void importDatasets(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, File workDir) throws StudyImporterException {
+    public static void importDatasets(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds,
+                                      List<Dataset> datasets,
+                                      ImportLogger logger,
+                                      NodeFactory nodeFactory,
+                                      File workDir) throws StudyImporterException {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
-                    if (studyImporter instanceof DatasetImporterWithListener) {
+                    if (hasListener(studyImporter)) {
                         final InteractionListenerResolving interactionListener = new InteractionListenerResolving(
                                 interactionsWithUnresolvedOccurrenceIds,
-                                ((DatasetImporterWithListener) studyImporter).getInteractionListener());
-                        ((DatasetImporterWithListener) studyImporter).setInteractionListener(interactionListener);
+                                ((NodeBasedImporter) studyImporter).getInteractionListener());
+                        ((NodeBasedImporter) studyImporter).setInteractionListener(interactionListener);
                     }
 
                 }, dataset, nodeFactory, logger, workDir);
@@ -153,13 +158,21 @@ public class DatasetImportUtil {
         }
     }
 
-    private static void indexDatasets(List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, InteractionListener indexingListener, File workDir) {
+    private static boolean hasListener(DatasetImporter studyImporter) {
+        return studyImporter instanceof NodeBasedImporter;
+    }
+
+    private static void indexDatasets(List<Dataset> datasets,
+                                      ImportLogger logger,
+                                      NodeFactory nodeFactory,
+                                      InteractionListener indexingListener,
+                                      File workDir) {
         for (Dataset dataset : datasets) {
             if (needsIndexing(dataset)) {
                 try {
                     importDataset(studyImporter -> {
                         studyImporter.setLogger(logger);
-                        if (studyImporter instanceof DatasetImporterWithListener) {
+                        if (hasListener(studyImporter)) {
                             ((DatasetImporterWithListener) studyImporter)
                                     .setInteractionListener(indexingListener);
                         }

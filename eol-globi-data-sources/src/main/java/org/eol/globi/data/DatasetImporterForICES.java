@@ -25,9 +25,9 @@ public class DatasetImporterForICES extends NodeBasedImporter {
         LabeledCSVParser parser = createParser();
 
 
-        Study study = getNodeFactory().getOrCreateStudy(
-                new StudyImpl("ICES", null, "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES"));
-        study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
+        StudyImpl study1 = new StudyImpl("ICES", null, "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES");
+        study1.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
+        Study study = getNodeFactory().getOrCreateStudy(study1);
         try {
             Specimen predator = null;
             String lastStomachId = null;
@@ -53,6 +53,7 @@ public class DatasetImporterForICES extends NodeBasedImporter {
                         getNodeFactory().setUnixEpochProperty(prey, date);
                         prey.caughtIn(location);
                         predator.ate(prey);
+                        notifyInteractionRecordIndexed();
                     }
                     lastStomachId = currentStomachId;
                 }
@@ -113,4 +114,5 @@ public class DatasetImporterForICES extends NodeBasedImporter {
         }
         return aDouble;
     }
+
 }

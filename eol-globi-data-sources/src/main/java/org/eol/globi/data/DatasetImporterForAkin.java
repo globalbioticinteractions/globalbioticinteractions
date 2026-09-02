@@ -126,6 +126,7 @@ public class DatasetImporterForAkin extends NodeBasedImporter {
                             prey.setVolumeInMilliLiter(volume);
                             prey.caughtIn(location);
                             specimen.ate(prey);
+                            this.notifyInteractionRecordIndexed();
                         }
                     }
                 } catch (NumberFormatException ex) {
@@ -244,4 +245,5 @@ public class DatasetImporterForAkin extends NodeBasedImporter {
 
         return study;
     }
+
 }

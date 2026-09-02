@@ -18,7 +18,7 @@ public class InteractionNode extends NodeBacked implements Interaction {
     @Override
     public Collection<Specimen> getParticipants() {
         List<Specimen> participants = new ArrayList<>();
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT), Direction.OUTGOING);
+        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT));
         for (Relationship rel : rels) {
             participants.add(new SpecimenNode(rel.getEndNode()));
         }
@@ -28,7 +28,7 @@ public class InteractionNode extends NodeBacked implements Interaction {
     @Override
     public Study getStudy() {
         Iterable<Relationship> rels = getUnderlyingNode()
-                .getRelationships(NodeUtil.asNeo4j(RelTypes.DERIVED_FROM), Direction.OUTGOING);
+                .getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM));
 
         return rels.iterator().hasNext()
                 ? new StudyNode(rels.iterator().next().getEndNode())

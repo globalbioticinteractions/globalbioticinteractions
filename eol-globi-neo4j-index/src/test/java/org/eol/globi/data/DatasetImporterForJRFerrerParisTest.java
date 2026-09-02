@@ -3,12 +3,13 @@ package org.eol.globi.data;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForJRFerrerParisTest extends GraphDBNeo4jTestCase {
+public class DatasetImporterForJRFerrerParisTest extends GraphDBTestCase {
 
     @Ignore(value = "too slow for regular use")
     @Test
@@ -33,8 +34,10 @@ public class DatasetImporterForJRFerrerParisTest extends GraphDBNeo4jTestCase {
 
         importStudy(importer);
 
-        assertNotNull(taxonIndex.findTaxonByName("Hesperocharis anguitia"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            assertNotNull(getTaxonIndexFactory().create(tx).findTaxonByName("Hesperocharis anguitia"));
 
-        assertThat(getSpecimenCount(getStudySingleton(getGraphDb())), Is.is(8));
+            assertThat(getSpecimenCount(getStudySingleton(getGraphDb())), Is.is(8));
+        }
     }
 }

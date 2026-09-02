@@ -28,6 +28,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_ID;
@@ -63,11 +64,6 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
-import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
-import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
-import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
-import static org.eol.globi.domain.PropertyAndValueDictionary.INSTITUTION_CODE;
-import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
@@ -89,7 +85,6 @@ public class InteractionImporter implements InteractionListener {
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
 
-
     public InteractionImporter(NodeFactory factory, ImportLogger logger, GeoNamesService geonamesService) {
         this.logger = logger;
         this.nodeFactory = factory;
@@ -105,15 +100,26 @@ public class InteractionImporter implements InteractionListener {
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         importInteraction(interaction);
+
     }
 
 
     private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy(studyOf(interaction, logger));
 
+        Consumer<Specimen> sourceSpecimenInitializer = new SpecimenInitializerIds(
+                interaction,
+                SOURCE_OCCURRENCE_ID,
+                SOURCE_CATALOG_NUMBER,
+                SOURCE_COLLECTION_CODE,
+                SOURCE_COLLECTION_ID,
+                SOURCE_INSTITUTION_CODE
+        );
+
         Specimen source = createSpecimen(
                 interaction,
                 study,
+                sourceSpecimenInitializer,
                 SOURCE_TAXON_NAME,
                 SOURCE_TAXON_ID,
                 SOURCE_BODY_PART_NAME,
@@ -127,16 +133,20 @@ public class InteractionImporter implements InteractionListener {
                 SOURCE_TAXON_RANK,
                 SOURCE_TAXON_PATH_IDS);
 
-        setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
-        setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
+
+        Consumer<Specimen> targetSpecimenInitializer = new SpecimenInitializerIds(
+                interaction,
+                TARGET_OCCURRENCE_ID,
+                TARGET_CATALOG_NUMBER,
+                TARGET_COLLECTION_CODE,
+                TARGET_COLLECTION_ID,
+                TARGET_INSTITUTION_CODE
+        );
 
         Specimen target = createSpecimen(
                 interaction,
                 study,
+                targetSpecimenInitializer,
                 TARGET_TAXON_NAME,
                 TARGET_TAXON_ID,
                 TARGET_BODY_PART_NAME,
@@ -150,13 +160,6 @@ public class InteractionImporter implements InteractionListener {
                 TARGET_TAXON_RANK,
                 TARGET_TAXON_PATH_IDS);
 
-        setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
-        setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
-
 
         String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
         InteractType type = InteractType.typeOf(interactionTypeId);
@@ -164,22 +167,23 @@ public class InteractionImporter implements InteractionListener {
         source.interactsWith(target, type, getOrCreateLocation(interaction));
     }
 
-    private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
+    public static void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
         String value = link.get(key);
         if (StringUtils.isNotBlank(value)) {
             source.setProperty(propertyKey, value);
         }
     }
 
-    private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
+    public static void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
         String s = link.get(sourceOccurrenceId);
         if (StringUtils.isNotBlank(s)) {
             source1.setExternalId(s);
         }
     }
 
-    private Specimen createSpecimen(Map<String, String> link,
+    private Specimen createSpecimen(Map<String, String> interaction,
                                     Study study,
+                                    final Consumer<Specimen> specimenInitializer,
                                     String taxonNameLabel,
                                     String taxonIdLabel,
                                     String bodyPartName,
@@ -192,49 +196,45 @@ public class InteractionImporter implements InteractionListener {
                                     String sexId,
                                     String taxonRankLabel,
                                     String taxonPathIdsLabel) throws StudyImporterException {
-        String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
+        String argumentTypeId = interaction.get(ARGUMENT_TYPE_ID);
         RelTypes[] argumentType = refutes(argumentTypeId)
                 ? new RelTypes[]{RelTypes.REFUTES}
                 : new RelTypes[]{RelTypes.COLLECTED, RelTypes.SUPPORTS};
 
-        String sourceTaxonName = link.get(taxonNameLabel);
-        String sourceTaxonId = link.get(taxonIdLabel);
+        String sourceTaxonName = interaction.get(taxonNameLabel);
+        String sourceTaxonId = interaction.get(taxonIdLabel);
         TaxonImpl taxon = new TaxonImpl(sourceTaxonName, sourceTaxonId);
 
-        String taxonRank = link.get(taxonRankLabel);
+        String taxonRank = interaction.get(taxonRankLabel);
         if (StringUtils.isNotBlank(taxonRank)) {
             taxon.setRank(taxonRank);
         }
 
-        String taxonPath = link.get(taxonPathLabel);
+        String taxonPath = interaction.get(taxonPathLabel);
         if (StringUtils.isNotBlank(taxonPath)) {
             taxon.setPath(taxonPath);
         }
 
-        String taxonPathIds = link.get(taxonPathIdsLabel);
+        String taxonPathIds = interaction.get(taxonPathIdsLabel);
         if (StringUtils.isNotBlank(taxonPathIds)) {
             taxon.setPathIds(taxonPathIds);
         }
 
-        String taxonPathNames = link.get(taxonPathNamesLabel);
+        String taxonPathNames = interaction.get(taxonPathNamesLabel);
         if (StringUtils.isNotBlank(taxonPathNames)) {
             taxon.setPathNames(taxonPathNames);
         }
 
-        Specimen specimen = nodeFactory.createSpecimen(study, taxon, argumentType);
-        setBasisOfRecordIfAvailable(link, specimen);
-        setDateTimeIfAvailable(link, specimen);
-        setBodyPartIfAvailable(link, specimen, bodyPartName, bodyPartId);
-        setLifeStageIfAvailable(link, specimen, lifeStageName, lifeStageId);
-        setSexIfAvailable(link, specimen, sexLabel, sexId);
-        return specimen;
+        Consumer<Specimen> initializerProxy = new SpecimenInitializerProperties(
+                InteractionImporter.this.nodeFactory, specimenInitializer, interaction, bodyPartName, bodyPartId, lifeStageName, lifeStageId, sexLabel, sexId, InteractionImporter.this.logger);
+        return nodeFactory.createSpecimen(study, taxon, initializerProxy, argumentType);
     }
 
     private boolean refutes(String argumentTypeId) {
         return StringUtils.equalsIgnoreCase(argumentTypeId, PropertyAndValueDictionary.REFUTES);
     }
 
-    private void setLifeStageIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+    public static void setLifeStageIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String lifeStageName = link.get(name);
         final String lifeStageId = link.get(id);
         if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
@@ -242,7 +242,7 @@ public class InteractionImporter implements InteractionListener {
         }
     }
 
-    private void setSexIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+    public static void setSexIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String sexName = link.get(name);
         final String sexId = link.get(id);
         if (StringUtils.isNotBlank(sexName) || StringUtils.isNotBlank(sexId)) {
@@ -275,7 +275,7 @@ public class InteractionImporter implements InteractionListener {
         return study1;
     }
 
-    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
+    public static void setDateTimeIfAvailable(NodeFactory nodeFactory1, ImportLogger importLogger, Map<String, String> link, Specimen target) throws StudyImporterException {
         final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
@@ -287,13 +287,13 @@ public class InteractionImporter implements InteractionListener {
                     String msg = DateUtil.validateDate(eventDate, dateTime);
 
                     if (StringUtils.isNoneBlank(msg)) {
-                        logWarningIfPossible(link, msg);
+                        LogUtil.logWarningIfPossible(link, msg, importLogger);
                     }
-                    nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
+                    nodeFactory1.setUnixEpochProperty(target, dateTime.toDate());
                 }
 
             } catch (IllegalArgumentException ex) {
-                logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
+                LogUtil.logWarningIfPossible(link, "invalid date string [" + eventDate + "]", importLogger);
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
             }
@@ -303,7 +303,7 @@ public class InteractionImporter implements InteractionListener {
     }
 
 
-    private String applySymbiotaDateTimeFix(String eventDate) {
+    public static String applySymbiotaDateTimeFix(String eventDate) {
         String eventDateCorrected = eventDate;
         if (StringUtils.contains(eventDate, "-00")) {
             // see https://github.com/globalbioticinteractions/scan/issues/2
@@ -314,7 +314,7 @@ public class InteractionImporter implements InteractionListener {
         return eventDateCorrected;
     }
 
-    private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
+    public static void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
         final String basisOfRecordName = link.get(BASIS_OF_RECORD_NAME);
         final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
         if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
@@ -322,7 +322,7 @@ public class InteractionImporter implements InteractionListener {
         }
     }
 
-    private void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+    public static void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String bodyPartName = link.get(name);
         final String bodyPartId = link.get(id);
         if (StringUtils.isNotBlank(bodyPartName) || StringUtils.isNotBlank(bodyPartId)) {

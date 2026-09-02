@@ -8,6 +8,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.CSVTSVUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -64,7 +65,7 @@ public final class ExportUtil {
         String join(Stream<String> values);
     }
 
-    interface Appender {
+    public interface Appender {
         void append(Stream<String> values) throws IOException;
     }
 
@@ -131,13 +132,16 @@ public final class ExportUtil {
 
     private static void writeResults(Appender appender, GraphDatabaseService dbService, List<String> queries, Map<String, Object> params, boolean includeHeader) throws IOException {
         for (String query : queries) {
-            Result rows = dbService.execute(query, params);
-            List<String> columns = rows.columns();
-            if (includeHeader && queries.indexOf(query) == 0) {
-                final String[] values = columns.toArray(new String[0]);
-                appender.append(Stream.of(values));
+            try (Transaction transaction = dbService.beginTx()) {
+                Result rows = transaction.execute(query, params);
+                List<String> columns = rows.columns();
+                if (includeHeader && queries.indexOf(query) == 0) {
+                    final String[] values = columns.toArray(new String[0]);
+                    appender.append(Stream.of(values));
+                }
+                appendRow(appender, rows, columns);
+                transaction.commit();
             }
-            appendRow(appender, rows, columns);
         }
     }
 

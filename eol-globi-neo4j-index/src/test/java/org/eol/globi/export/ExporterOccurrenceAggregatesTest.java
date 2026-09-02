@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -20,7 +20,7 @@ import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterOccurrenceAggregatesTest extends GraphDBNeo4jTestCase {
+public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String[] getExpectedData() {
         return ("globi:occur:source:X-EOL:123-ATE\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
@@ -39,12 +39,12 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void exportNoMatchName() throws NodeFactoryException, IOException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
+        StudyNode myStudy = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "some externalid"));
         resolveNames();
 
         StringWriter row = new StringWriter();
-        new ExporterOccurrenceAggregates().exportDistinct(myStudy, ExportUtil.AppenderWriter.of(row));
+        new ExporterOccurrenceAggregates(getGraphDb()).exportDistinct(ExportUtil.AppenderWriter.of(row));
         assertThat(row.toString(), equalTo(""));
     }
 
@@ -53,11 +53,11 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBNeo4jTestCase {
         createTestData(123.0);
         resolveNames();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
+        StudyNode myStudy1 = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 
-        new ExporterOccurrenceAggregates().exportDistinct(myStudy1, ExportUtil.AppenderWriter.of(row));
+        new ExporterOccurrenceAggregates(getGraphDb()).exportDistinct(ExportUtil.AppenderWriter.of(row));
 
 
         String actualData = row.getBuffer().toString();

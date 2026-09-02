@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eol-globi-parent</artifactId>
         <groupId>org.eol</groupId>
-        <version>0.29.1-SNAPSHOT</version>
+        <version>0.30.0-SNAPSHOT</version>
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
@@ -26,7 +26,7 @@
         <wagon-maven-plugin.version>2.0.0</wagon-maven-plugin.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <maven-dependency-plugin.version>${maven-assembly-plugin.version}</maven-dependency-plugin.version>
-        <toolchain.jdk.version>[1.8,1.8.1)</toolchain.jdk.version>
+        <toolchain.jdk.version>[21.0,21.1)</toolchain.jdk.version>
     </properties>
 
     <dependencies>
@@ -96,8 +96,6 @@
                         <argument>${dataset.dir}</argument>
                         <argument>-exportDir</argument>
                         <argument>${data.dir}</argument>
-                        <argument>-neo4jVersion</argument>
-                        <argument>2</argument>
                         <argument>-taxonCache</argument>
                         <argument>file://${data.dir}/taxa/taxonCache.tsv.gz</argument>
                         <argument>-taxonMap</argument>

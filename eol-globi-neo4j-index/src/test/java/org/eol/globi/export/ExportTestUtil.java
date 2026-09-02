@@ -2,7 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -11,13 +11,14 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
+import org.eol.globi.taxon.ResolvingTaxonIndexImpl;
 import org.eol.globi.util.DateUtil;
-import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 public class ExportTestUtil {
     public static StudyNode createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
@@ -32,7 +34,7 @@ public class ExportTestUtil {
     }
 
     public static StudyNode createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) factory.createStudy(new StudyImpl("myStudy", null, null));
+        StudyNode myStudy = (StudyNode) factory.getOrCreateStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen1 = factory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:45634"));
         specimen1.setStomachVolumeInMilliLiter(666.0);
         specimen1.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
@@ -65,8 +67,8 @@ public class ExportTestUtil {
         return DateUtil.parseDateUTC("1992-03-30T08:00:00Z").toDate();
     }
 
-    public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
-        return new NonResolvingTaxonIndexNeo4j2(graphDb);
+    public static ResolvingTaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, Transaction tx) {
+        return new ResolvingTaxonIndexImpl(taxonEnricher, tx);
     }
 
     public static void assertFileInMeta(ExporterBase exporter) throws IOException {
@@ -82,9 +84,12 @@ public class ExportTestUtil {
 
     static void assertSameAsideFromNodeIds(String[] actualLines, String[] expectedLines) {
         Stream<String> actual = Stream.of(actualLines)
-                .map(line -> line.replaceAll("([a-z]):\\d+", "$1:X"));
-        List<String> collect = actual.collect(Collectors.toList());
-        assertThat(collect, containsInAnyOrder(expectedLines));
-        assertThat(collect.size(), is(expectedLines.length));
+                .map(line -> line.replaceAll("([a-z_]+):[0-9]+", "$1:X"));
+        List<String> actualLinesCollection = actual.collect(Collectors.toList());
+        List<String> expectedCollection = Arrays.asList(expectedLines);
+        for (String line : actualLinesCollection) {
+            assertThat(expectedCollection, hasItem(line));
+        }
+        assertThat(actualLinesCollection.size(), is(expectedLines.length));
     }
 }

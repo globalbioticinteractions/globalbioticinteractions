@@ -105,6 +105,7 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
         }
 
         predator.ate(prey);
+        this.notifyInteractionRecordIndexed();
 
     }
 

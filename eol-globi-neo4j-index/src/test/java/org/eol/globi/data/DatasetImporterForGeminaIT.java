@@ -3,7 +3,7 @@ package org.eol.globi.data;
 
 import org.junit.Test;
 
-public class DatasetImporterForGeminaIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForGeminaIT extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException {

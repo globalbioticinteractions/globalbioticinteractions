@@ -5,6 +5,9 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.values.storable.CoordinateReferenceSystem;
+import org.neo4j.values.storable.PointValue;
+import org.neo4j.values.storable.Values;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,11 @@ public class LocationNode extends NodeBacked implements Location {
             getUnderlyingNode().setProperty(LocationConstant.LONGITUDE, location.getLongitude());
         }
 
+        if (location.getLongitude() != null && location.getLatitude() != null) {
+            PointValue pointValue = Values.pointValue(CoordinateReferenceSystem.WGS_84, location.getLongitude(), location.getLatitude());
+            getUnderlyingNode().setProperty(LocationConstant.LNGLAT, pointValue);
+        }
+
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, LocationNode.class.getSimpleName());
         if (StringUtils.isNotBlank(location.getLocality())) {
             getUnderlyingNode().setProperty(LocationConstant.LOCALITY, location.getLocality());
@@ -41,7 +49,7 @@ public class LocationNode extends NodeBacked implements Location {
 
     @Override
     public String getFootprintWKT() {
-        return (String) getPropertyValueOrNull(LocationConstant.FOOTPRINT_WKT);
+        return getPropertyValueOrNull(LocationConstant.FOOTPRINT_WKT);
     }
 
     @Override
@@ -60,7 +68,9 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     private Double getDoubleOrNull(String altitude) {
-        return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
+        return getUnderlyingNode().hasProperty(altitude)
+                ? (Double) getUnderlyingNode().getProperty(altitude)
+                : null;
     }
 
     @Override
@@ -76,7 +86,7 @@ public class LocationNode extends NodeBacked implements Location {
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT));
         for (Relationship relationship : relationships) {
             if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
                 needsAssociation = false;
@@ -84,13 +94,13 @@ public class LocationNode extends NodeBacked implements Location {
             }
         }
         if (needsAssociation) {
-            createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
+            createRelationshipTo(RelTypes.HAS_ENVIRONMENT, (NodeBacked) environment);
         }
     }
 
     public List<Environment> getEnvironments() {
         List<Environment> environments = new ArrayList<Environment>();
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT));
         for (Relationship relationship : relationships) {
             environments.add(new EnvironmentNode(relationship.getEndNode()));
         }

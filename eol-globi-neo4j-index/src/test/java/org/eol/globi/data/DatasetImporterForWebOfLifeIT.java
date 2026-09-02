@@ -1,17 +1,11 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -19,7 +13,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetImporterForWebOfLifeIT extends GraphDBNeo4jTestCase {
+public class DatasetImporterForWebOfLifeIT extends GraphDBTestCase {
 
 
     @Test

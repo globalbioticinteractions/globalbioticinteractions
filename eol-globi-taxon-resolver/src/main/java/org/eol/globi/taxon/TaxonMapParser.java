@@ -1,7 +1,5 @@
 package org.eol.globi.taxon;
 
-import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
@@ -9,8 +7,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
-
-import java.util.function.Function;
 
 public class TaxonMapParser {
 

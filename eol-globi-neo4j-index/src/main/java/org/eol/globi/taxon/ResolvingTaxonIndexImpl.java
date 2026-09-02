@@ -1,0 +1,260 @@
+package org.eol.globi.taxon;
+
+import org.apache.commons.lang.StringUtils;
+import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NodeLabel;
+import org.eol.globi.data.ResolvingTaxonIndex;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.tool.UnlikelyTaxonNameException;
+import org.eol.globi.util.NodeUtil;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+
+public class ResolvingTaxonIndexImpl implements ResolvingTaxonIndex {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ResolvingTaxonIndexImpl.class);
+
+    private final PropertyEnricher enricher;
+    private final Transaction tx;
+
+    private boolean skipHomonymMatches;
+    private boolean indexResolvedOnly;
+
+    public static final Pattern ACCEPTABLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
+
+    private static final String[] RANKS = new String[]{
+            "kingdom",
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "genus",
+            "subgenus",
+            "species"
+    };
+
+    public ResolvingTaxonIndexImpl(PropertyEnricher enricher, Transaction tx) {
+        this.enricher = enricher;
+        this.tx = tx;
+    }
+
+    @Override
+    public TaxonNode findTaxonByName(String name) throws NodeFactoryException {
+        return findTaxonByName(name, null);
+    }
+
+    @Override
+    public TaxonNode findTaxonByName(String name, Taxon taxonContext) throws NodeFactoryException {
+        return TaxonUtil.isEmptyValue(name)
+                ? null
+                : TaxonFinderUtil.findTaxonOrRelated(NAME, name, getTransaction(), taxonContext);
+    }
+
+    @Override
+    public Taxon findTaxonById(String externalId) {
+        return findTaxonById(externalId, null);
+    }
+
+    @Override
+    public TaxonNode findTaxonById(String externalId, Taxon taxonContext) {
+        // needs no homonym matching, so taxon context omitted
+        Transaction tx = getTransaction();
+        return TaxonUtil.isEmptyValue(externalId)
+                ? null
+                : TaxonFinderUtil.findTaxonOrRelated(EXTERNAL_ID, externalId, tx);
+    }
+
+    private Transaction getTransaction() {
+        return tx;
+    }
+
+    @Override
+    public Taxon getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
+        return taxon == null ? null : doGetOrCreateTaxon(taxon);
+    }
+
+    private Taxon doGetOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
+        if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
+            if (!ACCEPTABLE_SHORT_NAME_PATTERN.matcher(taxon.getName()).matches()) {
+                throw new UnlikelyTaxonNameException("taxon name [" + taxon.getName() + "] is a short and unlikely taxonomic name, and no externalId is provided");
+            }
+        }
+
+        Taxon taxonFound = findTaxonById(taxon.getExternalId(), taxon);
+
+        if (taxonFound == null) {
+            taxonFound = findTaxonByName(taxon.getName(), taxon);
+        }
+
+        if (taxonFound == null) {
+            try {
+                List<Map<String, String>> taxonResolved = enricher.enrichAllMatches(TaxonUtil.taxonToMap(taxon));
+
+                List<Taxon> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
+                        .stream()
+                        .filter(t -> !indexResolvedOnly || TaxonUtil.isResolved(t))
+                        .map(TaxonUtil::mapToTaxon)
+                        .filter(t -> includeAfterHomonymCheck(taxon, t))
+                        .filter(t -> !TaxonUtil.hasLiteratureReference(t))
+                        .collect(Collectors.toList());
+
+                TaxonNode taxonNodeFound;
+                if (matchCandidates.isEmpty()) {
+                    TaxonNode noMatch = createNoMatch(taxon);
+                    taxonNodeFound = indexResolvedOnly ? null : noMatch;
+                } else {
+                    Taxon primary = matchCandidates.get(0);
+                    TaxonNode existingPrimaryTaxon = findTaxonById(primary.getExternalId(), null);
+                    if (existingPrimaryTaxon == null) {
+                        TaxonNode primaryTaxon = taxonNodeFor(primary, NodeLabel.Taxon);
+                        matchCandidates.stream().skip(1)
+                                .forEach(n -> {
+                                    TaxonNode existingSameAsTaxon = findTaxonById(n.getExternalId(), null);
+                                    TaxonNode sameAsTaxon = existingSameAsTaxon == null
+                                            ? taxonNodeFor(n, NodeLabel.Taxon)
+                                            : existingSameAsTaxon;
+
+                                    sameAsTaxon.getUnderlyingNode().createRelationshipTo(
+                                            primaryTaxon.getUnderlyingNode(),
+                                            NodeUtil.asNeo4j(RelTypes.SAME_AS)
+                                    );
+                                });
+                        taxonNodeFound = primaryTaxon;
+                    } else {
+                        taxonNodeFound = existingPrimaryTaxon;
+                    }
+                }
+                if (taxonNodeFound != null) {
+                    onTaxonNode(taxonNodeFound);
+                    taxonFound = taxonNodeFound;
+                }
+            } catch (PropertyEnricherException e) {
+                // ignore
+            }
+
+        }
+        return taxonFound;
+    }
+
+    private void populateRankNames(Node node, String rank, Map<String, String> pathNameMap1) {
+        String name = pathNameMap1.get(rank);
+        if (StringUtils.isNotBlank(name)) {
+            node.setProperty(rank + "Name", name);
+        }
+    }
+
+    private void populateRankIds(Node node, String rank, Map<String, String> pathIdMap1) {
+        String id = pathIdMap1.get(rank);
+        if (StringUtils.isNotBlank(id)) {
+            node.setProperty(rank + "Id", id);
+        }
+    }
+
+
+    private void onTaxonNode(TaxonNode taxonNode) {
+        List<String> taxonIds = new ArrayList<>();
+        List<String> taxonPathIdsAndNames = new ArrayList<>();
+        addTaxonId(taxonIds, taxonNode);
+        addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
+
+        if (TaxonUtil.isNonEmptyTaxonNameOrId(taxonNode.getName())) {
+            final Map<String, String> pathIdMap1 = TaxonUtil.toPathNameMap(taxonNode, taxonNode.getPathIds());
+            final Map<String, String> pathNameMap1 = TaxonUtil.toPathNameMap(taxonNode, taxonNode.getPath());
+            for (String rank : RANKS) {
+                populateRankIds(taxonNode.getUnderlyingNode(), rank, pathIdMap1);
+                populateRankNames(taxonNode.getUnderlyingNode(), rank, pathNameMap1);
+            }
+        }
+
+        Node node = taxonNode.getUnderlyingNode();
+        Iterable<Relationship> rels = node.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
+        for (Relationship rel : rels) {
+            TaxonNode sameAsTaxon = new TaxonNode(rel.getStartNode());
+            addTaxonId(taxonIds, sameAsTaxon);
+            addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
+        }
+        taxonPathIdsAndNames.addAll(taxonIds);
+        String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+        node.setProperty(EXTERNAL_IDS, completeList(aggregateIds));
+
+        String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+        node.setProperty(NAME_IDS, completeList(aggregateTaxonIds));
+    }
+
+    private static String completeList(String aggregateIds) {
+        return CharsetConstant.SEPARATOR_START_LIST + aggregateIds + CharsetConstant.SEPARATOR_END_LIST;
+    }
+
+    private void addTaxonId(List<String> externalIds, TaxonNode taxonNode) {
+        String externalId = taxonNode.getExternalId();
+        if (StringUtils.isNotBlank(externalId)) {
+            externalIds.add(externalId);
+        }
+    }
+
+    private void addPathIdAndNames(List<String> externalIds, TaxonNode taxonNode) {
+        if (StringUtils.isNotBlank(taxonNode.getName())) {
+            externalIds.add(taxonNode.getName());
+        }
+        addDelimitedList(externalIds, taxonNode.getPath());
+        addDelimitedList(externalIds, taxonNode.getPathIds());
+    }
+
+    private void addDelimitedList(List<String> externalIds, String path) {
+        String[] pathElements = StringUtils.splitByWholeSeparator(path, CharsetConstant.SEPARATOR);
+        if (pathElements != null) {
+            externalIds.addAll(Arrays.asList(pathElements));
+        }
+    }
+
+    private boolean includeAfterHomonymCheck(Taxon taxon, Taxon t) {
+        return !skipHomonymMatches || !TaxonUtil.likelyHomonym(t, taxon);
+    }
+
+    private TaxonNode taxonNodeFor(Taxon r, NodeLabel... nodeLabel) {
+        Node node = getTransaction().createNode(nodeLabel);
+        TaxonNode t = new TaxonNode(node);
+        TaxonUtil.copy(r, t);
+        return t;
+    }
+
+    private TaxonNode createNoMatch(Taxon taxon) {
+        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon), NodeLabel.Taxon, NodeLabel.Taxon_Resolved);
+    }
+
+
+    @Override
+    public void setIndexResolvedTaxaOnly(boolean indexResolvedOnly) {
+        this.indexResolvedOnly = indexResolvedOnly;
+    }
+
+    @Override
+    public boolean isIndexResolvedOnly() {
+        return indexResolvedOnly;
+    }
+
+    public void skipHomonymMatches(boolean skipHomonymMatches) {
+        this.skipHomonymMatches = skipHomonymMatches;
+    }
+
+
+}

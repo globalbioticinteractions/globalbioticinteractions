@@ -1,10 +1,12 @@
 package org.eol.globi.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +55,7 @@ public class TaxonSearchUtil {
 
     public static CypherQuery getCypherQuery(String taxonPath, Map parameterMap) {
         final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), true);
-        StringBuilder query = new StringBuilder("START someTaxon = node:taxons({pathQuery}) ");
+        StringBuilder query = new StringBuilder();
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
@@ -72,7 +74,8 @@ public class TaxonSearchUtil {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(parameterMap));
         }
 
-        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE exists(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl ");
+
+        query.append(" MATCH (someTaxon:Taxon" + " { " + (StringUtils.contains(taxonPath, ":") ? "externalId" : "name") + ": $pathQuery }" + ")-[:SAME_AS*0..1]-(taxon:Taxon) WHERE taxon.externalId IS NOT NULL WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl ");
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(
                 query,
                 CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()),
@@ -81,6 +84,6 @@ public class TaxonSearchUtil {
             {
                 put("pathQuery", pathQuery);
             }
-        }, CypherUtil.CYPHER_VERSION_2_3);
+        });
     }
 }

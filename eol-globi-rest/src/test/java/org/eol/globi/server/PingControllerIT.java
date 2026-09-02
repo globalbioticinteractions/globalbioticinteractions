@@ -15,7 +15,8 @@ public class PingControllerIT extends ITBase {
     @Test
     public void ping() throws IOException {
         String uri = getURLPrefix() + "ping";
-        assertThat(HttpUtil.getRemoteJson(uri), is(not(nullValue())));
+        String remoteJson = HttpUtil.getRemoteJson(uri);
+        assertThat(remoteJson, is("pong"));
     }
 
     @Test

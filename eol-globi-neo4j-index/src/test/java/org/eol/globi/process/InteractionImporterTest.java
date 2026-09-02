@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.DatasetImporterForTSV;
-import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
@@ -91,10 +91,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class InteractionImporterTest extends GraphDBNeo4jTestCase {
+public class InteractionImporterTest extends GraphDBTestCase {
 
     @Test
     public void malformedDOI() {
@@ -378,6 +379,7 @@ public class InteractionImporterTest extends GraphDBNeo4jTestCase {
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             LocationNode sampleLocation = someSpecimen.getSampleLocation();
+            assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude(), is(12.2d));
             assertThat(sampleLocation.getLongitude(), is(13.2d));
             assertThat(sampleLocation.getLocality(), is("my back yard"));
@@ -546,14 +548,16 @@ public class InteractionImporterTest extends GraphDBNeo4jTestCase {
     }
 
     public void assertLocation(LocationNode sampleLocation) {
+        assertNotNull(sampleLocation);
         assertThat(sampleLocation.getLatitude(), is(12.1d));
         assertThat(sampleLocation.getLongitude(), is(13.2d));
     }
 
     public TaxonNode getOrigTaxon(SpecimenNode predator) {
         return new TaxonNode(predator.getUnderlyingNode()
-                .getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS))
-                .iterator().next().getEndNode());
+                .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                .getEndNode()
+        );
     }
 
 }

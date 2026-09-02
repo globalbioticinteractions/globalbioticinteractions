@@ -4,15 +4,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.DatasetImporterForRegistry;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetUtil;
+import org.globalbioticinteractions.elton.Neo4jIndexUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -42,15 +48,27 @@ public class IndexerDataset implements IndexerNeo4j {
     public void index() throws StudyImporterException {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
         NodeFactory nodeFactory;
+
+        try (Transaction tx = graphService.beginTx()) {
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Dataset, DatasetConstant.NAMESPACE);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Reference, StudyConstant.TITLE_IN_NAMESPACE);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Location, LocationConstant.LOCALITY_ID);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.Location, LocationConstant.LOCALITY);
+            Neo4jIndexUtil.createIndexIfNotExists(tx, NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID);
+            Neo4jIndexUtil.createPointLocationIndexIfNotExists(tx);
+            tx.commit();
+        }
+
         try (Transaction tx = graphService.beginTx();) {
             nodeFactory = nodeFactoryFactory.create(graphService, cacheDir);
-            tx.success();
+            tx.commit();
         }
 
         try {
             indexDatasets(
                     this.registry,
                     nodeFactory);
+
         } finally {
             if (nodeFactory != null) {
                 try {

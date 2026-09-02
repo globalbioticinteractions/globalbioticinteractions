@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Controller
 public class InteractionController {
@@ -47,11 +49,25 @@ public class InteractionController {
     @ResponseBody
     protected CypherQuery findInteractions(HttpServletRequest request) {
         Map parameterMap = getParamMap(request);
+        return findInteractions(request, parameterMap);
+    }
+
+    private static CypherQuery findInteractions(HttpServletRequest request, Map parameterMap) {
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 
-    private static Map getParamMap(HttpServletRequest request) {
+    @RequestMapping(value = "/interaction.{extension}", method = {RequestMethod.GET})
+    @ResponseBody
+    protected CypherQuery findInteractionsAsCSV(HttpServletRequest request, @PathVariable("extension") String extension) {
+        TreeMap<String, String[]> modifiedParameters = new TreeMap<String, String[]>() {{
+            putAll(getParamMap(request));
+            put("type", new String[]{extension});
+        }};
+        return findInteractions(request, modifiedParameters);
+    }
+
+    public static Map getParamMap(HttpServletRequest request) {
         return request.getParameterMap();
     }
 
