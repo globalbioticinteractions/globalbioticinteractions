@@ -75,8 +75,8 @@ public class InteractionControllerSpringTest extends SpringTestBase {
                         "WHERE (" +
                         "targetTaxon.externalId IS NOT NULL " +
                         "AND " +
-                        "targetTaxon.externalId IN ['COL:93Q4D']) " +
-                        "AND (sourceTaxon.externalId IS NOT NULL AND sourceTaxon.externalId IN ['http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875']) " +
+                        "targetTaxon.externalId IN [$target_taxon_name_0]) " +
+                        "AND (sourceTaxon.externalId IS NOT NULL AND sourceTaxon.externalId IN [$source_taxon_name_0]) " +
                         "OPTIONAL MATCH (sourceSpecimen:Specimen)-[:COLLECTED_AT]->(loc:Location) " +
                         "RETURN study.title as study_title," +
                         "study.citation as study_citation," +
@@ -88,7 +88,9 @@ public class InteractionControllerSpringTest extends SpringTestBase {
                         "SKIP 0 LIMIT 1024"));
         Map<String, String> params = interactions.getParams();
         assertThat(params.toString(), Is.is(
-                "{source_taxon_name=http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875," +
-                        " target_taxon_name=COL:93Q4D}"));
+                "{" +
+                        "target_taxon_name_0=COL:93Q4D, " +
+                        "source_taxon_name_0=http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875" +
+                        "}"));
     }
 }
