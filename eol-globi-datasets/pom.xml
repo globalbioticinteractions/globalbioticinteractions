@@ -96,8 +96,6 @@
                         <argument>${dataset.dir}</argument>
                         <argument>-exportDir</argument>
                         <argument>${data.dir}</argument>
-                        <argument>-neo4jVersion</argument>
-                        <argument>2</argument>
                         <argument>-taxonCache</argument>
                         <argument>file://${data.dir}/taxa/taxonCache.tsv.gz</argument>
                         <argument>-taxonMap</argument>
