@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class CypherQuery {
     private final String query;
@@ -26,7 +27,7 @@ public class CypherQuery {
 
     public CypherQuery(String query, Map<String, String> params, String version) {
         this.query = query;
-        this.params = params == null ? Collections.emptyMap() : params;
+        this.params = params == null ? Collections.emptyMap() : new TreeMap<>(params);
         this.version = version;
     }
 

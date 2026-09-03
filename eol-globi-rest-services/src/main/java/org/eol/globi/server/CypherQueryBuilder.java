@@ -311,23 +311,28 @@ public class CypherQueryBuilder {
             List<DOI> dois = extractDOIs(accordingTo);
             if (!dois.isEmpty()) {
                 List<String> DOIs = dois.stream().map(DOI::toString).collect(Collectors.toList());
-                paramMap.put("accordingTo", matchReferenceOrDataset(DOIs));
+                populateAccordingToParams(expandAccordingToIfNeeded(DOIs), paramMap);
             } else if (isAccordingToNamespaceQuery(accordingTo)) {
-                List<String> namespaces = getNamespaces(accordingTo);
-                paramMap.put("accordingTo", orNestedTerms(namespaces));
+                populateAccordingToParams(getNamespaces(accordingTo), paramMap);
             } else {
-                paramMap.put("accordingTo", matchReferenceOrDataset(accordingTo));
+                populateAccordingToParams(expandAccordingToIfNeeded(accordingTo), paramMap);
             }
         }
 
         List<String> prefix = collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
-        if (prefix != null && prefix.size() > 0) {
+        if (prefix != null && !prefix.isEmpty()) {
             String firstPrefix = prefix.get(0) + ".*";
             paramMap.put("source_taxon_prefix", firstPrefix);
             paramMap.put("target_taxon_prefix", firstPrefix);
         }
 
         return paramMap;
+    }
+
+    private static void populateAccordingToParams(List<String> accordingToList, Map<String, String> paramMap) {
+        for (int i = 0; i < accordingToList.size(); i++) {
+            paramMap.put("according_to_" + i, accordingToList.get(i));
+        }
     }
 
     static List<String> collectAccordingTo(Map parameterMap) {
@@ -345,13 +350,17 @@ public class CypherQueryBuilder {
 
 
     static String matchReferenceOrDataset(List<String> accordingTo) {
+        List<String> expandedList = expandAccordingToIfNeeded(accordingTo);
+        return strictExternalIdMatch(expandedList);
+    }
+
+    private static List<String> expandAccordingToIfNeeded(List<String> accordingTo) {
         List<String> expandedList = new ArrayList<>(accordingTo);
         expandedList.addAll(accordingTo.stream()
                 .filter(s -> StringUtils.startsWith(s, "http://gomexsi.tamucc.edu"))
                 .map(s -> "http://gomexsi.tamucc.edu/")
                 .collect(Collectors.toList()));
-
-        return strictExternalIdMatch(expandedList);
+        return expandedList;
     }
 
     private static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {
@@ -576,15 +585,26 @@ public class CypherQueryBuilder {
 
     private static void appendWithStudy(StringBuilder query, List<String> accordingToParams) {
         if (isAccordingToNamespaceQuery(accordingToParams)) {
-            query
-                    .append(" MATCH (study:Reference)-[:IN_DATASET]->(dataset:Dataset {namespace: $accordingTo})")
+            List<String> namespaces = getNamespaces(accordingToParams);
+            query.append(" MATCH (study:Reference)-[:IN_DATASET]->(dataset:Dataset) WHERE dataset.namespace IN [")
+                    .append(commaSeparateAccordingToParamListString(namespaces))
+                    .append("]")
                     .append(" WITH study");
         } else {
             query
                     .append(" MATCH")
-                    .append(" (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId {externalId: $accordingTo})")
+                    .append(" (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) ")
+                    .append("WHERE externalId IN [")
+                    .append(commaSeparateAccordingToParamListString(accordingToParams))
+                    .append("]")
                     .append(" WITH x as study ");
         }
+    }
+
+    private static String commaSeparateAccordingToParamListString(List<String> paramValueList) {
+        return IntStream.range(0, paramValueList.size())
+                .mapToObj(i -> "$according_to_" + i)
+                .collect(Collectors.joining(", "));
     }
 
     private static List<DOI> extractDOIs(List<String> accordingToParams) {
