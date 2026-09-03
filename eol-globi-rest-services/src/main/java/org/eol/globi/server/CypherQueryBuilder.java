@@ -594,7 +594,7 @@ public class CypherQueryBuilder {
             query
                     .append(" MATCH")
                     .append(" (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) ")
-                    .append("WHERE externalId IN [")
+                    .append("WHERE externalId.externalId IN [")
                     .append(commaSeparateAccordingToParamListString(accordingToParams))
                     .append("]")
                     .append(" WITH x as study ");

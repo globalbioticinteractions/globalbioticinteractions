@@ -50,7 +50,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
     private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, "REFUTES|COLLECTED");
     private static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
     private static final String EXPECTED_ACCORDING_TO_MATCH_CLAUSE = EXPECTED_CYPHER_VERSION +
-            "MATCH (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) WHERE externalId IN [$according_to_0]" +
+            "MATCH (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) WHERE externalId.externalId IN [$according_to_0]" +
             " WITH x as study ";
     private static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
     private static final String HAS_TARGET_TAXON_PLANTAE = hasTargetTaxon("Plantae");
@@ -565,7 +565,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         assertThat(query.getVersionedQuery(), is(
                 EXPECTED_CYPHER_VERSION +
                         "MATCH (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) " +
-                        "WHERE externalId IN [$according_to_0, $according_to_1, $according_to_2] " +
+                        "WHERE externalId.externalId IN [$according_to_0, $according_to_1, $according_to_2] " +
                         "WITH x as study " +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTargetTaxon("Arthropoda") +
@@ -980,7 +980,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         assertThat(query.getVersionedQuery(), is(
                 EXPECTED_CYPHER_VERSION +
                         "MATCH (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) " +
-                        "WHERE externalId IN [$according_to_0, $according_to_1]" +
+                        "WHERE externalId.externalId IN [$according_to_0, $according_to_1]" +
                         " WITH x as study " +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTargetTaxon("Arthropoda") +
@@ -1276,7 +1276,7 @@ public class CypherQueryBuilderTest extends Neo4jTestBase {
         assertThat(query.getVersionedQuery(), is(
                 EXPECTED_CYPHER_VERSION +
                         "MATCH (x:Reference)-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->(externalId:ExternalId) " +
-                        "WHERE externalId IN [$according_to_0, $according_to_1]" +
+                        "WHERE externalId.externalId IN [$according_to_0, $according_to_1]" +
                         " WITH x as study " +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
