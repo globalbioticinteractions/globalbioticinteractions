@@ -89,8 +89,8 @@ public class InteractionControllerSpringTest extends SpringTestBase {
         Map<String, String> params = interactions.getParams();
         assertThat(params.toString(), Is.is(
                 "{" +
-                        "target_taxon_name_0=COL:93Q4D, " +
-                        "source_taxon_name_0=http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875" +
+                        "source_taxon_name_0=http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875, " +
+                        "target_taxon_name_0=COL:93Q4D" +
                         "}"));
     }
 }
