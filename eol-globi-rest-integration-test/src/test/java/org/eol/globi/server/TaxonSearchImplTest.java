@@ -22,7 +22,10 @@ public class TaxonSearchImplTest extends Neo4jTestBase {
                         "AND (((otherTaxon.name IS NOT NULL AND otherTaxon.name = $taxonName) OR (otherTaxon.externalId IS NOT NULL AND otherTaxon.externalId = $taxonName))) " +
                         "RETURN taxon.name as `name`, taxon.commonNames as `commonNames`, taxon.path as `path`, taxon.externalId as `externalId`, taxon.externalUrl as `externalUrl`, taxon.thumbnailUrl as `thumbnailUrl` " +
                         "LIMIT 1"));
-        assertThat(query.getParams().toString(), Is.is("{taxonPathQuery=Apidae, taxonName=Apidae}"));
+        assertThat(query.getParams().toString(), Is.is("{" +
+                "taxonName=Apidae, " +
+                "taxonPathQuery=Apidae" +
+                "}"));
     }
 
     @Test
@@ -38,7 +41,10 @@ public class TaxonSearchImplTest extends Neo4jTestBase {
                         "AND taxon.thumbnailUrl IS NOT NULL AND NOT isEmpty(taxon.thumbnailUrl) " +
                         "RETURN taxon.name as `name`, taxon.commonNames as `commonNames`, taxon.path as `path`, taxon.externalId as `externalId`, taxon.externalUrl as `externalUrl`, taxon.thumbnailUrl as `thumbnailUrl` " +
                         "LIMIT 1"));
-        assertThat(query.getParams().toString(), Is.is("{taxonPathQuery=Apidae, taxonName=Apidae}"));
+        assertThat(query.getParams().toString(), Is.is("{" +
+                "taxonName=Apidae, " +
+                "taxonPathQuery=Apidae" +
+                "}"));
     }
 
     @Test
@@ -58,7 +64,7 @@ public class TaxonSearchImplTest extends Neo4jTestBase {
 
     @Test
     public void escapeLuceneTerms() {
-        String query = TaxonSearchImpl.buildLuceneQuery( "Sphagnum fallax)Sphagnum fallax)", "name");
+        String query = TaxonSearchImpl.buildLuceneQuery("Sphagnum fallax)Sphagnum fallax)", "name");
 
         assertThat(query, Is.is("(name:sphagnum* OR name:sphagnum~) AND (name:fallax\\)sphagnum* OR name:fallax\\)sphagnum~) AND (name:fallax\\)* OR name:fallax\\)~)"));
     }
