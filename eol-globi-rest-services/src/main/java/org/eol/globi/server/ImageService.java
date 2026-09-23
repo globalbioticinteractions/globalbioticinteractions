@@ -51,7 +51,8 @@ public class ImageService {
             if (taxon != null) {
                 Collection<String> links = taxonSearch.findTaxonIds(scientificName);
                 if (links != null) {
-                    taxonImage = enrichWithImage(preferredLanguage, taxonImage, taxon, links);
+                    // reduce load on wikidata web api for now see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1194
+                    //taxonImage = enrichWithImage(preferredLanguage, taxonImage, taxon, links);
                 }
             }
         }
