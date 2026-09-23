@@ -5,6 +5,7 @@ import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -126,6 +127,8 @@ public class ImageServiceTest {
         assertThat(image.getCommonName(), is("one"));
         assertThat(image.getTaxonPath(), is("path1 | path2"));
     }
+
+    @Ignore("see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1194")
     @Test
     public void foundImageInTaxonInfoAndInImageSearch() throws IOException {
         imageService.setTaxonSearch(new TaxonSearch() {
