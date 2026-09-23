@@ -51,8 +51,7 @@ public class ImageService {
             if (taxon != null) {
                 Collection<String> links = taxonSearch.findTaxonIds(scientificName);
                 if (links != null) {
-                    // reduce load on wikidata web api for now see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1194
-                    //taxonImage = enrichWithImage(preferredLanguage, taxonImage, taxon, links);
+                    taxonImage = enrichWithImage(preferredLanguage, taxonImage, taxon, links);
                 }
             }
         }
@@ -63,6 +62,19 @@ public class ImageService {
     }
 
     private TaxonImage enrichWithImage(@RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage, TaxonImage taxonImage, Map<String, String> taxon, Collection<String> links) throws IOException {
+        // reduce load on wikidata see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1194
+        //taxonImage = enrichWithWikidata(preferredLanguage, taxonImage, links);
+
+        if (taxonImage == null && !links.isEmpty()) {
+            taxonImage = new TaxonImage();
+            taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
+        }
+
+        TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage, preferredLanguage);
+        return taxonImage;
+    }
+
+    private TaxonImage enrichWithWikidata(String preferredLanguage, TaxonImage taxonImage, Collection<String> links) {
         for (String id : links) {
             try {
                 taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
@@ -80,13 +92,6 @@ public class ImageService {
                 break;
             }
         }
-
-        if (taxonImage == null && !links.isEmpty()) {
-            taxonImage = new TaxonImage();
-            taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
-        }
-
-        TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage, preferredLanguage);
         return taxonImage;
     }
 
