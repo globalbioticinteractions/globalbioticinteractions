@@ -11,7 +11,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.process.InteractionListener;
-import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -31,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,9 +66,11 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     public static final String VERBATIM_SRS = "http://rs.tdwg.org/dwc/terms/verbatimSRS";
 
     private Dataset dataset;
+    private final TableParserFactory tableFactory;
 
     public DatasetImporterForMetaTable(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+        tableFactory = new TableParserFactoryProxy();
     }
 
 
@@ -95,7 +95,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                         );
 
 
-                importTable(listener, new TableParserFactoryImpl(), datasetProxy, getLogger());
+                importTable(listener, tableFactory, datasetProxy, getLogger());
             }
         } catch (IOException | NodeFactoryException e) {
             String msg = "problem importing from [" + getBaseUrl() + "]";
@@ -389,7 +389,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                     }
                 }
 
-                if (lineWithListExpansion.size() == 0) {
+                if (lineWithListExpansion.isEmpty()) {
                     lineWithListExpansion.add(mappedLine);
                 }
                 for (Map<String, String> lineExpanded : lineWithListExpansion) {
@@ -570,34 +570,6 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
     public Dataset getDataset() {
         return dataset;
-    }
-
-    interface TableParserFactory {
-        CSVParse createParser(JsonNode config, Dataset dataset) throws IOException;
-    }
-
-    static class TableParserFactoryImpl implements TableParserFactory {
-
-        @Override
-        public CSVParse createParser(JsonNode config, Dataset dataset) throws IOException {
-            final JsonNode headerRowCount = config.get("headerRowCount");
-            final JsonNode delimiter = config.get("delimiter");
-            final String delimiterString = delimiter == null ? "," : delimiter.asText();
-            final char delimiterChar = delimiterString.length() == 0 ? ',' : delimiterString.charAt(0);
-            final JsonNode dataUrl = config.get("url");
-            int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
-
-            InputStream resource = dataset.retrieve(URI.create(dataUrl.asText()));
-            if (resource == null) {
-                throw new IOException("failed to access [" + dataUrl.asText() + "]");
-            }
-            final CSVParse csvParse = CSVTSVUtil.createExcelCSVParse(resource);
-            csvParse.changeDelimiter(delimiterChar);
-            for (int i = 0; i < headerCount; i++) {
-                csvParse.getLine();
-            }
-            return csvParse;
-        }
     }
 
     public static List<Column> columnNamesForMetaTable(JsonNode config) {

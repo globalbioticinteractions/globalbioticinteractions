@@ -287,6 +287,21 @@ public class AssociatedTaxaUtilTest {
     }
 
     @Test
+    public void associatedTaxaPipeDelimited() {
+        String associatedTaxa = "\"host\":\"Menegazzia albida\" | \"host\":\"Menegazzia magellanica\" | \"host\":\"Menegazzia opuntioides\"";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(3));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Menegazzia albida"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("host"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+
+        assertThat(properties.get(2).get(TaxonUtil.TARGET_TAXON_NAME), is("Menegazzia opuntioides"));
+        assertThat(properties.get(2).get(INTERACTION_TYPE_NAME), is("host"));
+        assertThat(properties.get(2).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
     public void associatedTaxaBlank() {
         String associatedTaxa = "Homo sapiens";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);

@@ -58,7 +58,7 @@ public final class AssociatedTaxaUtil {
                 @Override
                 public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                     List<Map<String, String>> enrichedMatches = enrichAllMatches(properties);
-                    return enrichedMatches == null || enrichedMatches.size() == 0
+                    return enrichedMatches == null || enrichedMatches.isEmpty()
                             ? properties
                             : enrichedMatches.get(0);
                 }

@@ -1,0 +1,148 @@
+{
+  "@context" : [ "http://www.w3.org/ns/csvw", {
+    "@language" : "en"
+  } ],
+  "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+  "tables" : [ {
+    "@context" : [ "http://www.w3.org/ns/csvw", {
+      "@language" : "en"
+    } ],
+    "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+    "url" : "mycoBaseCL.tsv",
+    "dcterms:bibliographicCitation" : "Riquelme, C. (2026). mycoBaseCL: An Updated Catalogue of the Fungi of Chile (Version 1.0) [Dataset]. Zenodo. https://doi.org/10.5281/zenodo.19702115",
+    "delimiter" : "\t",
+    "headerRowCount" : 1,
+    "null" : [ "null", "" ],
+    "tableSchema" : {
+      "columns" : [ {
+        "name" : "http://www.w3.org/ns/prov#wasDerivedFrom",
+        "titles" : "http://www.w3.org/ns/prov#wasDerivedFrom",
+        "datatype" : "string"
+      }, {
+        "name" : "http://purl.org/dc/elements/1.1/format",
+        "titles" : "http://purl.org/dc/elements/1.1/format",
+        "datatype" : "string"
+      }, {
+        "name" : "type",
+        "titles" : "type",
+        "datatype" : "string"
+      }, {
+        "name" : "modified",
+        "titles" : "modified",
+        "datatype" : "string"
+      }, {
+        "name" : "language",
+        "titles" : "language",
+        "datatype" : "string"
+      }, {
+        "name" : "license",
+        "titles" : "license",
+        "datatype" : "string"
+      }, {
+        "name" : "rightsHolder",
+        "titles" : "rightsHolder",
+        "datatype" : "string"
+      }, {
+        "name" : "accessRights",
+        "titles" : "accessRights",
+        "datatype" : "string"
+      }, {
+        "name" : "basisOfRecord",
+        "titles" : "basisOfRecord",
+        "datatype" : "string"
+      }, {
+        "name" : "dynamicProperties",
+        "titles" : "dynamicProperties",
+        "datatype" : "string"
+      }, {
+        "name" : "establishmentMeans",
+        "titles" : "establishmentMeans",
+        "datatype" : "string"
+      }, {
+        "name" : "associatedReferences",
+        "titles" : "associatedReferences",
+        "datatype" : "string"
+      }, {
+        "name" : "associatedTaxa",
+        "titles" : "associatedTaxa",
+        "datatype" : "string"
+      }, {
+        "name" : "otherCatalogNumbers",
+        "titles" : "otherCatalogNumbers",
+        "datatype" : "string"
+      }, {
+        "name" : "occurrenceRemarks",
+        "titles" : "occurrenceRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "organismID",
+        "titles" : "organismID",
+        "datatype" : "string"
+      }, {
+        "name" : "associatedSequences",
+        "titles" : "associatedSequences",
+        "datatype" : "string"
+      }, {
+        "name" : "continent",
+        "titles" : "continent",
+        "datatype" : "string"
+      }, {
+        "name" : "country",
+        "titles" : "country",
+        "datatype" : "string"
+      }, {
+        "name" : "countryCode",
+        "titles" : "countryCode",
+        "datatype" : "string"
+      }, {
+        "name" : "localityName",
+        "titles" : "locality",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonName",
+        "titles" : "scientificName",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonKingdomName",
+        "titles" : "kingdom",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonPhylumName",
+        "titles" : "phylum",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonClassName",
+        "titles" : "class",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonOrderName",
+        "titles" : "order",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonFamilyName",
+        "titles" : "family",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonGenusName",
+        "titles" : "genus",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonSpecificEpithetName",
+        "titles" : "specificEpithet",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonInfraspecificEpithetName",
+        "titles" : "infraspecificEpithet",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonRankName",
+        "titles" : "taxonRank",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonAuthorityName",
+        "titles" : "scientificNameAuthorship",
+        "datatype" : "string"
+      } ]
+    }
+  } ]
+}

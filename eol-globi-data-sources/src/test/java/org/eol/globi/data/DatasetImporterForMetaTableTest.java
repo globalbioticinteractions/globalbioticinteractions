@@ -228,6 +228,51 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
+    public void assocatedTaxaPipeDelimited() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-associated-taxa-pipe-delimited.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+                    put(URI.create("mycoBaseCL.tsv"), "test-meta-globi-associated-taxa-pipe-delimited.tsv");
+                }};
+
+                String testResource = resourceMap.get(resourceName);
+                assertNotNull("[" + resourceName + "] not found", testResource);
+                InputStream resourceAsStream = DatasetImporterForMetaTableTest.this.getClass().getResourceAsStream(testResource);
+                assertNotNull("failed to find test resource [" + testResource + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.setWorkDir(folder.newFolder());
+        importer.importStudy();
+
+        assertThat(links.size(), is(3));
+
+        Map<String, String> first = links.get(0);
+
+        assertThat(first.get("sourceTaxonName"), is("Abrothallus parmeliarum"));
+        assertThat(first.get("interactionTypeName"), is("host"));
+        assertThat(first.get("targetTaxonName"), is("Menegazzia albida"));
+
+        Map<String, String> last = links.get(2);
+
+        assertThat(last.get("sourceTaxonName"), is("Abrothallus parmeliarum"));
+        assertThat(last.get("interactionTypeName"), is("host"));
+        assertThat(last.get("targetTaxonName"), is("Menegazzia opuntioides"));
+    }
+
+    @Test
     public void dietMatrix() throws IOException, StudyImporterException {
         final InputStream inputStream = getClass().getResourceAsStream("test-meta-globi-diet-matrix.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);
