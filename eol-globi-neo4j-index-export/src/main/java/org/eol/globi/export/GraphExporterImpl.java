@@ -44,10 +44,6 @@ public class GraphExporterImpl extends GraphExporterBase {
 
         LOG.info("site maps generated... ");
 
-        LOG.info("ncbi linkout files generating... ");
-        exportNCBILinkOut(graphService, baseDir);
-        LOG.info("ncbi linkout files generated. ");
-
         exportNames(graphService, baseDir);
 
         GraphExporterUtil.exportInteractionsAndCitations(
@@ -59,19 +55,6 @@ public class GraphExporterImpl extends GraphExporterBase {
         exportDataOntology(graphService, baseDir);
         exportDarwinCoreAggregatedByStudy(graphService, baseDir);
         exportDarwinCoreAll(graphService, baseDir);
-    }
-
-    private void exportNCBILinkOut(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
-        final File ncbiDir = new File(baseDir, "ncbi-link-out/");
-        mkdir(ncbiDir);
-        new ExportNCBIIdentityFile().export(graphService, ncbiDir);
-
-        new ExportNCBIResourceFile().export(graphService, new ExportNCBIResourceFile.OutputStreamFactory() {
-            @Override
-            public OutputStream create(int i) throws IOException {
-                return new FileOutputStream(new File(ncbiDir, String.format("resources_%d.xml", i)));
-            }
-        });
     }
 
     private void exportNames(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
