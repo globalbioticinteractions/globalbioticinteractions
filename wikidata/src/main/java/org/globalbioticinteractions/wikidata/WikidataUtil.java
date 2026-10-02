@@ -171,7 +171,7 @@ public final class WikidataUtil {
     }
 
     private static void addWikidataTaxon(List<Taxon> relatedIds, JsonNode bindings) {
-        if (bindings.size() > 0) {
+        if (!bindings.isEmpty()) {
             TaxonImpl taxon1 = new TaxonImpl();
             final JsonNode binding = bindings.get(0);
             JsonNode wdTaxonId = binding.get("wdTaxonId");
@@ -212,9 +212,7 @@ public final class WikidataUtil {
         if (taxonomyProvider != null) {
             String id = replace(externalId, taxonomyProvider.getIdPrefix(), "");
 
-            if (TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)) {
-                query = generateSparql(preferredLanguage, taxonomyProvider, "wikidata.sparql.template", id);
-            } else if (TaxonomyProvider.PLAZI.equals(taxonomyProvider)) {
+             if (TaxonomyProvider.PLAZI.equals(taxonomyProvider)) {
                 query = generateSparql(preferredLanguage, taxonomyProvider, "plazi.sparql.template", id);
             } else if (PROVIDER_TO_WIKIDATA.containsKey(taxonomyProvider)) {
                 query = generateSparql(preferredLanguage, taxonomyProvider, "taxon.sparql.template", id);

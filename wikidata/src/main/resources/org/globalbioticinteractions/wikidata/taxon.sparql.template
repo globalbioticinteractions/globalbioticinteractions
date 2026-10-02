@@ -1,8 +1,3 @@
-SELECT ?pic ?name ?wdpage WHERE {
+SELECT ?name ?wdpage WHERE {
   ?wdpage wdt:{{SCHEME}} "{{ID}}" .
-  OPTIONAL { ?wdpage wdt:P18 ?pic . }
-  SERVICE wikibase:label {
-   bd:serviceParam wikibase:language "{{LANG}}" .
-   ?wdpage wdt:P1843 ?name .
-  }
 } limit 1

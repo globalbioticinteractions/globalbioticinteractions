@@ -1,13 +1,19 @@
 package org.globalbioticinteractions.wikidata;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.TaxonImage;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.SearchContext;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -16,6 +22,16 @@ public class WikiDataImageSearchIT {
 
     public static final String LION_COMMON_NAMES = "African Lion, Lion @en";
     public static final String SEA_OTTER_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20nursing.jpg?width=100";
+
+    @Test
+    public void lookupNonSPARL() throws IOException {
+        TaxonImage image = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140");
+        assertThat(image.getScientificName(), is("Panthera leo"));
+        assertThat(image.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
+        assertThat(image.getCommonName(), containsString("African lion @en"));
+        assertThat(image.getThumbnailURL(), is("https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Lion_in_masai_mara.jpg&width=100"));
+    }
+
 
     @Test
     public void lookupLion() throws IOException {
@@ -34,7 +50,6 @@ public class WikiDataImageSearchIT {
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
         assertThat(taxonImage.getCommonName(), is(LION_COMMON_NAMES));
     }
-
 
 
     @Test
