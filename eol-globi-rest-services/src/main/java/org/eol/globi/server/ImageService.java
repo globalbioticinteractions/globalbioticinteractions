@@ -63,7 +63,7 @@ public class ImageService {
 
     private TaxonImage enrichWithImage(@RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage, TaxonImage taxonImage, Map<String, String> taxon, Collection<String> links) throws IOException {
         // reduce load on wikidata see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1194
-        //taxonImage = enrichWithWikidata(preferredLanguage, taxonImage, links);
+        taxonImage = enrichWithWikidata(preferredLanguage, taxonImage, links);
 
         if (taxonImage == null && !links.isEmpty()) {
             taxonImage = new TaxonImage();
