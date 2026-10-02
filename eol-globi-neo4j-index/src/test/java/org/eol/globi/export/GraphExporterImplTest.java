@@ -37,7 +37,7 @@ public class GraphExporterImplTest extends GraphDBTestCase {
         new GraphExporterImpl().export(getGraphDb(), tmpDir);
         new GraphExporterInteractionsTSVImpl()
                 .export(getGraphDb(), tmpDir);
-        assertThat(tmpDir.list().length, is(8));
+        assertThat(tmpDir.list().length, is(7));
 
     }
 
