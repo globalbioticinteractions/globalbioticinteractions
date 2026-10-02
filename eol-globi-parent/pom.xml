@@ -25,7 +25,7 @@
         <commons-net.version>3.9.0</commons-net.version>
         <httpcomponents.version>4.5.13</httpcomponents.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <jackson.version>2.22.1</jackson.version>
+        <jackson.version>2.22.3</jackson.version>
         <mockito.version>3.12.4</mockito.version>
         <bytebuddy.version>1.17.5</bytebuddy.version>
         <picocli.version>4.6.3</picocli.version>
