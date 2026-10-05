@@ -106,12 +106,12 @@ public class WikiDataImageSearch implements ImageSearch {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            LOG.info("requesting [" + request + "] ...");
+            LOG.info("request [" + request + "] sent ...");
             HttpGet httpGet = HttpUtil.httpGetJson(request);
             return HttpUtil.executeAndRelease(httpGet, HttpUtil.getFailFastHttpClient());
         } finally {
             stopWatch.stop();
-            LOG.info("requesting [" + request + "] completed in " + stopWatch.getTime(TimeUnit.MILLISECONDS) + "ms");
+            LOG.info("request [" + request + "] completed in " + stopWatch.getTime(TimeUnit.MILLISECONDS) + "ms");
         }
     }
 
