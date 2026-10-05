@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
@@ -75,7 +76,11 @@ public class ImageService {
     }
 
     private TaxonImage enrichWithWikidata(String preferredLanguage, TaxonImage taxonImage, Collection<String> links) {
-        for (String id : links) {
+        List<String> wikidataIdsOnly = links
+                .stream()
+                .filter(link -> TaxonomyProvider.WIKIDATA.equals(ExternalIdUtil.taxonomyProviderFor(link)))
+                .collect(Collectors.toList());
+        for (String id : wikidataIdsOnly) {
             try {
                 taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
 
