@@ -104,6 +104,7 @@ public class WikiDataImageSearch implements ImageSearch {
             throw new RuntimeException(e);
         }
         StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         try {
             LOG.info("requesting [" + request + "] ...");
             HttpGet httpGet = HttpUtil.httpGetJson(request);
