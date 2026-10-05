@@ -46,7 +46,11 @@ public class WikiDataImageSearch implements ImageSearch {
             appendNames(entity, "/labels/", preferredLanguage, commonNames);
             appendNames(entity, "/aliases/", preferredLanguage, commonNames);
         }
-        image.setCommonName(commonNames.stream().map(n -> n + " @" + preferredLanguage).collect(Collectors.joining(CharsetConstant.SEPARATOR)));
+        image.setCommonName(commonNames
+                .stream()
+                .map(n -> n + " @" + preferredLanguage)
+                .collect(Collectors.joining(CharsetConstant.SEPARATOR))
+        );
 
         String scientificName = getClaimValue(entity, "P225");
         image.setScientificName(scientificName);
@@ -97,7 +101,7 @@ public class WikiDataImageSearch implements ImageSearch {
 
     public static String getWikidataEntry(String entityId, String preferredLanguage) throws IOException {
         String query = "action=wbgetentities&ids=" + entityId + "&languagefallback=en&languages=" + preferredLanguage + "&format=json&props=aliases|labels|claims";
-        URI request = null;
+        URI request;
         try {
             request = new URI("https", "www.wikidata.org", "/w/api.php", query, null);
         } catch (URISyntaxException e) {
