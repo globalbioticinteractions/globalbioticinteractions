@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.wikidata;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.text.WordUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,12 +13,15 @@ import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +30,8 @@ import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.split;
 
 public class WikiDataImageSearch implements ImageSearch {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WikiDataImageSearch.class);
 
     public static void enrichWithThumbnailAndCommonNamesIfAvailable(
             JsonNode jsonNode,
@@ -97,10 +103,15 @@ public class WikiDataImageSearch implements ImageSearch {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-
-        HttpGet httpGet = HttpUtil.httpGetJson(request);
-        String s = HttpUtil.executeAndRelease(httpGet, HttpUtil.getFailFastHttpClient());
-        return s;
+        StopWatch stopWatch = new StopWatch();
+        try {
+            LOG.info("requesting [" + request + "] ...");
+            HttpGet httpGet = HttpUtil.httpGetJson(request);
+            return HttpUtil.executeAndRelease(httpGet, HttpUtil.getFailFastHttpClient());
+        } finally {
+            stopWatch.stop();
+            LOG.info("requesting [" + request + "] completed in " + stopWatch.getTime(TimeUnit.MILLISECONDS) + "ms");
+        }
     }
 
 
