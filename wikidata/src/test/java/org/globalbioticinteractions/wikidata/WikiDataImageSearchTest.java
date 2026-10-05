@@ -32,4 +32,14 @@ public class WikiDataImageSearchTest  {
         assertThat(image.getCommonName(), Is.is("sea otter @en | Enhydra lutris @en"));
         assertThat(image.getThumbnailURL(), Is.is("https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Sea_otter_cropped.jpg&width=100"));
     }
+
+    @Test
+    public void southernSeaOtterImage() throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree(getClass().getResourceAsStream("Q20907635.json"));
+        TaxonImage image = new TaxonImage();
+        WikiDataImageSearch.enrichWithThumbnailAndCommonNamesIfAvailable(jsonNode, "Q20907635", "en", image);
+        assertThat(image.getScientificName(), is("Enhydra lutris nereis"));
+        assertThat(image.getCommonName(), Is.is("Enhydra lutris nereis @en"));
+        assertThat(image.getThumbnailURL(), Is.is("https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/California_Sea_Otters_-_Enhydra_lutris_nereis,_Elkhorn_Slough,_Moss_Landing,_California.jpg&width=100"));
+    }
 }
