@@ -18,6 +18,7 @@ import org.eol.globi.data.DatasetImporterForCruaud;
 import org.eol.globi.data.DatasetImporterForDBatVir;
 import org.eol.globi.data.DatasetImporterForDunne;
 import org.eol.globi.data.DatasetImporterForDwCA;
+import org.eol.globi.data.DatasetImporterForEppo;
 import org.eol.globi.data.DatasetImporterForFishbase3;
 import org.eol.globi.data.DatasetImporterForGemina;
 import org.eol.globi.data.DatasetImporterForGlobalWebDb;
@@ -163,6 +164,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("pensoft", DatasetImporterForPensoft.class);
                 put("zenodo", DatasetImporterForZenodoMetadata.class);
                 put("zover", DatasetImporterForZOVER.class);
+                put("eppo", DatasetImporterForEppo.class);
                 put("json", DatasetImporterForJSON.class);
             }
         };

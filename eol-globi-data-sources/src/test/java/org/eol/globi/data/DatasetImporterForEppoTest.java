@@ -2,15 +2,20 @@ package org.eol.globi.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +33,53 @@ public class DatasetImporterForEppoTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Test
+    public void importDataset() throws StudyImporterException {
+        List<Map<String, String>> foundInteractions = new ArrayList<>();
+        DatasetImporterForEppo datasetImporterForEppo = new DatasetImporterForEppo(null, null);
+        datasetImporterForEppo.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                foundInteractions.add(interaction);
+            }
+        });
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return getClass().getResourceAsStream("eppo/eppo-light.json");
+            }
+        }, URI.create("some:uri"));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put("url", "example.json");
+        dataset.setConfig(objectNode);
+
+        datasetImporterForEppo.setDataset(dataset);
+
+        datasetImporterForEppo.importStudy();
+
+        assertThat(foundInteractions.size(), is(1462));
+
+        Map<String, String> first = foundInteractions.get(0);
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_ID), is("EPPO:CUNNSP"));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_NAME), is("Cunninghamella sp."));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_PATH), is("Fungi | Zygomycota | Mucoromycotina | Mucorales | Cunninghamellaceae | Cunninghamella | Cunninghamella sp."));
+        assertThat(first.get(INTERACTION_TYPE_NAME), is("Host"));
+        assertThat(first.get(INTERACTION_TYPE_ID), is("9"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:EUWAWH"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("Euwallacea fornicatus sensu stricto"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_PATH), is("Animalia | Arthropoda | Hexapoda | Insecta | Coleoptera | Curculionidae | Scolytinae | Euwallacea | Euwallacea fornicatus sensu stricto"));
+
+        Map<String, String> last = foundInteractions.get(foundInteractions.size() - 1);
+        assertThat(last.get(TaxonUtil.SOURCE_TAXON_NAME), is(nullValue()));
+        assertThat(last.get(TaxonUtil.SOURCE_TAXON_ID), is("EPPO:MYNLA"));
+        assertThat(last.get(TaxonUtil.SOURCE_TAXON_PATH), is(nullValue()));
+        assertThat(last.get(INTERACTION_TYPE_NAME), is("Host"));
+        assertThat(last.get(INTERACTION_TYPE_ID), is("9"));
+        assertThat(last.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:EUWAWH"));
+        assertThat(last.get(TaxonUtil.TARGET_TAXON_NAME), is("Euwallacea fornicatus sensu stricto"));
+        assertThat(last.get(TaxonUtil.TARGET_TAXON_PATH), is("Animalia | Arthropoda | Hexapoda | Insecta | Coleoptera | Curculionidae | Scolytinae | Euwallacea | Euwallacea fornicatus sensu stricto"));
+    }
 
     @Test
     public void parsePests() throws IOException, StudyImporterException {
