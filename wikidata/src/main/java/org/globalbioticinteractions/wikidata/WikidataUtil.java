@@ -48,6 +48,7 @@ public final class WikidataUtil {
         put(TaxonomyProvider.PLAZI, "P1992");
         put(TaxonomyProvider.CATALOGUE_OF_LIFE, "P10585");
         put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE, "P7715");
+        put(TaxonomyProvider.EPPO, "P3031");
     }};
     public static final Map<String, TaxonomyProvider> WIKIDATA_TO_PROVIDER = new TreeMap<String, TaxonomyProvider>() {{
         put("P9157", TaxonomyProvider.OPEN_TREE_OF_LIFE);
@@ -67,6 +68,7 @@ public final class WikidataUtil {
         put("P1992", TaxonomyProvider.PLAZI);
         put("P7715", TaxonomyProvider.WORLD_OF_FLORA_ONLINE);
         put("P10585", TaxonomyProvider.CATALOGUE_OF_LIFE);
+        put("P3031", TaxonomyProvider.EPPO);
     }};
     public static final Pattern PATTERN_WD_PROPERTY_ID = Pattern.compile("http://www.wikidata.org/prop/(direct/){0,1}(?<propertyId>P[0-9]+)", Pattern.DOTALL);
 
