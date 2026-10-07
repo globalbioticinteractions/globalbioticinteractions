@@ -1,0 +1,10 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/dcb3e2ec1284eb949bf5e384111693a3d47d2d350d46c212c7b7bc0c8f6cc53c",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/CEYDE/pests",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "eppocode": "POMAIN",
+  "prefname": "Pomacea maculata",
+  "class_id": "6",
+  "class_label": "Wild/Weed",
+  "bibref": "* Baker P, Zimmanck F, Baker SM (2010) Feeding rates of an introduced freshwater gastropod Pomacea insularum on native and nonindigenous aquatic plants in Florida. Journal of Molluscan Studies 76(2), 138-143.\n\n* Burlakova LE, Karatayev AY, Padilla DK, Cartwright LD, Hollas DN (2009) Wetland restoration  and invasive species: Apple snail (Pomacea insularum) feeding on native and invasive aquatic plants. Restoration Ecology 17, 433-440."
+}

@@ -1,0 +1,10 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/3807010fe231179d2a5cb85830f276f43e056008af5dd83d84b6e8a82a75ac92",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/CUNNSP/pests",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "eppocode": "EUWAWH",
+  "prefname": "Euwallacea fornicatus sensu stricto",
+  "class_id": "9",
+  "class_label": "Host",
+  "bibref": "* Smith SM, Gomez DF, Beaver RA, Hulcr J, Cognato AI (2019) Reassessment of the species in the Euwallacea fornicatus (Coleoptera: Curculionidae: Scolytinae) complex after the rediscovery of the ‘lost’ type specimen. Insects 10, 261. https://doi.org/10.3390/insects10090261"
+}

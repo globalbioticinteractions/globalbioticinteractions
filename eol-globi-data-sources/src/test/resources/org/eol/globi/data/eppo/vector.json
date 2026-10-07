@@ -1,0 +1,10 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/4c3998258c26e50a0156bb7b99310db7d0501feab0de16cbc0b65f9d998157fc",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/CERAFA/vectors",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "eppocode": "ARRHMI",
+  "prefname": "Arrhenodes minutus",
+  "bibref": "* Buchanan WD (1957) Brentids may be vectors of the oak wilt disease. Plant Disease Reporter 41, 707-708.",
+  "vectorclass_id": "P",
+  "vectorclass_label": "Potential vector"
+}

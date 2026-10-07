@@ -1,0 +1,13 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/822d3291e482b769ba2357eb7622b4b12e7fe2e7456cffee5220f28236fe4488",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/ABSICO/overview",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "eppocode": "ABSICO",
+  "datecreate": "1997-06-26 00:00:00",
+  "lastupdate": "1997-06-26 00:00:00",
+  "infos": "null",
+  "replacedby": "null",
+  "prefname": "Lichtheimia corymbifera",
+  "is_active": "true",
+  "datatype": "GAF"
+}

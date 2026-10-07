@@ -1,0 +1,11 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/5040e32197e39dc38b716966b45cd232bcc1dca4ef7f12e100dbf58c9f347e53",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/ABSICO/names",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "name_id": "579977",
+  "lang_iso": "la",
+  "country_iso": "null",
+  "fullname": "Lichtheimia corymbifera",
+  "preferred": "true",
+  "author": "(Cohn) Vuillemin"
+}

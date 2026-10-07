@@ -1,0 +1,8 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/748f107a8d4d6e084d683e90b3585d79e4b8e841b4dde675a5728a3c4211911a",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/ABAGAL/bca",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "eppocode": "COTEMA",
+  "prefname": "Cotesia marginiventris (as Noctuidae)",
+  "bibref": "* EPPO (online) Appendix 1 - Commercially or officially used biological control agents. EPPO Standard PM 6/3 (5) Biological control agents safely used in the EPPO region. https://gd.eppo.int/standards/PM6/"
+}
