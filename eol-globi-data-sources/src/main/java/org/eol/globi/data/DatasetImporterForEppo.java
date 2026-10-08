@@ -62,7 +62,7 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
                 LineIterator lineIterator = getLineIterator(forInteractionClaims);
                 while (lineIterator.hasNext()) {
                     String line = lineIterator.nextLine();
-                    parseInteractionClaim(new ObjectMapper().readTree(line), new InteractionListener() {
+                    parseInteractionClaim(dataset, new ObjectMapper().readTree(line), new InteractionListener() {
                         @Override
                         public void on(Map<String, String> interaction) throws StudyImporterException {
                             final TreeMap<String, String> enrichedTaxonMap = new TreeMap<>();
@@ -156,7 +156,7 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
         return StringUtils.equals(currentFocalTaxonId, taxonId);
     }
 
-    public static void parseInteractionClaim(JsonNode record, InteractionListener listener) throws StudyImporterException {
+    public static void parseInteractionClaim(Dataset dataset, JsonNode record, InteractionListener listener) throws StudyImporterException {
         String recordType = getRecordType(record);
         String sourceTaxonId = getFocalTaxon(record);
 
@@ -168,14 +168,31 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
             interactionTypeId = record.get("class_id").asText("");
             interactionTypeName = record.get("class_label").asText("");
         } else if ("bca".equals(recordType)) {
-            interactionTypeId = InteractType.KILLS.getIRI();
-            interactionTypeName = InteractType.KILLS.getLabel();
+            interactionTypeId = InteractType.KILLED_BY.getIRI();
+            interactionTypeName = InteractType.KILLED_BY.getLabel();
         } else if ("vectors".equals(recordType)) {
             interactionTypeId = record.get("vectorclass_id").asText("");
             interactionTypeName = record.get("vectorclass_label").asText("");
         }
         if (likelyInteractionClaim(recordType)) {
-            emitLikelyInteractionClaims(record, listener, sourceTaxonId, interactionTypeName, interactionTypeId, targetTaxonId, targetTaxonName, recordType);
+            JsonNode referenceCitations = record.get("bibref");
+            String text = referenceCitations.asText();
+            String[] references = StringUtils.split(StringUtils.replace(text, "*", ""), "\n");
+
+            for (String reference : references) {
+                Map<String, String> interaction = new TreeMap<>();
+                interaction.put(TaxonUtil.SOURCE_TAXON_ID, TaxonomyProvider.EPPO.getIdPrefix() + sourceTaxonId);
+                interaction.put(INTERACTION_TYPE_NAME, interactionTypeName);
+                interaction.put(INTERACTION_TYPE_ID, interactionTypeId);
+                interaction.put(TaxonUtil.TARGET_TAXON_ID, TaxonomyProvider.EPPO.getIdPrefix() + targetTaxonId.asText());
+                interaction.put(TaxonUtil.TARGET_TAXON_NAME, targetTaxonName.asText());
+                String trimmedReference = StringUtils.trim(reference);
+                interaction.put(DatasetImporterForTSV.REFERENCE_CITATION, trimmedReference);
+                interaction.put(DatasetImporterForTSV.REFERENCE_ID, dataset.getNamespace() + trimmedReference);
+                interaction.put(DatasetImporterForTSV.REFERENCE_URL, getHtmlUrl(record));
+                interaction.put("recordType", recordType);
+                listener.on(interaction);
+            }
         }
     }
 
@@ -189,7 +206,8 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
     }
 
     private static Matcher getApiEndpointMatcher(JsonNode record) {
-        String url = getSourceUrl(record);
+        JsonNode revisionOf = record.get("http://www.w3.org/ns/prov#wasRevisionOf");
+        String url = revisionOf == null ? null : revisionOf.asText();
         return url == null ? null : EPPO_WEB_API_ENDPOINT_PATTERN.matcher(url);
     }
 
@@ -202,31 +220,19 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
         return recordType;
     }
 
-    private static String getSourceUrl(JsonNode record) {
-        JsonNode revisionOf = record.get("http://www.w3.org/ns/prov#wasRevisionOf");
-        return revisionOf == null ? null : revisionOf.asText();
+    private static String getHtmlUrl(JsonNode record) {
+        Matcher matcher = getApiEndpointMatcher(record);
+        String htmlUrl = null;
+        if (matcher != null && matcher.matches()) {
+            String recordType = matcher.group("recordType");
+            String taxonId = matcher.group("taxonId");
+            htmlUrl = "https://gd.eppo.int/taxon/" + taxonId + "/" + recordType;
+        }
+        return htmlUrl;
     }
 
     private static boolean likelyInteractionClaim(String recordType) {
         return Arrays.asList("pests", "bca", "vectors").contains(recordType);
-    }
-
-    private static void emitLikelyInteractionClaims(JsonNode record, InteractionListener listener, String sourceTaxonId, String interactionTypeName, String interactionTypeId, JsonNode targetTaxonId, JsonNode targetTaxonName, String recordType) throws StudyImporterException {
-        JsonNode referenceCitations = record.get("bibref");
-        String text = referenceCitations.asText();
-        String[] references = StringUtils.split(StringUtils.replace(text, "*", ""), "\n");
-
-        for (String reference : references) {
-            Map<String, String> interaction = new TreeMap<>();
-            interaction.put(TaxonUtil.SOURCE_TAXON_ID, TaxonomyProvider.EPPO.getIdPrefix() + sourceTaxonId);
-            interaction.put(INTERACTION_TYPE_NAME, interactionTypeName);
-            interaction.put(INTERACTION_TYPE_ID, interactionTypeId);
-            interaction.put(TaxonUtil.TARGET_TAXON_ID, TaxonomyProvider.EPPO.getIdPrefix() + targetTaxonId.asText());
-            interaction.put(TaxonUtil.TARGET_TAXON_NAME, targetTaxonName.asText());
-            interaction.put(DatasetImporterForTSV.REFERENCE_CITATION, StringUtils.trim(reference));
-            interaction.put("recordType", recordType);
-            listener.on(interaction);
-        }
     }
 
 }

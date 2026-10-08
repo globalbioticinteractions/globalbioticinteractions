@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.ResourceService;
@@ -23,10 +22,12 @@ import java.util.function.Consumer;
 
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class DatasetImporterForEppoTest {
@@ -69,6 +70,9 @@ public class DatasetImporterForEppoTest {
         assertThat(first.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:EUWAWH"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("Euwallacea fornicatus sensu stricto"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_PATH), is("Animalia | Arthropoda | Hexapoda | Insecta | Coleoptera | Curculionidae | Scolytinae | Euwallacea | Euwallacea fornicatus sensu stricto"));
+        assertThat(first.get(REFERENCE_CITATION), is("Smith SM, Gomez DF, Beaver RA, Hulcr J, Cognato AI (2019) Reassessment of the species in the Euwallacea fornicatus (Coleoptera: Curculionidae: Scolytinae) complex after the rediscovery of the ‘lost’ type specimen. Insects 10, 261. https://doi.org/10.3390/insects10090261"));
+        assertThat(first.get(REFERENCE_ID), is("foo/barSmith SM, Gomez DF, Beaver RA, Hulcr J, Cognato AI (2019) Reassessment of the species in the Euwallacea fornicatus (Coleoptera: Curculionidae: Scolytinae) complex after the rediscovery of the ‘lost’ type specimen. Insects 10, 261. https://doi.org/10.3390/insects10090261"));
+        assertThat(first.get(REFERENCE_URL), is("https://gd.eppo.int/taxon/CUNNSP/pests"));
 
         Map<String, String> last = foundInteractions.get(foundInteractions.size() - 1);
         assertThat(last.get(TaxonUtil.SOURCE_TAXON_NAME), is(nullValue()));
@@ -94,7 +98,11 @@ public class DatasetImporterForEppoTest {
         final InputStream inputStream = DatasetImporterForEppoTest.class.getResourceAsStream("eppo/pest.json");
         final JsonNode record = new ObjectMapper().readTree(inputStream);
 
-        DatasetImporterForEppo.parseInteractionClaim(record, listener);
+        DatasetImporterForEppo.parseInteractionClaim(
+                createDataset(),
+                record,
+                listener
+        );
 
         assertThat(received.size(), is(1));
         Map<String, String> first = received.get(0);
@@ -104,6 +112,10 @@ public class DatasetImporterForEppoTest {
         assertThat(first.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:EUWAWH"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("Euwallacea fornicatus sensu stricto"));
         assertThat(first.get(DatasetImporterForTSV.REFERENCE_CITATION), is("Smith SM, Gomez DF, Beaver RA, Hulcr J, Cognato AI (2019) Reassessment of the species in the Euwallacea fornicatus (Coleoptera: Curculionidae: Scolytinae) complex after the rediscovery of the ‘lost’ type specimen. Insects 10, 261. https://doi.org/10.3390/insects10090261"));
+    }
+
+    private static DatasetImpl createDataset() {
+        return new DatasetImpl("foo/bar", null, null);
     }
 
     @Test
@@ -152,13 +164,13 @@ public class DatasetImporterForEppoTest {
                 .class.getResourceAsStream("eppo/bca.json");
         final JsonNode record = new ObjectMapper().readTree(inputStream);
 
-        DatasetImporterForEppo.parseInteractionClaim(record, listener);
+        DatasetImporterForEppo.parseInteractionClaim(createDataset(), record, listener);
 
         assertThat(received.size(), is(1));
         Map<String, String> first = received.get(0);
         assertThat(first.get(TaxonUtil.SOURCE_TAXON_ID), is("EPPO:ABAGAL"));
-        assertThat(first.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002626"));
-        assertThat(first.get(INTERACTION_TYPE_NAME), is("kills"));
+        assertThat(first.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002627"));
+        assertThat(first.get(INTERACTION_TYPE_NAME), is("killedBy"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:COTEMA"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("Cotesia marginiventris (as Noctuidae)"));
         assertThat(first.get(DatasetImporterForTSV.REFERENCE_CITATION), is("EPPO (online) Appendix 1 - Commercially or officially used biological control agents. EPPO Standard PM 6/3 (5) Biological control agents safely used in the EPPO region. https://gd.eppo.int/standards/PM6/"));
@@ -178,7 +190,7 @@ public class DatasetImporterForEppoTest {
                 .class.getResourceAsStream("eppo/vector.json");
         final JsonNode record = new ObjectMapper().readTree(inputStream);
 
-        DatasetImporterForEppo.parseInteractionClaim(record, listener);
+        DatasetImporterForEppo.parseInteractionClaim(createDataset(), record, listener);
 
         assertThat(received.size(), is(1));
         Map<String, String> first = received.get(0);
@@ -203,7 +215,7 @@ public class DatasetImporterForEppoTest {
         final InputStream inputStream = DatasetImporterForEppoTest.class.getResourceAsStream("eppo/pest-multiple-refs.json");
         final JsonNode record = new ObjectMapper().readTree(inputStream);
 
-        DatasetImporterForEppo.parseInteractionClaim(record, listener);
+        DatasetImporterForEppo.parseInteractionClaim(createDataset(), record, listener);
 
         assertThat(received.size(), is(2));
         Map<String, String> first = received.get(0);
