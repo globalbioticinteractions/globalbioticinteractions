@@ -59,7 +59,7 @@ public class DatasetImporterForEppoTest {
 
         datasetImporterForEppo.importStudy();
 
-        assertThat(foundInteractions.size(), is(1462));
+        assertThat(foundInteractions.size(), is(739));
 
         Map<String, String> first = foundInteractions.get(0);
         assertThat(first.get(TaxonUtil.SOURCE_TAXON_ID), is("EPPO:CUNNSP"));
@@ -228,6 +228,31 @@ public class DatasetImporterForEppoTest {
 
         Map<String, String> second = received.get(1);
         assertThat(second.get(DatasetImporterForTSV.REFERENCE_CITATION), is("Burlakova LE, Karatayev AY, Padilla DK, Cartwright LD, Hollas DN (2009) Wetland restoration  and invasive species: Apple snail (Pomacea insularum) feeding on native and invasive aquatic plants. Restoration Ecology 17, 433-440."));
+    }
+
+    @Test
+    public void parsePestsRecordWithInternetReferenceAndComment() throws IOException, StudyImporterException {
+        List<Map<String, String>> received = new ArrayList<>();
+        InteractionListener listener = new InteractionListener() {
+
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                received.add(interaction);
+            }
+        };
+        final InputStream inputStream = DatasetImporterForEppoTest.class.getResourceAsStream("eppo/pest-with-reference-internet.json");
+        final JsonNode record = new ObjectMapper().readTree(inputStream);
+
+        DatasetImporterForEppo.parseInteractionClaim(createDataset(), record, listener);
+
+        assertThat(received.size(), is(1));
+        Map<String, String> first = received.get(0);
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_ID), is("EPPO:ACASI"));
+        assertThat(first.get(INTERACTION_TYPE_ID), is("9"));
+        assertThat(first.get(INTERACTION_TYPE_NAME), is("Host"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:CERTCO"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("Ceratitis cosyra"));
+        assertThat(first.get(DatasetImporterForTSV.REFERENCE_CITATION), is("True Fruit Flies (Diptera: Tephritidae) of the Afrotropical Region. Ceratitis anonae. Specimens http://projects.bebif.be/fruitfly/taxoninfo.html?id=26"));
     }
 
 

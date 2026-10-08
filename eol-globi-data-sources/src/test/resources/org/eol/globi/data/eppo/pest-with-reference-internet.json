@@ -1,0 +1,10 @@
+{
+  "http://www.w3.org/ns/prov#wasDerivedFrom": "hash://sha256/f365b0c460f4884cd4952b771d53ace39bdf21454dc6a29b46a72a2a1d2054f2",
+  "http://www.w3.org/ns/prov#wasRevisionOf": "https://api.eppo.int/gd/v2/taxons/taxon/ACASI/pests",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "application/json",
+  "eppocode": "CERTCO",
+  "prefname": "Ceratitis cosyra",
+  "class_id": "9",
+  "class_label": "Host",
+  "bibref": "* INTERNET\nTrue Fruit Flies (Diptera: Tephritidae) of the Afrotropical Region. Ceratitis anonae. Specimens http://projects.bebif.be/fruitfly/taxoninfo.html?id=26\n------- as Acacia sieberiana."
+}

@@ -24,12 +24,14 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
@@ -179,16 +181,22 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
             String text = referenceCitations.asText();
             String[] references = StringUtils.split(StringUtils.replace(text, "*", ""), "\n");
 
-            for (String reference : references) {
+            Iterator<String> refs = Stream.of(references)
+                    .map(StringUtils::trim)
+                    .filter(r -> !StringUtils.startsWith(r, "INTERNET"))
+                    .filter(r -> !StringUtils.startsWith(r, "-------"))
+                    .iterator();
+
+            while (refs.hasNext()) {
+                String reference = refs.next();
                 Map<String, String> interaction = new TreeMap<>();
                 interaction.put(TaxonUtil.SOURCE_TAXON_ID, TaxonomyProvider.EPPO.getIdPrefix() + sourceTaxonId);
                 interaction.put(INTERACTION_TYPE_NAME, interactionTypeName);
                 interaction.put(INTERACTION_TYPE_ID, interactionTypeId);
                 interaction.put(TaxonUtil.TARGET_TAXON_ID, TaxonomyProvider.EPPO.getIdPrefix() + targetTaxonId.asText());
                 interaction.put(TaxonUtil.TARGET_TAXON_NAME, targetTaxonName.asText());
-                String trimmedReference = StringUtils.trim(reference);
-                interaction.put(DatasetImporterForTSV.REFERENCE_CITATION, trimmedReference);
-                interaction.put(DatasetImporterForTSV.REFERENCE_ID, dataset.getNamespace() + trimmedReference);
+                interaction.put(DatasetImporterForTSV.REFERENCE_CITATION, reference);
+                interaction.put(DatasetImporterForTSV.REFERENCE_ID, dataset.getNamespace() + reference);
                 interaction.put(DatasetImporterForTSV.REFERENCE_URL, getHtmlUrl(record));
                 interaction.put("recordType", recordType);
                 listener.on(interaction);
