@@ -220,10 +220,10 @@ public class DatasetImporterForMetaTableTest {
 
         Map<String, String> first = links.get(0);
 
-        assertThat(first.get("sourceTaxonId"), is("https://gd.eppo.int/taxon/PHYSCC"));
+        assertThat(first.get("sourceTaxonId"), is("EPPO:PHYSCC"));
         assertThat(first.get("sourceTaxonName"), is("Phyllosticta colocasiicola (as Aroideae)"));
         assertThat(first.get("interactionTypeName"), is("Host"));
-        assertThat(first.get("targetTaxonId"), is("https://gd.eppo.int/taxon/AAUVS"));
+        assertThat(first.get("targetTaxonId"), is("EPPO:AAUVS"));
         assertThat(first.get("targetTaxonName"), is("Arisarum simorrhinum"));
     }
 
