@@ -74,6 +74,13 @@ public class SchemaController {
         return "csv".equals(getRequestType(request)) ? csvFields() : jsonFields();
     }
 
+    @RequestMapping(value = "/observationFields", method = RequestMethod.GET)
+    @ResponseBody
+    public String getObservationFields(HttpServletRequest request) throws IOException {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1203
+        return getInteractionFields(request);
+    }
+
     protected String jsonFields() {
         List<String> fields = new ArrayList<String>();
         for (ResultField resultField : ResultField.values()) {

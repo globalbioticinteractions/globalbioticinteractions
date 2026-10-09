@@ -1,5 +1,9 @@
 package org.eol.globi.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.util.HttpUtil;
+import org.hamcrest.core.IsNot;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -9,11 +13,31 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.Mockito.when;
 
-public class SchemaControllerTestIT {
+public class SchemaControllerTestIT extends ITBase {
+
+    @Test
+    public void interactionTypeFields() throws IOException {
+        String uri = getURLPrefix() + "interactionFields";
+        String response = HttpUtil.getRemoteJson(uri);
+        JsonNode jsonNode = new ObjectMapper().readTree(response);
+        assertThat(jsonNode.get("latitude"), is(notNullValue()));
+    }
+
+    @Test
+    public void observationFields() throws IOException {
+        String uri = getURLPrefix() + "observationFields";
+        String response = HttpUtil.getRemoteJson(uri);
+        JsonNode jsonNode = new ObjectMapper().readTree(response);
+        assertThat(jsonNode.get("latitude"), is(notNullValue()));
+    }
+
 
     @Test
     public void findSupportedInteractionTypes() throws IOException {
