@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
@@ -24,18 +26,25 @@ public class SchemaControllerTestIT extends ITBase {
 
     @Test
     public void interactionTypeFields() throws IOException {
-        String uri = getURLPrefix() + "interactionFields";
-        String response = HttpUtil.getRemoteJson(uri);
+        String response = HttpUtil.getRemoteJson(getURLPrefix() + "interactionFields");
+        assertSomeJsonResults(response);
+    }
+
+    private static void assertSomeJsonResults(String response) throws JsonProcessingException {
         JsonNode jsonNode = new ObjectMapper().readTree(response);
         assertThat(jsonNode.get("latitude"), is(notNullValue()));
     }
 
     @Test
-    public void observationFields() throws IOException {
-        String uri = getURLPrefix() + "observationFields";
-        String response = HttpUtil.getRemoteJson(uri);
-        JsonNode jsonNode = new ObjectMapper().readTree(response);
-        assertThat(jsonNode.get("latitude"), is(notNullValue()));
+    public void interactionFieldsDotCsv() throws IOException {
+        String response = HttpUtil.getContent(getURLPrefix() + "interactionFields.csv");
+        assertThat(response, startsWith("name,description\nlatitude,"));
+    }
+
+    @Test
+    public void interactionFieldsDotJson() throws IOException {
+        String response = HttpUtil.getContent(getURLPrefix() + "interactionFields.json");
+        assertSomeJsonResults(response);
     }
 
 
