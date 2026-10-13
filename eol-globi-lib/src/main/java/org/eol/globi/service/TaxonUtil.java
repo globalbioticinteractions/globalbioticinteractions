@@ -164,12 +164,16 @@ public class TaxonUtil {
             TARGET_TAXON_KINGDOM);
     public static final String SOURCE_TAXON_NAME = "sourceTaxonName";
     public static final String SOURCE_TAXON_ID = "sourceTaxonId";
+    public static final String SOURCE_TAXON_AUTHORSHIP = "sourceTaxonAuthorship";
     public static final String SOURCE_TAXON_PATH = "sourceTaxonPath";
     public static final String SOURCE_TAXON_PATH_NAMES = "sourceTaxonPathNames";
+    public static final String SOURCE_TAXON_PATH_AUTHORSHIPS = "sourceTaxonPathNameAuthorships";
     public static final String TARGET_TAXON_PATH = "targetTaxonPath";
     public static final String TARGET_TAXON_PATH_NAMES = "targetTaxonPathNames";
+    public static final String TARGET_TAXON_PATH_AUTHORSHIPS = "targetTaxonPathNameAuthorships";
     public static final String TARGET_TAXON_ID = "targetTaxonId";
     public static final String TARGET_TAXON_NAME = "targetTaxonName";
+    public static final String TARGET_TAXON_AUTHORSHIP = "targetTaxonAuthorship";
 
     public static final List<String> TAXON_RANK_PROPERTY_NAMES = new ArrayList<String>() {{
         addAll(SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS);
@@ -195,8 +199,8 @@ public class TaxonUtil {
                     "(Common|" + join(RANKS_SUPPORTED, "|") + "){1}" +
                     "(Name|Id){0,1}"
     );
-    private static final String SOURCE_TAXON_COMMON_NAME = SOURCE_TAXON + "CommonName";
-    private static final String TARGET_TAXON_COMMON_NAME = TARGET_TAXON + "CommonName";
+    public static final String SOURCE_TAXON_COMMON_NAME = SOURCE_TAXON + "CommonName";
+    public static final String TARGET_TAXON_COMMON_NAME = TARGET_TAXON + "CommonName";
 
     public static Map<String, String> taxonToMap(Taxon taxon) {
         Map<String, String> properties = new HashMap<>();

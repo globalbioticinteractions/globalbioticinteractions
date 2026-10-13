@@ -64,12 +64,22 @@ public class DatasetImporterForEppoTest {
         Map<String, String> first = foundInteractions.get(0);
         assertThat(first.get(TaxonUtil.SOURCE_TAXON_ID), is("EPPO:CUNNSP"));
         assertThat(first.get(TaxonUtil.SOURCE_TAXON_NAME), is("Cunninghamella sp."));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_AUTHORSHIP), is(nullValue()));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_COMMON_NAME), is("Cunninghamella sp. @la"));
         assertThat(first.get(TaxonUtil.SOURCE_TAXON_PATH), is("Fungi | Zygomycota | Mucoromycotina | Mucorales | Cunninghamellaceae | Cunninghamella | Cunninghamella sp."));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_PATH_IDS), is("EPPO:1FUNGK | EPPO:1ZYGOP | EPPO:1MUCOC | EPPO:1MUCOO | EPPO:1CUNNF | EPPO:1CUNNG | EPPO:CUNNSP"));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_PATH_AUTHORSHIPS), is(" |  |  |  |  |  | "));
         assertThat(first.get(INTERACTION_TYPE_NAME), is("Host"));
         assertThat(first.get(INTERACTION_TYPE_ID), is("9"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_ID), is("EPPO:EUWAWH"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("Euwallacea fornicatus sensu stricto"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_AUTHORSHIP), is("(Eichhoff)"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_COMMON_NAME), is("Euwallacea fornicatus sensu stricto @la | polyphagous shot-hole borer @en | Euwallacea whitfordiodendrus @la | Xyleborus fornicatus @la | Xyleborus tapatapaoensis @la"));
         assertThat(first.get(TaxonUtil.TARGET_TAXON_PATH), is("Animalia | Arthropoda | Hexapoda | Insecta | Coleoptera | Curculionidae | Scolytinae | Euwallacea | Euwallacea fornicatus sensu stricto"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_PATH_IDS), is("EPPO:1ANIMK | EPPO:1ARTHP | EPPO:1HEXAQ | EPPO:1INSEC | EPPO:1COLEO | EPPO:1CURCF | EPPO:1SCOLS | EPPO:1EUWAG | EPPO:EUWAWH"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_PATH_NAMES), is("kingdom | phylum | subphylum | class | order | family | subfamily | genus | species"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_PATH_AUTHORSHIPS), is(" |  |  |  |  |  |  | Hopkins | (Eichhoff)"));
         assertThat(first.get(REFERENCE_CITATION), is("Smith SM, Gomez DF, Beaver RA, Hulcr J, Cognato AI (2019) Reassessment of the species in the Euwallacea fornicatus (Coleoptera: Curculionidae: Scolytinae) complex after the rediscovery of the ‘lost’ type specimen. Insects 10, 261. https://doi.org/10.3390/insects10090261"));
         assertThat(first.get(REFERENCE_ID), is("foo/barSmith SM, Gomez DF, Beaver RA, Hulcr J, Cognato AI (2019) Reassessment of the species in the Euwallacea fornicatus (Coleoptera: Curculionidae: Scolytinae) complex after the rediscovery of the ‘lost’ type specimen. Insects 10, 261. https://doi.org/10.3390/insects10090261"));
         assertThat(first.get(REFERENCE_URL), is("https://gd.eppo.int/taxon/CUNNSP/pests"));
@@ -130,7 +140,7 @@ public class DatasetImporterForEppoTest {
         };
         final InputStream inputStream = DatasetImporterForEppoTest.class.getResourceAsStream("eppo/taxonomy.json");
         assertNotNull(inputStream);
-        DatasetImporterForEppo.parseTaxonomyOnly(inputStream, listener);
+        DatasetImporterForEppo.parseNamesAndTaxonomyOnly(inputStream, listener);
         assertThat(taxa.size(), is(2));
 
         Taxon first = taxa.get(0);

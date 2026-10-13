@@ -39,7 +39,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 public class DatasetImporterForEppo extends DatasetImporterWithListener {
 
     public static final Pattern EPPO_WEB_API_ENDPOINT_PATTERN = Pattern
-            .compile(".*/taxons/taxon/(?<taxonId>[A-Z]+)/(?<recordType>[a-z]+)$");
+            .compile(".*/taxons/taxon/(?<taxonId>[A-Z0-9]+)/(?<recordType>[a-z]+)$");
 
     public DatasetImporterForEppo(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -51,13 +51,19 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
         Dataset dataset = getDataset();
         JsonNode jsonNode = dataset.getConfig().get("url");
         if (jsonNode != null && jsonNode.isTextual()) {
-            BTreeMap<String, Map<String, String>> bigMap = MapDBUtil.createBigMap(getWorkDir());
+            BTreeMap<String, Map<String, String>> taxonIdMap = MapDBUtil.createBigMap(getWorkDir());
+            BTreeMap<String, String> taxonIdToAuthorityMap = MapDBUtil.createBigMap(getWorkDir());
             String url = jsonNode.asText();
             try {
                 InputStream forTaxonomy = dataset.retrieve(URI.create(url));
-                parseTaxonomyOnly(forTaxonomy,
-                        (Consumer<Taxon>) taxon ->
-                                bigMap.putIfAbsent(taxon.getExternalId(), new TreeMap<>(TaxonUtil.taxonToMap(taxon)))
+                parseNamesAndTaxonomyOnly(forTaxonomy,
+                        (Consumer<Taxon>) taxon -> {
+                            taxonIdMap.putIfAbsent(taxon.getExternalId(), new TreeMap<>(TaxonUtil.taxonToMap(taxon)));
+                            String authorship = taxon.getAuthorship();
+                            if (StringUtils.isNotBlank(authorship)) {
+                                taxonIdToAuthorityMap.putIfAbsent(taxon.getExternalId(), authorship);
+                            }
+                        }
                 );
 
                 InputStream forInteractionClaims = dataset.retrieve(URI.create(url));
@@ -69,24 +75,42 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
                         public void on(Map<String, String> interaction) throws StudyImporterException {
                             final TreeMap<String, String> enrichedTaxonMap = new TreeMap<>();
                             String sourceTaxonId = interaction.get(TaxonUtil.SOURCE_TAXON_ID);
-                            Map<String, String> taxonMap = bigMap.get(sourceTaxonId);
+                            Map<String, String> taxonMap = taxonIdMap.get(sourceTaxonId);
                             if (sourceTaxonId != null && taxonMap != null) {
                                 enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_NAME, taxonMap.get(PropertyAndValueDictionary.NAME));
                                 enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_ID, taxonMap.get(PropertyAndValueDictionary.EXTERNAL_ID));
                                 enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_RANK, taxonMap.get(PropertyAndValueDictionary.RANK));
+                                enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_AUTHORSHIP, taxonMap.get(PropertyAndValueDictionary.AUTHORSHIP));
                                 enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_PATH, taxonMap.get(PropertyAndValueDictionary.PATH));
-                                enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_PATH_IDS, taxonMap.get(PropertyAndValueDictionary.PATH_IDS));
+                                String pathIds = populateAuthorships(
+                                        taxonMap,
+                                        enrichedTaxonMap,
+                                        TaxonUtil.SOURCE_TAXON_PATH_AUTHORSHIPS,
+                                        taxonIdToAuthorityMap
+                                );
+
+                                enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_PATH_IDS, pathIds);
                                 enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, taxonMap.get(PropertyAndValueDictionary.PATH_NAMES));
+                                enrichedTaxonMap.put(TaxonUtil.SOURCE_TAXON_COMMON_NAME, taxonMap.get(PropertyAndValueDictionary.COMMON_NAMES));
                             }
                             String targetTaxonId = interaction.get(TaxonUtil.TARGET_TAXON_ID);
-                            taxonMap = bigMap.get(targetTaxonId);
+                            taxonMap = taxonIdMap.get(targetTaxonId);
                             if (targetTaxonId != null && taxonMap != null) {
                                 enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_NAME, taxonMap.get(PropertyAndValueDictionary.NAME));
                                 enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_ID, taxonMap.get(PropertyAndValueDictionary.EXTERNAL_ID));
                                 enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_RANK, taxonMap.get(PropertyAndValueDictionary.RANK));
+                                enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_AUTHORSHIP, taxonMap.get(PropertyAndValueDictionary.AUTHORSHIP));
                                 enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_PATH, taxonMap.get(PropertyAndValueDictionary.PATH));
                                 enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_PATH_IDS, taxonMap.get(PropertyAndValueDictionary.PATH_IDS));
                                 enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_PATH_NAMES, taxonMap.get(PropertyAndValueDictionary.PATH_NAMES));
+                                populateAuthorships(
+                                        taxonMap,
+                                        enrichedTaxonMap,
+                                        TaxonUtil.TARGET_TAXON_PATH_AUTHORSHIPS,
+                                        taxonIdToAuthorityMap
+                                );
+
+                                enrichedTaxonMap.put(TaxonUtil.TARGET_TAXON_COMMON_NAME, taxonMap.get(PropertyAndValueDictionary.COMMON_NAMES));
                             }
                             getInteractionListener().on(new TreeMap<String, String>(interaction) {{
                                 putAll(enrichedTaxonMap);
@@ -101,37 +125,80 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
         }
     }
 
-    static void parseTaxonomyOnly(InputStream inputStream, Consumer<Taxon> listener) throws JsonProcessingException {
+    private static String populateAuthorships(Map<String, String> taxonMap, TreeMap<String, String> enrichedTaxonMap, String sourceTaxonPathNameAuthorships, BTreeMap<String, String> taxonIdToAuthorityMap) {
+        String pathIds = taxonMap.get(PropertyAndValueDictionary.PATH_IDS);
+        String nameAuthorships = generateAuthorshipPath(pathIds, taxonIdToAuthorityMap);
+        enrichedTaxonMap.put(sourceTaxonPathNameAuthorships, nameAuthorships);
+        return pathIds;
+    }
+
+    private static String generateAuthorshipPath(String pathIds, BTreeMap<String, String> taxonIdToAuthorityMap) {
+        String[] ids = StringUtils.splitByWholeSeparator(pathIds, CharsetConstant.SEPARATOR);
+        List<String> authorshipList = new ArrayList<String>();
+        for (String id : ids) {
+            String s = taxonIdToAuthorityMap.get(id);
+            authorshipList.add(StringUtils.defaultIfBlank(s, ""));
+        }
+        return StringUtils.join(authorshipList, CharsetConstant.SEPARATOR);
+    }
+
+    static void parseNamesAndTaxonomyOnly(InputStream inputStream, Consumer<Taxon> listener) throws JsonProcessingException {
         LineIterator lineIterator = getLineIterator(inputStream);
         String currentFocalTaxonId = null;
+        String currentAuthor = null;
         List<String> currentTaxonNames = new ArrayList<>();
+        List<String> currentTaxonCommonNames = new ArrayList<>();
         List<String> currentTaxonIds = new ArrayList<>();
         List<String> currentTaxonRanks = new ArrayList<>();
         while (lineIterator.hasNext()) {
-            final JsonNode record = new ObjectMapper().readTree(lineIterator.next());
+            String line = lineIterator.next();
+            final JsonNode record = new ObjectMapper().readTree(line);
             String recordType = getRecordType(record);
-            if ("taxonomy".equals(recordType) && record.has("type")) {
+            if (Arrays.asList("taxonomy", "names").contains(recordType)) {
                 String focalTaxonId = getFocalTaxon(record);
                 if (currentFocalTaxonId == null) {
                     currentFocalTaxonId = focalTaxonId;
                 } else if (!StringUtils.equals(currentFocalTaxonId, focalTaxonId)) {
-                    currentFocalTaxonId = nextTaxon(currentTaxonNames, currentTaxonIds, currentTaxonRanks, focalTaxonId);
+                    String currentFocalTaxonId1;
+                    currentTaxonNames.clear();
+                    currentTaxonIds.clear();
+                    currentTaxonRanks.clear();
+                    currentTaxonCommonNames.clear();
+                    currentAuthor = null;
+                    currentFocalTaxonId1 = focalTaxonId;
+                    currentFocalTaxonId = currentFocalTaxonId1;
                 }
-                String name = record.get("prefname").asText();
-                currentTaxonNames.add(name);
-                String taxonId = record.get("eppocode").asText();
-                currentTaxonIds.add(TaxonomyProvider.EPPO.getIdPrefix() + taxonId);
-                String rank = StringUtils.lowerCase(record.get("type").asText());
-                currentTaxonRanks.add(rank);
-                if (endOfHierarchyChain(currentFocalTaxonId, taxonId)) {
-                    TaxonImpl t = new TaxonImpl();
-                    t.setName(name);
-                    t.setRank(rank);
-                    t.setExternalId(TaxonomyProvider.EPPO.getIdPrefix() + taxonId);
-                    t.setPath(StringUtils.join(currentTaxonNames, CharsetConstant.SEPARATOR));
-                    t.setPathIds(StringUtils.join(currentTaxonIds, CharsetConstant.SEPARATOR));
-                    t.setPathNames(StringUtils.join(currentTaxonRanks, CharsetConstant.SEPARATOR));
-                    listener.accept(t);
+                if (record.has("type") && record.has("prefname")) {
+                    String name = record.get("prefname").asText();
+                    currentTaxonNames.add(name);
+                    String taxonId = record.get("eppocode").asText();
+                    currentTaxonIds.add(TaxonomyProvider.EPPO.getIdPrefix() + taxonId);
+                    String rank = StringUtils.lowerCase(record.get("type").asText());
+                    currentTaxonRanks.add(rank);
+                    if (endOfHierarchyChain(currentFocalTaxonId, taxonId)) {
+                        TaxonImpl t = new TaxonImpl();
+                        t.setName(name);
+                        t.setRank(rank);
+                        t.setExternalId(TaxonomyProvider.EPPO.getIdPrefix() + taxonId);
+                        t.setAuthorship(StringUtils.isBlank(currentAuthor) ? null : currentAuthor);
+                        t.setPath(StringUtils.join(currentTaxonNames, CharsetConstant.SEPARATOR));
+                        t.setPathIds(StringUtils.join(currentTaxonIds, CharsetConstant.SEPARATOR));
+                        t.setPathNames(StringUtils.join(currentTaxonRanks, CharsetConstant.SEPARATOR));
+                        t.setCommonNames(StringUtils.join(currentTaxonCommonNames, CharsetConstant.SEPARATOR));
+                        listener.accept(t);
+                    }
+                } else if (record.has("lang_iso") && record.has("fullname")) {
+                    String language = record.get("lang_iso").asText();
+                    String name = record.get("fullname").asText();
+                    currentTaxonCommonNames.add(name + " @" + language);
+                    if (record.hasNonNull("author")
+                            && record.has("preferred")
+                            && StringUtils.equals("true",record.get("preferred").asText())) {
+                        String text = record.get("author").asText();
+                        if (!StringUtils.equals(text, "null")) {
+                            currentAuthor = text;
+                        }
+                    }
                 }
             }
 
@@ -143,15 +210,6 @@ public class DatasetImporterForEppo extends DatasetImporterWithListener {
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8)
         ));
         return lineIterator;
-    }
-
-    private static String nextTaxon(List<String> currentTaxonNames, List<String> currentTaxonIds, List<String> currentTaxonRanks, String focalTaxonId) {
-        String currentFocalTaxonId;
-        currentTaxonNames.clear();
-        currentTaxonIds.clear();
-        currentTaxonRanks.clear();
-        currentFocalTaxonId = focalTaxonId;
-        return currentFocalTaxonId;
     }
 
     private static boolean endOfHierarchyChain(String currentFocalTaxonId, String taxonId) {
