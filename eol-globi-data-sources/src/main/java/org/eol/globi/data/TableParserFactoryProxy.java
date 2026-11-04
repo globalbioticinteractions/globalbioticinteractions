@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParse;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.globalbioticinteractions.dataset.Dataset;
 

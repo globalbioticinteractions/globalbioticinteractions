@@ -1,16 +1,14 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,18 +18,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForMetaTableIT {
 
     @Rule
@@ -79,7 +76,7 @@ public class DatasetImporterForMetaTableIT {
                     "seed disperser,direct observation,years,4,NULL,NULL,NULL,NULL,3051,Animal,Animal,Animal,Animal,animal,NULL,general animal,NULL,4176,Caesalpinioideae,Distemonanthus,benthamianus,NULL,Cameroon,NULL,NULL,yes,NULL,semideciduous tropical rain forest,\"Hardesty, B.D. and Parker, V.T.\",Community seed rain patterns and a comparison to adult community structure in a West African tropical forest,2003,Plant Ecology,164,1,49-64,Mary,8/15/12 9:35,,,\n" +
                     "ingestion,direct observation,years,2,NULL,NULL,NULL,during both summer and winter season,1462,Mammalia,Artiodactyla,Bovidae,Madoqua,kirkii,,NULL,Kirk's Dikdik,6897,Moraceae,Ficus,petersii,NULL,Namibia,South West Africa,NULL,yes,NULL,riverine thicket,\"Tinley, K.\",Dikdik; Madoqua kirkii; in south-west Africa: notes on distribution; ecology; and behaviour,1969,Madoqua,1,NULL,Jul-33,Anna,2/24/14 18:40,,,\n";
 
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return new TableParserFactoryCsv().createParser(config, dataset);
         };
 
 
@@ -102,7 +99,7 @@ public class DatasetImporterForMetaTableIT {
                     "11012118.0,8791030401.0,9.0,9999999998.0,58.0,1994.0,7.0,11.0,AI,\"Pacific cod Gadus macrocephalus\",\"Rocks \",95.0,199401.0,148.0,51.43,178.81999999999999,222.0,228.0,11.0,0.63,0.41999999999999998,542.0,118-11,\"1994-07-11 00:00:00\",13.0,\n" +
                     "11012118.0,8791030401.0,9.0,9999999998.0,58.0,1994.0,7.0,11.0,AI,\"Pacific cod Gadus macrocephalus\",\"Rocks \",95.0,199401.0,148.0,51.43,178.81999999999999,222.0,228.0,11.0,0.63,0.41999999999999998,542.0,118-11,\"1994-07-11 00:00:00\",3.0,\n";
 
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return new TableParserFactoryCsv().createParser(config, dataset);
         };
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/noaa-reem/main";
@@ -179,7 +176,7 @@ public class DatasetImporterForMetaTableIT {
                     "\"80e66e7c-75db-467f-9a89-a11f94d58eb3\",\"http://phthiraptera.info/node/94210\",\"fe5b2e50-b414-41d9-840d-189e732b2ea5\",\"Ricinus fringillae flammeae\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"f26a1199-c0bb-4d7c-a511-2fe6284c5378\",\"Acanthis flammea flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"Self citation to checklist added. Requires page number.\"\n" +
                     "\"001ee8aa-dbab-43b8-9137-a61565ccf41b\",\"http://phthiraptera.info/node/94211\",\"ee17d179-9f60-4198-ac49-dc9dab3ae529\",\"Brueelia sibirica\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"f26a1199-c0bb-4d7c-a511-2fe6284c5378\",\"Acanthis flammea flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"Self citation to checklist added. Requires page number.\"\n" +
                     "\"d0929673-2f4c-49ec-877f-116e74ea360e\",\"http://phthiraptera.info/node/94212\",\"46084bc3-cfbf-4e01-96f8-5ecb50bc5ff9\",\"Ricinus fringillae\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"2027cf09-f15d-4c2b-be28-9cb00fabf308\",\"Acanthis flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"204\",\"[REF: Rheinwald, 1968:204]\"\n";
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return new TableParserFactoryCsv().createParser(config, dataset);
         };
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/natural-history-museum-london-interactions-bank/main";

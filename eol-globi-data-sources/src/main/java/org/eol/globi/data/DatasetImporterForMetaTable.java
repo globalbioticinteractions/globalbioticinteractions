@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.map.LinkedMap;

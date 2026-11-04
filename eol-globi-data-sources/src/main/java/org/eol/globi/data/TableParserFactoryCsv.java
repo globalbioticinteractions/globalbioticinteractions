@@ -2,7 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.BadDelimiterException;
 import com.Ostermiller.util.BadQuoteException;
-import com.Ostermiller.util.CSVParse;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
