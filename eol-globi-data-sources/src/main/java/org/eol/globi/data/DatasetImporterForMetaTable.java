@@ -142,7 +142,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                                 cachedTable.putIfAbsent(keyValue, interaction);
                             }
                         }
-                    }, new TableParserFactoryImpl(), datasetDependency, logger);
+                    }, new TableParserFactoryCsv(), datasetDependency, logger);
                     indexedTables.put(primaryKey, cachedTable);
                 }
             }

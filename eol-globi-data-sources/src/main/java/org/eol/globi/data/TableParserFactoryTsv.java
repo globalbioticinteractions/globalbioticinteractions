@@ -12,7 +12,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class TableParserFactoryTsv implements TableParserFactory {
@@ -46,7 +46,8 @@ class TableParserFactoryTsv implements TableParserFactory {
             private void lazyInit() throws IOException {
                 if (lineIterator == null) {
                     InputStream retrieve = dataset.retrieve(URI.create(jsonNode.asText()));
-                    lineIterator = IOUtils.lineIterator(retrieve, StandardCharsets.UTF_8);
+                    Charset charset = getEncoding(config);
+                    lineIterator = IOUtils.lineIterator(retrieve, charset);
                 }
             }
 
@@ -77,7 +78,11 @@ class TableParserFactoryTsv implements TableParserFactory {
                 }
             }
         };
-        TableParserFactoryImpl.skipHeader(config, csvParse);
+        TableParserFactoryCsv.skipHeader(config, csvParse);
         return csvParse;
+    }
+
+    public static Charset getEncoding(JsonNode config) {
+        return Charset.forName(config.has("encoding") ? config.get("encoding").asText("UTF8") : "UTF8");
     }
 }

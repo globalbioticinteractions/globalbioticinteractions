@@ -130,7 +130,7 @@ public class DatasetImporterForMetaTableIT {
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/gandhi2009/main";
         final String resource = baseUrl + "/globi.json";
-        importAll(interactionListener, new TableParserFactoryImpl(), baseUrl, resource, getResourceServiceHTTP());
+        importAll(interactionListener, new TableParserFactoryCsv(), baseUrl, resource, getResourceServiceHTTP());
 
         assertThat(links.size()> 0, is(true));
         final Map<String, String> firstLine = links.get(0);
@@ -150,7 +150,7 @@ public class DatasetImporterForMetaTableIT {
 
         final String baseUrl = "https://raw.githubusercontent.com/theptin/Thamnophis-GloBI/main";
         final String resource = baseUrl + "/globi.json";
-        importAll(interactionListener, new TableParserFactoryImpl(), baseUrl, resource, getResourceServiceHTTP());
+        importAll(interactionListener, new TableParserFactoryCsv(), baseUrl, resource, getResourceServiceHTTP());
 
         assertThat(links.size()> 0, is(true));
         final Map<String, String> firstLine = links.get(0);

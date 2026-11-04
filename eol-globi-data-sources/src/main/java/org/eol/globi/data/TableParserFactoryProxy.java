@@ -14,7 +14,7 @@ public class TableParserFactoryProxy implements TableParserFactory {
         String delimiter = jsonNode == null ? "," : jsonNode.asText();
         TableParserFactory factory = ("\t".equals(delimiter)
                 ? new TableParserFactoryTsv()
-                : new TableParserFactoryImpl());
+                : new TableParserFactoryCsv());
         return factory.createParser(config, dataset);
     }
 }

@@ -1,0 +1,2 @@
+HostOriginal,VirusOriginal,HostFlagID,DetectionMethod,DetectionOriginal,DatabaseVersion,PublicationYear,ReferenceText,PMID,ReleaseYear,ReleaseMonth,ReleaseDay,CollectionYear,CollectionMonth,CollectionDay,HostTaxHashID,VirusTaxHashID,AssocID,Release_Date,Collection_Date
+Homo sapiens,Naples phlebovirus,FALSE,Not specified,CargoCarrier,Wardeh et al. 2015 Sci Data,2007,"Miró G, 2007, Vet Parasitol, 143",17056182,,,,,,,5611dd1d0327e5b23cd025446e17caf8,c77ea44bab2bcef990a6efdb66f1ee4b,641977,,

@@ -66,6 +66,16 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
+    public void parseColumnNamesCharacterEncodingISO88591() throws IOException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("whitespace-separator-schema.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnNamesForSchema(config);
+        assertThat(columnNames.size(), is(1));
+        assertThat(columnNames.get(0).getSeparator(), is(" "));
+    }
+
+    @Test
     public void parseSchemaWithPrimaryAndForeignKeys() throws IOException, StudyImporterException {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);
@@ -1019,6 +1029,52 @@ public class DatasetImporterForMetaTableTest {
     @Test
     public void carriageReturn() throws IOException, StudyImporterException {
         final InputStream inputStream = getClass().getResourceAsStream("example-carriage-return.json");
+        assertNotNull(inputStream);
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        DatasetLocal dataset = new DatasetLocal(
+                new ResourceService() {
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return IOUtils.toInputStream("Homo sapiens,eats: Canis lupus | eats: Catus felis\r" +
+                                "Homo sapiens,eats: Canis lupus | eats: Catus felis", StandardCharsets.UTF_8);
+                    }
+                }
+        );
+
+        dataset.setConfig(config);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(4));
+
+        assertThat(links.get(0).get("empty1"), is("Homo sapiens"));
+        assertThat(links.get(0).get("empty3"), is("eats: Canis lupus | eats: Catus felis"));
+
+        assertThat(links.get(0).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
+
+        assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(1).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
+
+        assertThat(links.get(2).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(2).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(2).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
+
+        assertThat(links.get(3).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(3).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(3).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
+    }
+
+    @Test
+    public void exampleISO88551() throws IOException, StudyImporterException {
+        final InputStream inputStream = getClass().getResourceAsStream("iso-8859-1-globi.json");
         assertNotNull(inputStream);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
