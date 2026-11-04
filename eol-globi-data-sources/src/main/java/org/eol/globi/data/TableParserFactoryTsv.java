@@ -24,11 +24,6 @@ class TableParserFactoryTsv implements TableParserFactory {
             private final AtomicInteger lastLineNumber = new AtomicInteger(0);
 
             @Override
-            public String nextValue() throws IOException {
-                throw new IOException("not implemented");
-            }
-
-            @Override
             public int lastLineNumber() {
                 return lastLineNumber.get();
             }
@@ -56,17 +51,7 @@ class TableParserFactoryTsv implements TableParserFactory {
             }
 
             @Override
-            public String[][] getAllValues() throws IOException {
-                throw new IOException("not implemented");
-            }
-
-            @Override
             public void changeDelimiter(char newDelim) throws BadDelimiterException {
-
-            }
-
-            @Override
-            public void changeQuote(char newQuote) throws BadQuoteException {
 
             }
 

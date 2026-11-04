@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.BadDelimiterException;
-import com.Ostermiller.util.BadQuoteException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -40,11 +39,6 @@ public class TableParserFactoryCsv implements TableParserFactory {
             AtomicReference<CSVParser> csvParser = new AtomicReference<>();
 
             @Override
-            public String nextValue() throws IOException {
-                return "";
-            }
-
-            @Override
             public int lastLineNumber() {
                 return (int) csvParser.get().getCurrentLineNumber();
             }
@@ -68,18 +62,8 @@ public class TableParserFactoryCsv implements TableParserFactory {
             }
 
             @Override
-            public String[][] getAllValues() throws IOException {
-                throw new IllegalArgumentException("not supported");
-            }
-
-            @Override
             public void changeDelimiter(char newDelim) throws BadDelimiterException {
                 parserFormatBuilder.setDelimiter(newDelim);
-            }
-
-            @Override
-            public void changeQuote(char newQuote) throws BadQuoteException {
-                parserFormatBuilder.setQuote(newQuote);
             }
 
             @Override
