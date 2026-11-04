@@ -58,14 +58,9 @@ public class TableParserFactoryCsv implements TableParserFactory {
                             .get()
                             .parse(in));
                 }
-                if (!csvParser.get().iterator().hasNext()) {
-                    throw new IOException("no more records");
-                }
-                return csvParser
-                        .get()
-                        .iterator()
-                        .next()
-                        .values();
+                return csvParser.get().iterator().hasNext()
+                        ? csvParser.get().iterator().next().values()
+                        : null;
             }
 
             @Override
