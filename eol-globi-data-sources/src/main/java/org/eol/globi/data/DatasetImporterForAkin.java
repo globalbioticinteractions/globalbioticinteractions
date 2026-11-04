@@ -19,6 +19,7 @@ import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +74,12 @@ public class DatasetImporterForAkin extends NodeBasedImporter {
 
     private String[][] loadSampleSiteLocations() throws IOException {
         CSVParse csvParser = CSVTSVUtil.createCSVParser(getDataset().retrieve(URI.create("akin/Akin2002Locations.csv")));
-        return csvParser.getAllValues();
+        String[] line;
+        List<String[]> lines = new ArrayList<>();
+        while ((line = csvParser.getLine()) != null) {
+            lines.add(line);
+        }
+        return lines.toArray(new String[0][]);
     }
 
     private String[] findSiteInfo(String[] header, String[] line, String[][] siteInfos, LabeledCSVParser parser) throws StudyImporterException {

@@ -70,7 +70,7 @@ public class TableParserFactoryCsv implements TableParserFactory {
 
             @Override
             public String[][] getAllValues() throws IOException {
-                return new String[0][];
+                throw new IllegalArgumentException("not supported");
             }
 
             @Override
