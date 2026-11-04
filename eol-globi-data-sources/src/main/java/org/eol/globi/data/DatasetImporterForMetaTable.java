@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.map.LinkedMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -339,7 +340,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];
                     final Column column = columnNames.get(i);
-                    if (Arrays.asList("targetTaxonName","sourceTaxonName").contains(column.getDataTypeId())) {
+                    if (Arrays.asList("targetTaxonName", "sourceTaxonName").contains(column.getDataTypeId())) {
                         if (StringUtils.isBlank(namedMatrixPropertyName)) {
                             namedMatrixPropertyName = column.getDataTypeId();
                         }
@@ -402,6 +403,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
             }
         } catch (IOException e) {
             throw new StudyImporterException(e);
+        } finally {
+            IOUtils.closeQuietly(csvParse);
         }
     }
 

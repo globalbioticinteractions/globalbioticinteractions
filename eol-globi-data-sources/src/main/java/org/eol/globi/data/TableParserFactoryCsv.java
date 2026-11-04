@@ -32,33 +32,39 @@ public class TableParserFactoryCsv implements TableParserFactory {
         final CSVFormat.Builder parserFormatBuilder = CSVFormat
                 .EXCEL
                 .builder()
+                .setAutoFlush(true)
                 .setDelimiter(delimiterChar);
 
         final CSVParse csvParse = new CSVParse() {
 
-            AtomicReference<CSVParser> csvParser = new AtomicReference<>();
+            CSVParser csvParser = null;
 
             @Override
             public int lastLineNumber() {
-                return (int) csvParser.get().getCurrentLineNumber();
+                return (int) csvParser.getCurrentLineNumber();
             }
 
             @Override
             public String[] getLine() throws IOException {
-                if (csvParser.get() == null) {
+                if (csvParser == null) {
                     Reader in = new InputStreamReader(resource, getEncoding(config));
-                    csvParser.set(parserFormatBuilder
+                    csvParser = parserFormatBuilder
                             .get()
-                            .parse(in));
+                            .parse(in);
                 }
-                return csvParser.get().iterator().hasNext()
-                        ? csvParser.get().iterator().next().values()
-                        : null;
+                String[] values = null;
+                if (csvParser.iterator().hasNext()) {
+                    values = csvParser.iterator().next().values();
+                }
+                if (values == null) {
+                    close();
+                }
+                return values;
             }
 
             @Override
             public int getLastLineNumber() {
-                return (int) csvParser.get().getCurrentLineNumber();
+                return (int) csvParser.getCurrentLineNumber();
             }
 
             @Override
@@ -68,9 +74,8 @@ public class TableParserFactoryCsv implements TableParserFactory {
 
             @Override
             public void close() throws IOException {
-                CSVParser parser = csvParser.getAndSet(null);
-                if (parser != null) {
-                    parser.close();
+                if (csvParser != null) {
+                    csvParser.close();
                 }
             }
         };
